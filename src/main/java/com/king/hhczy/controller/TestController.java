@@ -57,7 +57,7 @@ public class TestController {
     }
 
     @GetMapping("/writeToFile")
-    @ApiOperation("测试XXX")
+    @ApiOperation("测试XXXX")
     public ResponseEntity<?> writeToFile(@ApiParam(value = "编号",required = true)Long idNum, String path, int size) {
 //        String fileName = "abc.txt";
         List<String> idNums = new ArrayList<>();
