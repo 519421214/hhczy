@@ -19,7 +19,6 @@ import java.util.stream.IntStream;
 public class Test {
 
     public static void main(String[] args) throws InterruptedException {
-
 //        String ip = "192.168.2.1";
 //        if (!IpV4Util.isSameAddress("192.168.3.1", ip.trim(),"255.255.255.0")) {
 //            System.out.println(12345678);
@@ -71,12 +70,12 @@ public class Test {
 //        System.out.println((int)65297);
 //        System.out.println(encodeString("15017607945"));
 //        System.out.println(a.charAt(0));
-//        System.out.println(decodeString("053049048051048049049057056052049048050052055057048051"));
+        System.out.println(decodeString("049053048054050052049057057057048055049049048051051055"));
 //        System.out.println(encodeString("110101199003074872"));
 //        System.out.println("052053050049050054049057055049048056050050048051052052");
-//        searchFileByContent2("C:\\Users\\ningjinxiang\\Desktop\\sac\\log","\"eventType\":1");
+//        searchFileByContent2("C:\\Users\\ningjinxiang\\Desktop\\sac\\log","00000000973E1007");
 //        System.out.println(LocalDateTime.ofInstant(Instant.ofEpochMilli(1564364487290L), ZoneId.systemDefault()));
-        optionalTest();
+//        optionalTest();
     }
 
     //二进制
@@ -140,8 +139,14 @@ public class Test {
                 List<String> lines = Files.readAllLines(Paths.get(path + "\\" + file.getFileName()), StandardCharsets.UTF_8);
                 for (String line : lines) {
                     if (line.contains(words)) {
-                        System.out.println(file.getFileName());
-                        break;
+//                        System.out.println(file.getFileName());
+//                        break;
+
+                        List<JSONObject> list = JSONObject.parseObject(line.substring(line.indexOf("[{")), List.class);
+                        for (JSONObject o : list) {
+                            System.out.println(o.toJSONString());
+                            System.out.println("================================================================");
+                        }
                     }
                 }
             }
@@ -151,33 +156,37 @@ public class Test {
     }
 
     private static void searchFileByContent2(String path, String words) {
-        //ETFC0C128A5B4D,ETF54A553611A3
+        String cardNo = "00000000973E1007";
+        words = cardNo;
+
         Map<String, Integer> map = new HashMap<>();
         Map<String, Integer> map2 = new HashMap<>();
         try {
             DirectoryStream<Path> files = Files.newDirectoryStream(Paths.get(path));
             for (Path file : files) {
+                System.out.println("##开始检索日志文件："+file.getFileName());
                 List<String> lines = Files.readAllLines(Paths.get(path + "\\" + file.getFileName()), StandardCharsets.UTF_8);
                 for (String line : lines) {
                     if (line.contains(words)) {
                         List<JSONObject> list = JSONObject.parseObject(line.substring(line.indexOf("[{")), List.class);
                         for (JSONObject o : list) {
                             Integer eventType = o.getInteger("eventType");
-                            if (eventType != 24 && o.getString("villageCode").equals("XS_SZFT_10010040") && o.getString("eventFile") == null) {
-                                String fileName = file.getFileName().toString();
-                                String strFile = fileName.substring(0, fileName.indexOf("."));
-                                if (map.get(strFile + "fzp") != null) {
-                                    map.put(strFile + "fzp", map.get(strFile + "fzp") + 1);
-                                    if (eventType > 0 && eventType < 7) {
-                                        if (map2.get(strFile + "km") != null) {
-                                            map2.put(strFile + "km", map2.get(strFile + "km") + 1);
-                                        } else {
-                                            map2.put(strFile + "km", 1);
-                                        }
-                                    }
-                                } else {
-                                    map.put(strFile + "fzp", 1);
-                                }
+//                            if (eventType != 24 && o.getString("villageCode").equals("XS_SZFT_10010040") && o.getString("eventFile") == null) {
+                            if (eventType == 1 && o.getString("cardNo").equals(cardNo) && o.getString("eventFile") == null) {
+//                                String fileName = file.getFileName().toString();
+//                                String strFile = fileName.substring(0, fileName.indexOf("."));
+//                                if (map.get(strFile + "fzp") != null) {
+//                                    map.put(strFile + "fzp", map.get(strFile + "fzp") + 1);
+//                                    if (eventType > 0 && eventType < 7) {
+//                                        if (map2.get(strFile + "km") != null) {
+//                                            map2.put(strFile + "km", map2.get(strFile + "km") + 1);
+//                                        } else {
+//                                            map2.put(strFile + "km", 1);
+//                                        }
+//                                    }
+//                                } else {
+//                                    map.put(strFile + "fzp", 1);
+//                                }
                                 System.out.println(o.toJSONString());
                                 System.out.println("================================================================");
                             }
@@ -186,16 +195,19 @@ public class Test {
                     }
                 }
             }
-            System.out.println("统计日期：2019-07-26~2019-08-02");
+//            System.out.println("统计日期：2019-07-26~2019-08-02");
             map.forEach((k, v) -> {
                 System.out.println("捕获到非抓拍事件，日期" + k + "共 " + v + "条记录");
             });
             map2.forEach((k, v) -> {
                 System.out.println("捕获到开门事件，日期" + k + "共 " + v + "条记录");
             });
+            //打开的Stream，需要关闭。（否则，linux下会造成： too many open files）
+            files.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
+
     }
 
     private static void writeToFile(Long idNum, String path, int size) {
@@ -441,5 +453,15 @@ public class Test {
             return source;
         }
 
+    }
+    public static void FilesAndPaths() {
+        //Files.createDirectory()//目录必须存在，否则抛异常
+        //目录存在就跳过
+        //System.getProperty("user.dir") source:vdu_sz; jar:bin 都指向工作环境路径
+        try {
+            Files.createDirectories(Paths.get(Paths.get(System.getProperty("user.dir")).getParent().toString()));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
