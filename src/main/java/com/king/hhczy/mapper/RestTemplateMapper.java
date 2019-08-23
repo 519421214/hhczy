@@ -17,6 +17,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
 
 /**
  * 整合数据传送HttpEntity，简化代码步骤
@@ -31,11 +32,11 @@ public class RestTemplateMapper {
     @Autowired
     private RestTemplate restTemplate;
     //响应码 key
-    private String resultCodeKey = "code";
+    private String[] resultCodeKey = {"code","retcode"};
     //响应数据体 key
-    private String resultDataKey = "data";
+    private String[] resultDataKey = {"data"};
     //响应信息 key
-    private String resultMsgKey = "msg";
+    private String[] resultMsgKey = {"msg","retmsg"};
     //响应成功码
     private int successCode = 0;
 
@@ -48,7 +49,7 @@ public class RestTemplateMapper {
     public JSONObject postResult(String requestUrl, Object params, Object... msg) {
 
         MultiValueMap headers = new HttpHeaders();
-        headers.add("Content-Type", "application/json;charset=utf8");
+        headers.add("Content-Type", "application/json");
         headers.add("Request-Id", UUIDUtil.uuid());
 
         JSONObject data = null;
@@ -122,11 +123,14 @@ public class RestTemplateMapper {
     }
 
     private JSONObject resultDeal(JSONObject data, Object... params) {
-        int resultCode = data.getIntValue(resultCodeKey);
+
+        Function<String[],String> getKey = x->Arrays.stream(x).filter(y -> data.get(y) != null).findAny().orElse(UUIDUtil.uuid());
+
+        int resultCode = data.getIntValue(getKey.apply(resultCodeKey));
         if (resultCode == successCode) {
-            return Optional.ofNullable(data.getJSONObject(resultDataKey)).orElse(new JSONObject());
+            return Optional.ofNullable(data.getJSONObject(getKey.apply(resultDataKey))).orElse(new JSONObject());
         } else {
-            logger.error("远程接口{}回参失败：{} {}", params[0], params.length > 1 ? params[1] : "", data.getString(resultMsgKey));
+            logger.error("远程接口{}回参失败：{} {}", params[0], params.length > 1 ? params[1] : "", data.getString(getKey.apply(resultMsgKey)));
 //            logger.error("远程接口调用回参失败：{}[{}]",data.getString(resultMsgKey),JSONObject.toJSONString(params));
 //            throw new RuntimeException("远程接口调用回参失败：" + data.getString(resultMsgKey));
             return null;
