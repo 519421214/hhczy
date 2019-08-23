@@ -13,6 +13,8 @@ import java.sql.Timestamp;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.stream.IntStream;
 
@@ -463,5 +465,12 @@ public class Test {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    //关于线程安全
+    public void threadFafe(){
+        List l = Collections.synchronizedList(new ArrayList<>());//List线程安全,写快读慢，在并行流有用到
+        ConcurrentHashMap concurrentHashMap = new ConcurrentHashMap();//有读写分离锁,websocket有实例
+        AtomicInteger atomicInteger = new AtomicInteger(0);//java 线程安全的全局计数器-AtomicInteger
     }
 }
