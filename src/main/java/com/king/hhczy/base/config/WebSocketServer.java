@@ -21,7 +21,7 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  *
  * @ServerEndpoint 这个注解有什么作用？
- *
+ * 多例##
  * 这个注解用于标识作用在类上，它的主要功能是把当前类标识成一个WebSocket的服务端
  * 注解的值用户客户端连接访问的URL地址
  *
