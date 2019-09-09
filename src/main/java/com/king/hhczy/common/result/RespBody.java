@@ -1,6 +1,5 @@
 package com.king.hhczy.common.result;
 
-import com.king.hhczy.base.constant.ErrorCodeConstant;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -28,16 +27,26 @@ public class RespBody<T> implements Serializable {
     /**
      * 接口执行结果
      */
-    private int code= ErrorCodeConstant.SUCCESS_CODE;
+    private int code;
 
     /**
      * 响应给前台的消息
      */
-    private String msg=ErrorCodeConstant.SUCCESS_MSG;
+    private String msg;
 
     /**
      * 响应给前台的数据
      */
     private T data;
 
+//    public RespBody() {
+//        this.code = BaseResultCode.SUCCESS.getCode();
+//        this.msg = BaseResultCode.SUCCESS.getMessage();
+//    }
+
+    public RespBody result(BaseResultCode baseResultCode) {
+        this.code = baseResultCode.getCode();
+        this.msg = baseResultCode.getMessage();
+        return this;
+    }
 }

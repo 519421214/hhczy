@@ -1,12 +1,11 @@
 package com.king.hhczy.exception;
 
-import com.alibaba.fastjson.JSONObject;
-import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
-import com.king.hhczy.base.constant.ErrorCodeConstant;
-import com.king.hhczy.common.result.ReqtBody;
-import com.king.hhczy.common.result.RespBody;
+import com.gosuncn.viis.common.result.BaseResultCode;
+import com.gosuncn.viis.common.result.ReqtBody;
+import com.gosuncn.viis.common.result.RespBody;
+import com.gosuncn.viis.common.util.JsonUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.util.StringUtils;
@@ -20,7 +19,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
-import java.net.ConnectException;
 import java.net.SocketTimeoutException;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -49,18 +47,15 @@ public class GlobalExceptionHandler {
 		}
 		//请求信息读取及绑定到对象时的异常，此时不会进入WebLogAspect
 		if (e instanceof HttpMessageNotReadableException) {
-			respBody.setCode(ErrorCodeConstant.PARAMS_ERROR);
 			HttpMessageNotReadableException hmnre = (HttpMessageNotReadableException) e;
-			respBody.setMsg("请求入参解析失败，请参考解析异常检查您的请求再重试 : "
-					+ hmnre.getMessage());
+			respBody.result(BaseResultCode.NON_PARAMTER.fillArgs(hmnre.getMessage()));
 		}//HttpMessageNotReadableException 当空参时抛出，统一归json格式错误处理java.net.ConnectException: Connection refused: connect
 		else if(e.getCause() instanceof JsonParseException || e.getCause() instanceof JsonMappingException){
-			respBody.setCode(ErrorCodeConstant.PARAMS_ERROR);
-			respBody.setMsg("入参JSON格式错误");
+			respBody.result(BaseResultCode.NON_PARAMTER_JSON_FORMAT);
 		}
 		//请求参数绑定到对象成功后，但校验失败的时异常，此时不会进入WebLogAspect
 		else if (e instanceof MethodArgumentNotValidException) {
-			respBody.setCode(ErrorCodeConstant.PARAMS_VALID_ERROR);
+			respBody.setCode(BaseResultCode.NON_PARAMTER_VALID_ERROR.getCode());
 			MethodArgumentNotValidException argNotValidEx = (MethodArgumentNotValidException) e;
 			Method method = argNotValidEx.getParameter().getMethod();
 
@@ -68,7 +63,7 @@ public class GlobalExceptionHandler {
 			BindingResult bindingResult = argNotValidEx.getBindingResult();
 			handleArgNotValidException(request, respBody, requestMap, method, bindingResult);
 		} else if (e instanceof BindException) {
-			respBody.setCode(ErrorCodeConstant.PARAMS_VALID_ERROR);
+			respBody.setCode(BaseResultCode.NON_PARAMTER_VALID_ERROR.getCode());
 			BindingResult bindingResult = ((BindException) e).getBindingResult();
 			handleArgNotValidException(request, respBody, requestMap, null, bindingResult);
 		}
@@ -79,18 +74,11 @@ public class GlobalExceptionHandler {
 		}*/
 		//请求头、请求类型错误
 		else if (e instanceof HttpRequestMethodNotSupportedException) {
-			respBody.setCode(ErrorCodeConstant.NOT_SUPPORTED_ERROR);
-			respBody.setMsg("请正确使用GET/POST请求类型");
+			respBody.result(BaseResultCode.INVALID_ACCESS_NOT_SUPPORTED_ERROR);
 		}
 		//远程接口请求超时
 		else if (e.getCause() instanceof SocketTimeoutException) {
-			respBody.setCode(ErrorCodeConstant.GOVIDEO_CONNET_OUT_ERROR);
-			respBody.setMsg("govideo请求超时");
-		}
-		//远程接口请求超时
-		else if (e.getCause() instanceof ConnectException) {
-			respBody.setCode(ErrorCodeConstant.GOVIDEO_CONNET_OUT_ERROR);
-			respBody.setMsg("govideo请求异常，请检查CMS服务是否在线");
+			respBody.result(BaseResultCode.SOCKET_ERROR_CONNET_OUT);
 		}
 		//自定义异常
 		else if (e instanceof CustomizedException) {
@@ -103,8 +91,7 @@ public class GlobalExceptionHandler {
 		}
 		//其他异常(服务器异常)
 		else {
-			respBody.setCode(ErrorCodeConstant.SYSTEM_ERROR);
-			respBody.setMsg(e.getMessage());
+			respBody.result(BaseResultCode.UNKNOWN_ERROR.fillArgs(e.getMessage()));
 			//调试用 todo
 			e.printStackTrace();
 		}
@@ -114,13 +101,13 @@ public class GlobalExceptionHandler {
 		}
 		requestMap.put("costTime", System.currentTimeMillis() - startTime);
 		requestMap.put("responseBody", respBody);
-		log.error("response : {} ", JSONObject.toJSONString(requestMap, SerializerFeature.WriteMapNullValue));
+		log.error("response : {} ", JsonUtils.objectToString(requestMap,true));
 		return respBody;
 	}
 
 	private void handleArgNotValidException(HttpServletRequest req, RespBody respBody,
-											 Map<String, Object> requestMap, Method method,
-											 BindingResult bindingResult) {
+                                            Map<String, Object> requestMap, Method method,
+                                            BindingResult bindingResult) {
 		String url = req.getRequestURL().toString();
 		String remoteAddr = req.getRemoteAddr();
 		String httpMethod = req.getMethod();

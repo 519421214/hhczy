@@ -1,4 +1,5 @@
 import com.alibaba.fastjson.JSONObject;
+import com.king.hhczy.common.util.Log;
 import com.king.hhczy.entity.domain.TblAccount;
 import org.springframework.util.StringUtils;
 
@@ -21,7 +22,11 @@ import java.util.stream.IntStream;
 public class Test {
 
     public static void main(String[] args) throws InterruptedException {
+
+        Object[] a = {"a"};
+        System.out.println(String.format("这是2%s", a));
 //        String ip = "192.168.2.1";
+        //
 //        if (!IpV4Util.isSameAddress("192.168.3.1", ip.trim(),"255.255.255.0")) {
 //            System.out.println(12345678);
 //        }
@@ -72,8 +77,8 @@ public class Test {
 //        System.out.println((int)65297);
 //        System.out.println(encodeString("15017607945"));
 //        System.out.println(a.charAt(0));
-        System.out.println(decodeString("049053048054050052049057057057048055049049048051051055"));
-//        System.out.println(encodeString("110101199003074872"));
+//        System.out.println(decodeString("049053048054050052049057057057048055049049048051051055"));
+//        System.out.println(encodeString("666666666666666666"));
 //        System.out.println("052053050049050054049057055049048056050050048051052052");
 //        searchFileByContent2("C:\\Users\\ningjinxiang\\Desktop\\sac\\log","00000000973E1007");
 //        System.out.println(LocalDateTime.ofInstant(Instant.ofEpochMilli(1564364487290L), ZoneId.systemDefault()));
@@ -158,23 +163,25 @@ public class Test {
     }
 
     private static void searchFileByContent2(String path, String words) {
-        String cardNo = "00000000973E1007";
+        String cardNo = "\"eventType\":";
         words = cardNo;
 
         Map<String, Integer> map = new HashMap<>();
         Map<String, Integer> map2 = new HashMap<>();
+        int count = 0;
         try {
             DirectoryStream<Path> files = Files.newDirectoryStream(Paths.get(path));
             for (Path file : files) {
                 System.out.println("##开始检索日志文件："+file.getFileName());
                 List<String> lines = Files.readAllLines(Paths.get(path + "\\" + file.getFileName()), StandardCharsets.UTF_8);
                 for (String line : lines) {
-                    if (line.contains(words)) {
+                    if (line.contains(words)&&!line.contains("批量保存事件文件存储服务入参")) {
                         List<JSONObject> list = JSONObject.parseObject(line.substring(line.indexOf("[{")), List.class);
                         for (JSONObject o : list) {
                             Integer eventType = o.getInteger("eventType");
-//                            if (eventType != 24 && o.getString("villageCode").equals("XS_SZFT_10010040") && o.getString("eventFile") == null) {
-                            if (eventType == 1 && o.getString("cardNo").equals(cardNo) && o.getString("eventFile") == null) {
+                            //XS_SZFT_10010040 上梅林；XS_SZFT_10010034 石厦东村；XS_SZFT_10010036 石厦西村
+                            if (eventType != 24&&eventType != 11&& o.getString("villageCode").equals("XS_SZFT_10010036") && o.getString("eventFile") == null&&o.getInteger("eventTime")>1566748800&&o.getInteger("eventTime")<1566835200 ) {
+//                            if (eventType == 1 && o.getString("cardNo").equals(cardNo) && o.getString("eventFile") == null) {
 //                                String fileName = file.getFileName().toString();
 //                                String strFile = fileName.substring(0, fileName.indexOf("."));
 //                                if (map.get(strFile + "fzp") != null) {
@@ -189,6 +196,15 @@ public class Test {
 //                                } else {
 //                                    map.put(strFile + "fzp", 1);
 //                                }
+                                count++;
+                                String key = o.getString("certificateNo") + o.getString("eventTime");
+                                if (map.get(key)==null) {
+                                    map.put(key, 1);
+                                }
+                                String key2 = o.getString("eventTime");
+                                if (map2.get(key2)==null) {
+                                    map2.put(key2, 1);
+                                }
                                 System.out.println(o.toJSONString());
                                 System.out.println("================================================================");
                             }
@@ -198,12 +214,13 @@ public class Test {
                 }
             }
 //            System.out.println("统计日期：2019-07-26~2019-08-02");
-            map.forEach((k, v) -> {
-                System.out.println("捕获到非抓拍事件，日期" + k + "共 " + v + "条记录");
-            });
-            map2.forEach((k, v) -> {
-                System.out.println("捕获到开门事件，日期" + k + "共 " + v + "条记录");
-            });
+//            map.forEach((k, v) -> {
+//                System.out.println("捕获到非抓拍事件，日期" + k + "共 " + v + "条记录");
+//            });
+//            map2.forEach((k, v) -> {
+//                System.out.println("捕获到开门事件，日期" + k + "共 " + v + "条记录");
+//            });
+            Log.info("检索到总数：{}，唯一key1：{}，唯一key2：{}",count,map.size(),map2.size());
             //打开的Stream，需要关闭。（否则，linux下会造成： too many open files）
             files.close();
         } catch (Exception e) {
@@ -468,9 +485,13 @@ public class Test {
     }
 
     //关于线程安全
-    public void threadFafe(){
+    public static void threadFafe(){
         List l = Collections.synchronizedList(new ArrayList<>());//List线程安全,写快读慢，在并行流有用到
         ConcurrentHashMap concurrentHashMap = new ConcurrentHashMap();//有读写分离锁,websocket有实例
-        AtomicInteger atomicInteger = new AtomicInteger(0);//java 线程安全的全局计数器-AtomicInteger
+        //java 线程安全的全局计数器-AtomicInteger
+        AtomicInteger atomicInteger = new AtomicInteger(0);
+        System.out.println(atomicInteger.incrementAndGet());
+        System.out.println(atomicInteger.decrementAndGet());
+
     }
 }

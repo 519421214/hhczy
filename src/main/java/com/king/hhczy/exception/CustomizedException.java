@@ -1,5 +1,7 @@
 package com.king.hhczy.exception;
 
+import com.gosuncn.viis.common.result.BaseResultCode;
+
 /**
  * 自定义系统错误 customized:定制的
  * by ningjinxiang
@@ -19,6 +21,10 @@ public class CustomizedException extends RuntimeException{
         this.msg = msg;
         this.code = code;
         this.requestId = requestId;
+    }
+    public CustomizedException(BaseResultCode baseResultCode) {
+        this.msg = baseResultCode.getMessage();
+        this.code = baseResultCode.getCode();
     }
 
     public int getCode() {

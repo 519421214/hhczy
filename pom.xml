@@ -119,7 +119,7 @@
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>fastjson</artifactId>
-            <version>1.2.59</version>
+            <version>1.2.58</version>
         </dependency>
         <!--rabbitmq消息中间件 start-->
         <dependency>
@@ -155,7 +155,7 @@
             <version>1.6</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/com.jcraft/jsch -->
-        <!--利用JSch包实现SFTP下载、上传文件 -->
+        <!--利用JSch包实现FTP下载、上传文件 -->
         <dependency>
             <groupId>com.jcraft</groupId>
             <artifactId>jsch</artifactId>
