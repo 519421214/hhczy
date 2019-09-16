@@ -3,7 +3,8 @@ package com.king.hhczy.base.config;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.king.hhczy.common.result.ReqtBody;
-import com.king.hhczy.common.result.RespBody;
+import com.king.hhczy.common.util.Log;
+import com.king.hhczy.common.util.UUIDUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.Signature;
@@ -18,8 +19,10 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * 项目名称:  vdc
@@ -51,12 +54,17 @@ public class WebLogAspect {
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
         Signature signature = joinPoint.getSignature();
 
+        Object requestId = request.getAttribute("requestId");
+        if (requestId==null) {
+            requestId = request.getHeader("request-id");
+        }
         String url = request.getRequestURL().toString();
         String remoteAddr = request.getRemoteAddr();
         String httpMethod = request.getMethod();
         String classMethod = signature.getDeclaringTypeName() + "." + signature.getName();
 
         Map<String, Object> requestMap = new LinkedHashMap<>();
+        requestMap.put("requestId", Optional.ofNullable(requestId).orElse(UUIDUtil.uuid()));
         requestMap.put("remoteAddr", remoteAddr);
         requestMap.put("url", url);
         requestMap.put("httpMethod", httpMethod);
@@ -84,8 +92,8 @@ public class WebLogAspect {
             requestMap.put("requestBody", clone);
         }
 
-        if (log.isInfoEnabled()) {
-            log.info("request : {} ", JSONObject.toJSONString(requestMap, SerializerFeature.WriteMapNullValue));
+        if (Log.isInfoEnabled()) {
+            Log.info("request : {} ", JSONObject.toJSONString(requestMap, SerializerFeature.WriteMapNullValue));
         }
 
         REQUEST_MAP_THREAD_LOCAL.set(requestMap);
@@ -95,26 +103,18 @@ public class WebLogAspect {
     // returning的值和doAfterReturning的参数名一致
     public void doAfterReturning(Object ret) {
 
+        Map<String, Object> responseParams = new HashMap<>();
+
         Map<String, Object> requestMap = REQUEST_MAP_THREAD_LOCAL.get();
-        if (ret instanceof RespBody) {
-            Object requestBody = requestMap.get("requestBody");
-            ReqtBody reqtBody = null;
-            //controller第一个入参不是RespBody时requestBody就不是ReqtBody
-            if (requestBody instanceof ReqtBody) {
-                reqtBody = (ReqtBody) requestBody;
-            }
-            if (reqtBody != null) {
-                ((RespBody)ret).setRequestId(reqtBody.getRequestId());
-            }
-            requestMap.put("responseBody", ret);
-        }
+        responseParams.put("request-id",requestMap.get("requestId"));
 
         long costTime = System.currentTimeMillis() - START_TIME_THREAD_LOCAL.get();
-        requestMap.put("costTime", costTime);   //处理日志
+        responseParams.put("costTime", costTime);   //处理日志
 
+        responseParams.put("responseBody", ret);
         // 处理完请求，返回内容
-        if (log.isInfoEnabled()) {
-            log.info("response : {} ", JSONObject.toJSONString(requestMap,SerializerFeature.WriteMapNullValue));
+        if (Log.isInfoEnabled()) {
+            Log.info("response : {} ", JSONObject.toJSONString(responseParams, SerializerFeature.WriteMapNullValue));
         }
 
         START_TIME_THREAD_LOCAL.remove();
@@ -128,18 +128,14 @@ public class WebLogAspect {
     @AfterThrowing(value = "logPointCut()", throwing = "ex")
     public void doAfterThrowing(Exception ex) {
 
+        Map<String, Object> responseParams = new HashMap<>();
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
 
         Map<String, Object> requestMap = REQUEST_MAP_THREAD_LOCAL.get();
         if (!CollectionUtils.isEmpty(requestMap)) {
-            Object requestBody = requestMap.get("requestBody");
-            //controller第一个入参不是RespBody时requestBody就不是ReqtBody
-            if (requestBody instanceof ReqtBody) {
-                ReqtBody reqtBody = (ReqtBody) requestBody;
-                request.setAttribute("requestId", reqtBody.getRequestId());
-            }
+            responseParams.put("request-id",requestMap.get("requestId"));
         }
-        request.setAttribute("requestMap", requestMap);
+        request.setAttribute("requestMap", responseParams);
         request.setAttribute("startTime", START_TIME_THREAD_LOCAL.get());
 
         START_TIME_THREAD_LOCAL.remove();

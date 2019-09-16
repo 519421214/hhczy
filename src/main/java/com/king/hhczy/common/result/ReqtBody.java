@@ -19,14 +19,6 @@ public class ReqtBody<T> implements Serializable {
     private static final long serialVersionUID = 4170534046017913803L;
 
     /**
-     * 请求识别唯一ID
-     * <p>
-     * 接收到前台传递过来的requestId后透传给RespBody
-     *
-     */
-    private String requestId;
-
-    /**
      * 当前页码
      */
     private int pageIndex;
@@ -42,14 +34,6 @@ public class ReqtBody<T> implements Serializable {
     @NotNull(message = "请求体参数parameter不能为空")
     @Valid
     private T parameter;
-
-    public String getRequestId() {
-        return requestId;
-    }
-
-    public void setRequestId(String requestId) {
-        this.requestId = requestId;
-    }
 
     public int getPageIndex() {
         return pageIndex;
@@ -86,7 +70,6 @@ public class ReqtBody<T> implements Serializable {
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("ReqtBody{");
-        sb.append("requestId='").append(requestId).append('\'');
         sb.append(", pageIndex=").append(pageIndex);
         sb.append(", pageSize=").append(pageSize);
         sb.append(", count=").append(count);

@@ -48,5 +48,8 @@ public class Log {
             }
         }.getClassName();
     }
+    public static boolean isInfoEnabled() {
+        return LoggerFactory.getLogger(getClassName()).isInfoEnabled();
+    }
 
 }

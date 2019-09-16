@@ -47,9 +47,10 @@ public class BaseInterceptors implements WebMvcConfigurer {
 
         @Override
         public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
-
             //请求信息
-            Log.info("user-identify={}", Optional.ofNullable(request.getHeader("request-id")).orElse(UUIDUtil.uuid()));
+            String requestId = Optional.ofNullable(request.getHeader("request-id")).orElse(UUIDUtil.uuid());
+            request.setAttribute("requestId",requestId);
+            Log.info("request-id={}", requestId);
             Log.info("Method={}", request.getMethod());
             Log.info("RequestURL={}", request.getRequestURL());
             Log.info("Protocol={}", request.getProtocol());

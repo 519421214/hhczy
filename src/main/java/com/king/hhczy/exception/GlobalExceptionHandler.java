@@ -3,7 +3,6 @@ package com.king.hhczy.exception;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.king.hhczy.common.result.BaseResultCode;
-import com.king.hhczy.common.result.ReqtBody;
 import com.king.hhczy.common.result.RespBody;
 import com.king.hhczy.common.util.JsonUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -61,11 +60,11 @@ public class GlobalExceptionHandler {
 
 			//参数校验失败时，可直接获取各种校验注解上的提示信息并可直接拿到入参target从而得到requestId
 			BindingResult bindingResult = argNotValidEx.getBindingResult();
-			handleArgNotValidException(request, respBody, requestMap, method, bindingResult);
+			respBody.setMsg(bindingResult.getFieldError().getDefaultMessage());
 		} else if (e instanceof BindException) {
 			respBody.setCode(BaseResultCode.NON_PARAMTER_VALID_ERROR.getCode());
 			BindingResult bindingResult = ((BindException) e).getBindingResult();
-			handleArgNotValidException(request, respBody, requestMap, null, bindingResult);
+			respBody.setMsg(bindingResult.getFieldError().getDefaultMessage());
 		}
 		//数据库操作异常（sql有误等）
 		/*else if (e instanceof DataAccessException) {
@@ -104,28 +103,4 @@ public class GlobalExceptionHandler {
 		log.error("response : {} ", JsonUtils.objectToString(requestMap,true));
 		return respBody;
 	}
-
-	private void handleArgNotValidException(HttpServletRequest req, RespBody respBody,
-                                            Map<String, Object> requestMap, Method method,
-                                            BindingResult bindingResult) {
-		String url = req.getRequestURL().toString();
-		String remoteAddr = req.getRemoteAddr();
-		String httpMethod = req.getMethod();
-
-		requestMap.put("remoteAddr", remoteAddr);
-		requestMap.put("url", url);
-		requestMap.put("httpMethod", httpMethod);
-		if (method != null) {
-			requestMap.put("classMethod", method.getDeclaringClass().getName() + "." + method.getName());
-		}
-
-		Object target = bindingResult.getTarget();
-		if (target instanceof ReqtBody) {
-			respBody.setRequestId(((ReqtBody) target).getRequestId());
-		}
-		requestMap.put("requestBody", target);
-
-		respBody.setMsg(bindingResult.getFieldError().getDefaultMessage());
-	}
-
 }
