@@ -111,7 +111,11 @@
 //        rMap.put("333", 333.3d);
 //        rMap.put("444", new Object());
 //        rMap.expire(30, TimeUnit.MINUTES);
-//
+
+//        RMapCache<String, String> tokenCache = redissonClient.getMapCache(CacheConstants.INIT_CACHE_PREFIX);
+//        //token有效时间30分钟，最大闲置时间比接口端少一分钟（避免延迟导致误差）
+//        tokenCache.put(token, message.getString("Token"), 30, TimeUnit.MINUTES, govideoTokenLosetime, TimeUnit.MINUTES);
+
 //        if (infoEnabled) {
 //            logger.info("put values to redission_test_Map_on_project_starting success");
 //            logger.info("redission_test_Map_on_project_starting's values : {}", rMap.toString());

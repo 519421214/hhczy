@@ -1,6 +1,7 @@
 package com.king.hhczy.base.config;
 
-import lombok.extern.slf4j.Slf4j;
+import com.king.hhczy.common.util.Log;
+import com.king.hhczy.common.util.UUIDUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
@@ -10,6 +11,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Optional;
 
 /**
  * 请求拦截，给请求提供token;日志拦截器，记录访问接口地址
@@ -19,7 +21,6 @@ import javax.servlet.http.HttpServletResponse;
  * @author ningjinxiang
  */
 @Configuration
-@Slf4j
 public class BaseInterceptors implements WebMvcConfigurer {
     @Autowired
     private TokenInterceptor tokenInterceptor;
@@ -29,7 +30,11 @@ public class BaseInterceptors implements WebMvcConfigurer {
         //设置拦截与不拦截的路径(根据设置顺序而执行先后)
         //静态资源不过滤
         //本地查询不需要北向接口登陆校验
-        registry.addInterceptor(tokenInterceptor).addPathPatterns("/**");
+        registry.addInterceptor(tokenInterceptor).addPathPatterns("/**")
+                //排除在线文档的拦截
+                .excludePathPatterns("/doc.html","/error")
+                //去除对swagger api doc的拦截
+                .excludePathPatterns("/swagger-resources/**", "/webjars/**", "/v2/**", "/swagger-ui.html", "/csrf/**");
     }
 
     /**
@@ -42,7 +47,18 @@ public class BaseInterceptors implements WebMvcConfigurer {
 
         @Override
         public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
+
+            //请求信息
+            Log.info("user-identify={}", Optional.ofNullable(request.getHeader("request-id")).orElse(UUIDUtil.uuid()));
+            Log.info("Method={}", request.getMethod());
+            Log.info("RequestURL={}", request.getRequestURL());
+            Log.info("Protocol={}", request.getProtocol());
+            Log.info("CharacterEncoding={}", request.getCharacterEncoding());
+            Log.info("srcHost:Port={}", request.getRemoteHost() + ":" + request.getRemotePort());
+            //请求参数
+            Log.info("QueryString= {}", request.getQueryString());
             String token = request.getHeader("Authorization");
+            Log.info("preHandle:token="+token);
 //            String token = null;
 //            if ("GET".equals(request.getMethod())) {
 //                token = request.getParameter("Token");
@@ -63,7 +79,7 @@ public class BaseInterceptors implements WebMvcConfigurer {
 ////                throw new CustomizedException(ErrorCodeConstant.TOKEN_ERROR, "govide-token获取失败");
 //            }
 //            throw new CustomizedException(ErrorCodeConstant.TOKEN_ERROR, "token认证失败");
-            return true;
+            return false;
         }
     }
 

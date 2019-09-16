@@ -22,9 +22,11 @@ import java.util.stream.IntStream;
 public class Test {
 
     public static void main(String[] args) throws InterruptedException {
-
-        Object[] a = {"a"};
-        System.out.println(String.format("这是2%s", a));
+        String equalsStr = "username=\"gosun\", realm=\"REALM\", nonce=\"MTU0ODMzNjUzMTM4NTo4ZmU0NjlkOGExZWU2MzZkM2U1MDQzYzE1NjBmNjdmOA==\", uri=\"/VIID/System/Register\", algorithm=\"MD5\", qop=auth, cnonce=\"\", response=\"711ecbdcda7c258a6eafbfd35c6cc810\"";
+        String key1 = "uri";
+        String result = Arrays.stream(equalsStr.replaceAll("[\"'\\s+]", "").split(",")).
+                map(y -> y.replaceFirst("=", "￥@￥").split("￥@￥")).filter(z -> key1.equals(z[0]) && z.length > 1).findAny().map(i -> i[1]).orElse(null);
+        System.out.println(result);
 //        String ip = "192.168.2.1";
         //
 //        if (!IpV4Util.isSameAddress("192.168.3.1", ip.trim(),"255.255.255.0")) {

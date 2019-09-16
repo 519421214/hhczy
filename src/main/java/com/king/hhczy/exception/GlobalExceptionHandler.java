@@ -2,10 +2,10 @@ package com.king.hhczy.exception;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
-import com.gosuncn.viis.common.result.BaseResultCode;
-import com.gosuncn.viis.common.result.ReqtBody;
-import com.gosuncn.viis.common.result.RespBody;
-import com.gosuncn.viis.common.util.JsonUtils;
+import com.king.hhczy.common.result.BaseResultCode;
+import com.king.hhczy.common.result.ReqtBody;
+import com.king.hhczy.common.result.RespBody;
+import com.king.hhczy.common.util.JsonUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.util.StringUtils;

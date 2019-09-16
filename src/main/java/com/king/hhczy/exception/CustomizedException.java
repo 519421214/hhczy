@@ -1,6 +1,7 @@
 package com.king.hhczy.exception;
 
-import com.gosuncn.viis.common.result.BaseResultCode;
+
+import com.king.hhczy.common.result.BaseResultCode;
 
 /**
  * 自定义系统错误 customized:定制的
