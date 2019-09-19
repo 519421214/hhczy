@@ -1,15 +1,14 @@
 import com.alibaba.fastjson.JSONObject;
+import com.king.hhczy.common.util.FilesUtils;
 import com.king.hhczy.common.util.Log;
 import com.king.hhczy.entity.domain.TblAccount;
 import org.springframework.util.StringUtils;
 
 import java.io.*;
+import java.net.URI;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.DirectoryStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.nio.file.*;
 import java.sql.Timestamp;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
@@ -18,15 +17,11 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 public class Test {
 
     public static void main(String[] args) throws InterruptedException {
-        String equalsStr = "username=\"gosun\", realm=\"REALM\", nonce=\"MTU0ODMzNjUzMTM4NTo4ZmU0NjlkOGExZWU2MzZkM2U1MDQzYzE1NjBmNjdmOA==\", uri=\"/VIID/System/Register\", algorithm=\"MD5\", qop=auth, cnonce=\"\", response=\"711ecbdcda7c258a6eafbfd35c6cc810\"";
-        String key1 = "uri";
-        String result = Arrays.stream(equalsStr.replaceAll("[\"'\\s+]", "").split(",")).
-                map(y -> y.replaceFirst("=", "￥@￥").split("￥@￥")).filter(z -> key1.equals(z[0]) && z.length > 1).findAny().map(i -> i[1]).orElse(null);
-        System.out.println(result);
 //        String ip = "192.168.2.1";
         //
 //        if (!IpV4Util.isSameAddress("192.168.3.1", ip.trim(),"255.255.255.0")) {
@@ -36,7 +31,7 @@ public class Test {
 //        System.out.println(compile.matcher("192.168.2.1").matches());
         //还可以这么写
 //        List<Integer> cost = Lists.newArrayList(1, 3, 7, 9, 34);
-//        searchFileByContent("C:\\Users\\ningjinxiang\\Desktop\\sac\\log", "1562863586");
+//        searchFileByContent("C:\\Users\\ningjinxiang\\Desktop\\sac\\log", "checkinSync");
 //        System.out.println(LocalDate.of(2019, 2, 1).lengthOfMonth());
 //        Path path = Paths.get("C:\\Users\\ningjinxiang\\Desktop\\sac\\tencent\\cert\\15558554155303.jpg");
 //        try {
@@ -85,6 +80,7 @@ public class Test {
 //        searchFileByContent2("C:\\Users\\ningjinxiang\\Desktop\\sac\\log","00000000973E1007");
 //        System.out.println(LocalDateTime.ofInstant(Instant.ofEpochMilli(1564364487290L), ZoneId.systemDefault()));
 //        optionalTest();
+        FilesAndPaths();
     }
 
     //二进制
@@ -141,21 +137,22 @@ public class Test {
 
     //内容检索
     private static void searchFileByContent(String path, String words) {
-        //ETFC0C128A5B4D,ETF54A553611A3
+        Path filesPath = Paths.get(path);
         try {
-            DirectoryStream<Path> files = Files.newDirectoryStream(Paths.get(path));
+            DirectoryStream<Path> files = Files.newDirectoryStream(filesPath);
             for (Path file : files) {
-                List<String> lines = Files.readAllLines(Paths.get(path + "\\" + file.getFileName()), StandardCharsets.UTF_8);
+                List<String> lines = Files.readAllLines(filesPath.resolve(file.getFileName()), StandardCharsets.UTF_8);
                 for (String line : lines) {
                     if (line.contains(words)) {
-//                        System.out.println(file.getFileName());
-//                        break;
-
-                        List<JSONObject> list = JSONObject.parseObject(line.substring(line.indexOf("[{")), List.class);
-                        for (JSONObject o : list) {
-                            System.out.println(o.toJSONString());
-                            System.out.println("================================================================");
-                        }
+                        System.out.println(file.getFileName());
+                        break;
+//                        if (line.contains("[{")) {
+//                            List<JSONObject> list = JSONObject.parseObject(line.substring(line.indexOf("[{")), List.class);
+//                            for (JSONObject o : list) {
+//                                System.out.println(o.toJSONString());
+//                                System.out.println("================================================================");
+//                            }
+//                        }
                     }
                 }
             }
@@ -165,6 +162,8 @@ public class Test {
     }
 
     private static void searchFileByContent2(String path, String words) {
+        //所在文件夹路径
+        Path filesPath = Paths.get(path);
         String cardNo = "\"eventType\":";
         words = cardNo;
 
@@ -172,17 +171,17 @@ public class Test {
         Map<String, Integer> map2 = new HashMap<>();
         int count = 0;
         try {
-            DirectoryStream<Path> files = Files.newDirectoryStream(Paths.get(path));
+            DirectoryStream<Path> files = Files.newDirectoryStream(filesPath);
             for (Path file : files) {
-                System.out.println("##开始检索日志文件："+file.getFileName());
-                List<String> lines = Files.readAllLines(Paths.get(path + "\\" + file.getFileName()), StandardCharsets.UTF_8);
+                System.out.println("##开始检索日志文件：" + file.getFileName());
+                List<String> lines = Files.readAllLines(filesPath.resolve(file.getFileName()), StandardCharsets.UTF_8);
                 for (String line : lines) {
-                    if (line.contains(words)&&!line.contains("批量保存事件文件存储服务入参")) {
+                    if (line.contains(words) && !line.contains("批量保存事件文件存储服务入参")) {
                         List<JSONObject> list = JSONObject.parseObject(line.substring(line.indexOf("[{")), List.class);
                         for (JSONObject o : list) {
                             Integer eventType = o.getInteger("eventType");
                             //XS_SZFT_10010040 上梅林；XS_SZFT_10010034 石厦东村；XS_SZFT_10010036 石厦西村
-                            if (eventType != 24&&eventType != 11&& o.getString("villageCode").equals("XS_SZFT_10010036") && o.getString("eventFile") == null&&o.getInteger("eventTime")>1566748800&&o.getInteger("eventTime")<1566835200 ) {
+                            if (eventType != 24 && eventType != 11 && o.getString("villageCode").equals("XS_SZFT_10010036") && o.getString("eventFile") == null && o.getInteger("eventTime") > 1566748800 && o.getInteger("eventTime") < 1566835200) {
 //                            if (eventType == 1 && o.getString("cardNo").equals(cardNo) && o.getString("eventFile") == null) {
 //                                String fileName = file.getFileName().toString();
 //                                String strFile = fileName.substring(0, fileName.indexOf("."));
@@ -200,11 +199,11 @@ public class Test {
 //                                }
                                 count++;
                                 String key = o.getString("certificateNo") + o.getString("eventTime");
-                                if (map.get(key)==null) {
+                                if (map.get(key) == null) {
                                     map.put(key, 1);
                                 }
                                 String key2 = o.getString("eventTime");
-                                if (map2.get(key2)==null) {
+                                if (map2.get(key2) == null) {
                                     map2.put(key2, 1);
                                 }
                                 System.out.println(o.toJSONString());
@@ -222,7 +221,7 @@ public class Test {
 //            map2.forEach((k, v) -> {
 //                System.out.println("捕获到开门事件，日期" + k + "共 " + v + "条记录");
 //            });
-            Log.info("检索到总数：{}，唯一key1：{}，唯一key2：{}",count,map.size(),map2.size());
+            Log.info("检索到总数：{}，唯一key1：{}，唯一key2：{}", count, map.size(), map2.size());
             //打开的Stream，需要关闭。（否则，linux下会造成： too many open files）
             files.close();
         } catch (Exception e) {
@@ -475,19 +474,86 @@ public class Test {
         }
 
     }
+
+    /**
+     * Files/Paths练习
+     * 参考：https://www.cnblogs.com/digdeep/p/4478734.html
+     */
     public static void FilesAndPaths() {
-        //Files.createDirectory()//目录必须存在，否则抛异常
-        //目录存在就跳过
-        //System.getProperty("user.dir") source:vdu_sz; jar:bin 都指向工作环境路径
+        //路径拼接方法
+        Path path1 = Paths.get("G:/","Xmp");
+        Path path2 = Paths.get("G:/Xmp");
+        URI u = URI.create("file:///G:/Xmp");//创建UIR供paths使用，并不是本地创建
+        Path path3 = Paths.get(u);
+        Path path4 = FileSystems.getDefault().getPath("G:/", "Xmp");
+
         try {
-            Files.createDirectories(Paths.get(Paths.get(System.getProperty("user.dir")).getParent().toString()));
+            Path path5 = Paths.get("G:/","Xmp","dd.txt");//这种写法就不用加斜杠
+            //文件夹、文件均属判断范围
+            if (!Files.exists(path5)) {
+                //创建文件前先建文件夹
+                Files.createDirectories(path5.getParent());
+                //创建文件，不能创建文件夹
+                Files.createFile(path5);
+            }
+            //创建文件夹
+            //Files.createDirectory()//目录必须存在，否则抛异常
+            //目录存在就跳过
+            //System.getProperty("user.dir") source:vdu_sz; jar:bin 都指向工作环境路径
+            Files.createDirectories(Paths.get(System.getProperty("user.dir")).getParent());
+            //读取文件夹的文件
+            DirectoryStream<Path> files = Files.newDirectoryStream(Paths.get("G:/","Xmp"));
+            //文件内容读取
+            //比下面newBufferedReader耗时，不过此方法可以用并行处理提高效率
+            List<String> lines1 = Files.readAllLines(path1.resolve("log.log"),StandardCharsets.UTF_8);//resolve作用：path拼接字符串返回path
+            for (String line1 : lines1) {
+//                System.out.println(line1);
+            }
+            //拿到BufferedReader，处理比上面快一点
+            BufferedReader br = Files.newBufferedReader(path1.resolve("log.log"), StandardCharsets.UTF_8);
+            String line2 = null;
+            while ((line2 = br.readLine())!=null){
+//                System.out.println(line2);
+            }
+            //写文件测试
+            Files.write(path1.resolve("copy1.log"), lines1,StandardCharsets.UTF_8);
+            BufferedWriter bw = Files.newBufferedWriter(path1.resolve("copy2.log"), StandardCharsets.UTF_8);
+            bw.write("测试文件写操作");bw.newLine();//换行
+            bw.flush();bw.close();
+
+            //遍历文件夹测试
+            //单目录遍历
+            DirectoryStream<Path> paths1 = Files.newDirectoryStream(path1);
+            Stream<Path> paths2 = Files.list(path1);
+            Iterator<Path> iteratorPaths2 = paths2.iterator();
+            //整个目录遍历
+            List<Path> allFilesPaths = FilesUtils.getAllFilesPaths("G:/Xmp");
+            //文件复制
+            //从文件复制到输出流
+            Files.copy(path1.resolve("log.log"), System.out);//打印到控制台
+            //从文件复制到文件
+            Files.copy(path1.resolve("log.log"), path1.resolve("log_copy1.log"), StandardCopyOption.REPLACE_EXISTING);//存在则替换
+            //从输入流复制到文件
+            //从控制台输入获取
+            Files.copy(System.in, path1.resolve("log_copy2.log"), StandardCopyOption.REPLACE_EXISTING);//
+            //读取和设置文件权限：省略
+
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
+    public static void ImageTest() {
+
+    }
+    public static void StringTest() {
+        //截最后一个.的前段
+        org.apache.commons.lang3.StringUtils.substringBeforeLast("a.jpg", ".");
+        //截最后一个.的后段
+        org.apache.commons.lang3.StringUtils.substringAfterLast("a.jpg", ".");
+    }
 
     //关于线程安全
-    public static void threadFafe(){
+    public static void threadFafe() {
         List l = Collections.synchronizedList(new ArrayList<>());//List线程安全,写快读慢，在并行流有用到
         ConcurrentHashMap concurrentHashMap = new ConcurrentHashMap();//有读写分离锁,websocket有实例
         //java 线程安全的全局计数器-AtomicInteger
