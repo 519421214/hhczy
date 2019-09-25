@@ -2,6 +2,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.king.hhczy.common.util.FilesUtils;
 import com.king.hhczy.common.util.Log;
 import com.king.hhczy.entity.domain.TblAccount;
+import lombok.Cleanup;
 import org.springframework.util.StringUtils;
 
 import java.io.*;
@@ -403,7 +404,12 @@ public class Test {
         if (file.exists()) {
             try {
                 InputStreamReader reader = new InputStreamReader(new FileInputStream(file), "gbk");
-                BufferedReader bufferedReader = new BufferedReader(reader);
+//                try (BufferedReader bufferedReader = new BufferedReader(reader)){ //这样写也可以自动关流
+//
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+                @Cleanup BufferedReader bufferedReader = new BufferedReader(reader);//@Cleanup:自动关闭资源
                 StringBuilder result = new StringBuilder();
                 String partResult;
                 while ((partResult = bufferedReader.readLine()) != null) {

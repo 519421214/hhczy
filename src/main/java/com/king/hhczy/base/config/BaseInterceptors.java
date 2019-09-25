@@ -1,8 +1,10 @@
 package com.king.hhczy.base.config;
 
+import com.king.hhczy.base.constant.ErrorCodeConstant;
 import com.king.hhczy.common.util.Log;
 import com.king.hhczy.common.util.UUIDUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -44,9 +46,11 @@ public class BaseInterceptors implements WebMvcConfigurer {
      */
     @Component
     private class TokenInterceptor implements HandlerInterceptor {
-
+        @Value("${abcd}")
+        private String abcd;
         @Override
         public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
+            ErrorCodeConstant.abcd = abcd;
             //请求信息
             String requestId = Optional.ofNullable(request.getHeader("request-id")).orElse(UUIDUtil.uuid());
             request.setAttribute("requestId",requestId);
@@ -84,4 +88,21 @@ public class BaseInterceptors implements WebMvcConfigurer {
         }
     }
 
+    /**
+     * 跨域问题处理
+     */
+//    @Component
+//    public class CommonIntercepter implements HandlerInterceptor {
+//        @Override
+//        public boolean preHandle(HttpServletRequest request,
+//                                 HttpServletResponse response, Object handler) throws Exception {
+//            //允许跨域,不能放在postHandle内
+//            response.setHeader("Access-Control-Allow-Origin", "*");
+//            if (request.getMethod().equals("OPTIONS")) {
+//                response.addHeader("Access-Control-Allow-Methods", "GET,HEAD,POST,PUT,DELETE,TRACE,OPTIONS,PATCH");
+//                response.addHeader("Access-Control-Allow-Headers", "Content-Type, Accept, Authorization");
+//            }
+//            return true;
+//        }
+//    }
 }
