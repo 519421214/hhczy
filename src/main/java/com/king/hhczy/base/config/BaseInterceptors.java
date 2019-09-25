@@ -1,6 +1,5 @@
 package com.king.hhczy.base.config;
 
-import com.king.hhczy.base.constant.ErrorCodeConstant;
 import com.king.hhczy.common.util.Log;
 import com.king.hhczy.common.util.UUIDUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,7 +49,6 @@ public class BaseInterceptors implements WebMvcConfigurer {
         private String abcd;
         @Override
         public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
-            ErrorCodeConstant.abcd = abcd;
             //请求信息
             String requestId = Optional.ofNullable(request.getHeader("request-id")).orElse(UUIDUtil.uuid());
             request.setAttribute("requestId",requestId);
