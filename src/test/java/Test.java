@@ -81,7 +81,7 @@ public class Test {
 //        searchFileByContent2("C:\\Users\\ningjinxiang\\Desktop\\sac\\log","00000000973E1007");
 //        System.out.println(LocalDateTime.ofInstant(Instant.ofEpochMilli(1564364487290L), ZoneId.systemDefault()));
 //        optionalTest();
-        FilesAndPaths();
+//        FilesAndPaths();
     }
 
     //二进制
@@ -182,7 +182,7 @@ public class Test {
                         for (JSONObject o : list) {
                             Integer eventType = o.getInteger("eventType");
                             //XS_SZFT_10010040 上梅林；XS_SZFT_10010034 石厦东村；XS_SZFT_10010036 石厦西村
-                            if (eventType != 24 && eventType != 11 && o.getString("villageCode").equals("XS_SZFT_10010036") && o.getString("eventFile") == null && o.getInteger("eventTime") > 1566748800 && o.getInteger("eventTime") < 1566835200) {
+                            if (eventType != 24 && eventType != 11 && o.getString("villageCode").equals("XS_SZFT_10010036") && o.getString("eventFile") == null) {
 //                            if (eventType == 1 && o.getString("cardNo").equals(cardNo) && o.getString("eventFile") == null) {
 //                                String fileName = file.getFileName().toString();
 //                                String strFile = fileName.substring(0, fileName.indexOf("."));
