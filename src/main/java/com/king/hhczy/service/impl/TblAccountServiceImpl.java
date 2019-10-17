@@ -44,6 +44,8 @@ public class TblAccountServiceImpl extends ServiceImpl<TblAccountMapper, TblAcco
         //mybatis分页查询方法2，关联查询
         IPage<Map> page2 = accountMapper.listAccounts(iPage);
 
+        Map longLongMap = accountMapper.listInteger();
+        int id = Integer.parseInt(longLongMap.get("id").toString());
         //分页查询3 由于PageHelper跟mybatis包冲突，这里测不了
 //        PageHelper.startPage(1, 20);
 //        List<Map> alarms = accountMapper.listAccounts();
