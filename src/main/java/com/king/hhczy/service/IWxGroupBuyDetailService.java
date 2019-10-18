@@ -1,7 +1,7 @@
 package com.king.hhczy.service;
 
-import com.king.hhczy.entity.WxGroupBuyDetail;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.king.hhczy.entity.domain.WxGroupBuyDetail;
 
 /**
  * <p>
