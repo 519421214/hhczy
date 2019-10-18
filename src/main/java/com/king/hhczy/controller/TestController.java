@@ -2,6 +2,8 @@ package com.king.hhczy.controller;
 
 import com.king.hhczy.base.config.CityCodeConfig;
 import com.king.hhczy.common.result.RespBody;
+import com.king.hhczy.common.util.WxAppUtil;
+import com.king.hhczy.mapper.RestTemplateMapper;
 import com.king.hhczy.service.ITblAccountService;
 import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
@@ -38,6 +40,8 @@ public class TestController {
 //    private ResourceLoader resourceLoader;
     @Autowired
     private CityCodeConfig cityCodeConfig;
+    @Autowired
+    private RestTemplateMapper restTemplateMapper;
 
     @GetMapping("/test-cache")
     @Cacheable(value = "myCache", key = "#areaId")
@@ -88,5 +92,11 @@ public class TestController {
     public ResponseEntity personAdd(@ApiParam(value = "人员照片", required = false)@RequestParam(required=false) MultipartFile data , @RequestParam(required=true) Integer type,
                                @RequestParam(required=true) String name, @RequestParam(required=true) String companyCode, @RequestParam(required=false) String personCode) {
         return ResponseEntity.ok(type+name+companyCode+personCode);
+    }
+    @RequestMapping("/wx-user")
+    public Object doLogin() {
+        String code = "043Vy03X15SnG01MdxZW1UCR2X1Vy03a";
+        //appid=APPID&secret=SECRET&js_code=JSCODE&grant_type=authorization_code
+        return restTemplateMapper.getResult(WxAppUtil.code2SessionUrl, new String[]{"appid="+WxAppUtil.appId,"secret="+WxAppUtil.secret,"js_code="+code,"grant_type=authorization_code"});
     }
 }
