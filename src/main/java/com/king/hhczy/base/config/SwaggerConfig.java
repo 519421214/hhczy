@@ -16,17 +16,17 @@ import java.util.Collection;
 /**
  * Swagger2 配置
  * 访问方式说明：
- * 1,启动gmvcs-cas。
+ * 1,启动项目。
  * 2,浏览器访问 =>
  * 升级管理
  * http://ip:port/project-name/doc.html
  * http://ip:port/project-name/swagger-ui.html#/
  * <p>
  * Created with IntelliJ IDEA
- * Created by zhaohuan
- * DATE : 2017/8/22.
- * TIME : 16:09
- * EMAIL : 791934554@qq.com
+ * Created by ningjinxiang
+ * DATE : 2019/2/22.
+ * TIME : 22:22
+ * EMAIL : 519421214@qq.com
  * 步骤：
  * 1、引包：
  *     //swagger 在线API文档
@@ -35,9 +35,9 @@ import java.util.Collection;
  *     implementation 'io.springfox:springfox-swagger-ui:2.9.2'
  *      //swagger-doc 在线API文档，支持导出doc
  *     implementation 'com.github.xiaoymin:swagger-bootstrap-ui:1.8.8'
- * 2、引该配置文件
- * 3、controller顶头标签：@Api(value = "数据层接口", description = "数据层接口")
- * 4、方法标签： @ApiOperation(value = "注销认证")
+ * 2、粘贴该配置文件
+ * 3、controller顶头标签（接口大类名称）：@Api(value = "数据层接口", description = "数据层接口")
+ * 4、方法标签（接口名称）： @ApiOperation(value = "注销认证")
  * 5、请求体标签：@ApiModelProperty(value = "开始时间",required=true)
  */
 @Configuration

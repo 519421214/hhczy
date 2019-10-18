@@ -6,7 +6,6 @@ import lombok.Cleanup;
 import org.springframework.util.StringUtils;
 
 import java.io.*;
-import java.math.BigDecimal;
 import java.net.URI;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
@@ -25,10 +24,10 @@ import java.util.stream.Stream;
 public class Test {
 
     public static void main(String[] args) throws InterruptedException {
-        BigDecimal b1 = new BigDecimal("3.14");
-        BigDecimal b2 = new BigDecimal("100");
-        BigDecimal b = b1.multiply(b2);
-        System.out.println(b);
+//        BigDecimal b1 = new BigDecimal("3.14");
+//        BigDecimal b2 = new BigDecimal("100");
+//        BigDecimal b = b1.multiply(b2);
+//        System.out.println(b);
 //        String ip = "192.168.2.1";
         //
 //        if (!IpV4Util.isSameAddress("192.168.3.1", ip.trim(),"255.255.255.0")) {
@@ -38,7 +37,7 @@ public class Test {
 //        System.out.println(compile.matcher("192.168.2.1").matches());
         //还可以这么写
 //        List<Integer> cost = Lists.newArrayList(1, 3, 7, 9, 34);
-//        searchFileByContent("C:\\Users\\ningjinxiang\\Desktop\\sac\\log", "checkinSync");
+        searchFileByContent2("C:\\Users\\ningjinxiang\\Desktop\\sac\\log", "checkinSync");
 //        System.out.println(LocalDate.of(2019, 2, 1).lengthOfMonth());
 //        Path path = Paths.get("C:\\Users\\ningjinxiang\\Desktop\\sac\\tencent\\cert\\15558554155303.jpg");
 //        try {
@@ -192,7 +191,7 @@ public class Test {
                         for (JSONObject o : list) {
                             Integer eventType = o.getInteger("eventType");
                             //XS_SZFT_10010040 上梅林；XS_SZFT_10010034 石厦东村；XS_SZFT_10010036 石厦西村
-                            if (eventType != 24 && eventType != 11 && o.getString("villageCode").equals("XS_SZFT_10010036") && o.getString("eventFile") == null) {
+                            if (eventType != 24 && eventType != 11 && o.getString("villageCode").equals("XS_SZFT_10010046") && o.getString("eventFile") == null) {
 //                            if (eventType == 1 && o.getString("cardNo").equals(cardNo) && o.getString("eventFile") == null) {
 //                                String fileName = file.getFileName().toString();
 //                                String strFile = fileName.substring(0, fileName.indexOf("."));

@@ -34,7 +34,8 @@ public class RestTemplateMapper {
     //响应码 key
     private String[] resultCodeKey = {"code","retcode"};
     //响应数据体 key
-    private String[] resultDataKey = {"data"};
+//    private String[] resultDataKey = {"data"};
+    private String[] resultDataKey = {};
     //响应信息 key
     private String[] resultMsgKey = {"msg","retmsg"};
     //响应成功码
@@ -113,7 +114,7 @@ public class RestTemplateMapper {
         JSONObject data = null;
         try {
             //先以String形式返回在转JSON，（直接转的话）避免回参编码问题转JSON报错
-            data = JSON.parseObject(restTemplate.getForObject(requestUrl + "?{1}", String.class, paramsStr));
+            data = JSON.parseObject(restTemplate.getForObject(requestUrl + "?"+paramsStr, String.class));
             //返回结果码
             return resultDeal(data, requestUrl, params);
         } catch (Exception e) {
@@ -128,6 +129,9 @@ public class RestTemplateMapper {
 
         int resultCode = data.getIntValue(getKey.apply(resultCodeKey));
         if (resultCode == successCode) {
+            if (resultDataKey.length==0) {
+                return data;
+            }
             return Optional.ofNullable(data.getJSONObject(getKey.apply(resultDataKey))).orElse(new JSONObject());
         } else {
             logger.error("远程接口{}回参失败：{} {}", params[0], params.length > 1 ? params[1] : "", data.getString(getKey.apply(resultMsgKey)));
