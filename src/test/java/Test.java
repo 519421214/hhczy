@@ -6,6 +6,7 @@ import lombok.Cleanup;
 import org.springframework.util.StringUtils;
 
 import java.io.*;
+import java.math.BigDecimal;
 import java.net.URI;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
@@ -17,12 +18,17 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 public class Test {
 
     public static void main(String[] args) throws InterruptedException {
+        BigDecimal b1 = new BigDecimal("3.14");
+        BigDecimal b2 = new BigDecimal("100");
+        BigDecimal b = b1.multiply(b2);
+        System.out.println(b);
 //        String ip = "192.168.2.1";
         //
 //        if (!IpV4Util.isSameAddress("192.168.3.1", ip.trim(),"255.255.255.0")) {
@@ -78,10 +84,10 @@ public class Test {
 //        System.out.println(decodeString("049053048054050052049057057057048055049049048051051055"));
 //        System.out.println(encodeString("666666666666666666"));
 //        System.out.println("052053050049050054049057055049048056050050048051052052");
-//        searchFileByContent2("C:\\Users\\ningjinxiang\\Desktop\\sac\\log","00000000973E1007");
+//        searchFileByContent("G:\\log\\uploadEventAndFile","00000000973E1007");
 //        System.out.println(LocalDateTime.ofInstant(Instant.ofEpochMilli(1564364487290L), ZoneId.systemDefault()));
 //        optionalTest();
-        FilesAndPaths();
+//        FilesAndPaths();
     }
 
     //二进制
@@ -142,20 +148,24 @@ public class Test {
         try {
             DirectoryStream<Path> files = Files.newDirectoryStream(filesPath);
             for (Path file : files) {
-                List<String> lines = Files.readAllLines(filesPath.resolve(file.getFileName()), StandardCharsets.UTF_8);
-                for (String line : lines) {
-                    if (line.contains(words)) {
-                        System.out.println(file.getFileName());
-                        break;
-//                        if (line.contains("[{")) {
-//                            List<JSONObject> list = JSONObject.parseObject(line.substring(line.indexOf("[{")), List.class);
-//                            for (JSONObject o : list) {
-//                                System.out.println(o.toJSONString());
-//                                System.out.println("================================================================");
-//                            }
-//                        }
-                    }
-                }
+                List<String> lines = Files.readAllLines(file, StandardCharsets.UTF_8);
+                String dc = lines.stream().map(x -> x.split("编码")[1]).map(y -> y.split("，")[0]).collect(Collectors.toSet())
+                        .stream().reduce("", (s1, s2) -> "'" + s1 + "," + "'" + s2 + "'");
+                System.out.println(dc);
+
+//                for (String line : lines) {
+//                    if (line.contains(words)) {
+//                        System.out.println(file.getFileName());
+//                        break;
+////                        if (line.contains("[{")) {
+////                            List<JSONObject> list = JSONObject.parseObject(line.substring(line.indexOf("[{")), List.class);
+////                            for (JSONObject o : list) {
+////                                System.out.println(o.toJSONString());
+////                                System.out.println("================================================================");
+////                            }
+////                        }
+//                    }
+//                }
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -182,7 +192,7 @@ public class Test {
                         for (JSONObject o : list) {
                             Integer eventType = o.getInteger("eventType");
                             //XS_SZFT_10010040 上梅林；XS_SZFT_10010034 石厦东村；XS_SZFT_10010036 石厦西村
-                            if (eventType != 24 && eventType != 11 && o.getString("villageCode").equals("XS_SZFT_10010036") && o.getString("eventFile") == null && o.getInteger("eventTime") > 1566748800 && o.getInteger("eventTime") < 1566835200) {
+                            if (eventType != 24 && eventType != 11 && o.getString("villageCode").equals("XS_SZFT_10010036") && o.getString("eventFile") == null) {
 //                            if (eventType == 1 && o.getString("cardNo").equals(cardNo) && o.getString("eventFile") == null) {
 //                                String fileName = file.getFileName().toString();
 //                                String strFile = fileName.substring(0, fileName.indexOf("."));

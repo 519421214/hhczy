@@ -19,6 +19,8 @@ import java.util.Map;
 public interface TblAccountMapper extends BaseMapper<TblAccount> {
     @Select("select * from tbl_account")
     IPage<Map> listAccounts(IPage page);
+    @Select("select id from tbl_account limit 1")
+    Map listInteger();
     @Select("select * from tbl_account")
     List listAccounts();
 }

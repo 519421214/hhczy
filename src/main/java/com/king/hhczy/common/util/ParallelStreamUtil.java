@@ -26,4 +26,11 @@ public class ParallelStreamUtil {
         return true;
     }
 
+
+//    private void test() {
+//        List<Integer> test = new ArrayList<>();
+//        Runnable runnable = () -> test.parallelStream().forEach(x -> {
+//        });
+//        this.parallelWaitFinish(runnable);
+//    }
 }

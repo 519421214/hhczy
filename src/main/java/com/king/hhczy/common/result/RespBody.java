@@ -17,13 +17,7 @@ public class RespBody<T> implements Serializable {
 
     private static final long serialVersionUID = 7996354349506576057L;
 
-    /**
-     * 请求识别唯一ID,
-     * <p>
-     * 透传前台传递过来的requestId
-     */
     private String requestId;
-
     /**
      * 接口执行结果
      */

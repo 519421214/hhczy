@@ -3,7 +3,6 @@ package com.king.hhczy.base.config;
 import com.king.hhczy.common.util.Log;
 import com.king.hhczy.common.util.UUIDUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -45,8 +44,6 @@ public class BaseInterceptors implements WebMvcConfigurer {
      */
     @Component
     private class TokenInterceptor implements HandlerInterceptor {
-        @Value("${abcd}")
-        private String abcd;
         @Override
         public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
             //请求信息
@@ -82,7 +79,7 @@ public class BaseInterceptors implements WebMvcConfigurer {
 ////                throw new CustomizedException(ErrorCodeConstant.TOKEN_ERROR, "govide-token获取失败");
 //            }
 //            throw new CustomizedException(ErrorCodeConstant.TOKEN_ERROR, "token认证失败");
-            return false;
+            return true;
         }
     }
 
