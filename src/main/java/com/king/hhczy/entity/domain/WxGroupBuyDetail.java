@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
  * </p>
  *
  * @author ningjinxiang
- * @since 2019-10-17
+ * @since 2019-10-19
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
@@ -36,6 +36,8 @@ public class WxGroupBuyDetail implements Serializable {
     private Integer no;
 
     private String name;
+    private String content;
+    private Integer groupBuyId;
 
     private Integer wantNumber;
 
@@ -51,7 +53,7 @@ public class WxGroupBuyDetail implements Serializable {
 
     private LocalDateTime createTime;
 
-    private String lastEditor;
+    private Integer lastEditorId;
 
     private LocalDateTime updateTime;
 

@@ -38,9 +38,8 @@ public class RespBody<T> implements Serializable {
 //        this.msg = BaseResultCode.SUCCESS.getMessage();
 //    }
 
-    public RespBody result(BaseResultCode baseResultCode) {
+    public void result(BaseResultCode baseResultCode) {
         this.code = baseResultCode.getCode();
         this.msg = baseResultCode.getMessage();
-        return this;
     }
 }

@@ -14,5 +14,14 @@ public final class CacheConstants {
      * 不随系统重启影响 持久化前缀
      */
     public final static String LASTING_CACHE_PREFIX = COMMON_CACHE_PREFIX+"lasting:";
+    /**
+     * 微信系统
+     */
+    public final static String WECHAT = "wechat:";
+    /**
+     * 用户
+     */
+    public final static String USER = "user:";
+
 
 }

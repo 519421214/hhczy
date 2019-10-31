@@ -129,6 +129,7 @@ public class RestTemplateMapper {
 
         int resultCode = data.getIntValue(getKey.apply(resultCodeKey));
         if (resultCode == successCode) {
+            logger.info("远程接口成功回参：{}",data);
             if (resultDataKey.length==0) {
                 return data;
             }

@@ -95,7 +95,7 @@ public class TestController {
     }
     @RequestMapping("/wx-user")
     public Object doLogin() {
-        String code = "043Vy03X15SnG01MdxZW1UCR2X1Vy03a";
+        String code = "033eibzr0gBRoh1eHryr0SzUyr0eibzW";
         //appid=APPID&secret=SECRET&js_code=JSCODE&grant_type=authorization_code
         return restTemplateMapper.getResult(WxAppUtil.code2SessionUrl, new String[]{"appid="+WxAppUtil.appId,"secret="+WxAppUtil.secret,"js_code="+code,"grant_type=authorization_code"});
     }

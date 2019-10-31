@@ -17,6 +17,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -24,6 +25,12 @@ import java.util.stream.Stream;
 public class Test {
 
     public static void main(String[] args) throws InterruptedException {
+        String a = "1.dawdwa";
+        System.out.println(a.startsWith("[1-9].*"));
+
+        Pattern pattern = Pattern.compile("\\d+.*");//一定记住加“.”
+        System.out.println(pattern.matcher(a).matches());
+
 //        BigDecimal b1 = new BigDecimal("3.14");
 //        BigDecimal b2 = new BigDecimal("100");
 //        BigDecimal b = b1.multiply(b2);
@@ -37,7 +44,7 @@ public class Test {
 //        System.out.println(compile.matcher("192.168.2.1").matches());
         //还可以这么写
 //        List<Integer> cost = Lists.newArrayList(1, 3, 7, 9, 34);
-        searchFileByContent2("C:\\Users\\ningjinxiang\\Desktop\\sac\\log", "checkinSync");
+//        searchFileByContent2("C:\\Users\\ningjinxiang\\Desktop\\sac\\log", "checkinSync");
 //        System.out.println(LocalDate.of(2019, 2, 1).lengthOfMonth());
 //        Path path = Paths.get("C:\\Users\\ningjinxiang\\Desktop\\sac\\tencent\\cert\\15558554155303.jpg");
 //        try {

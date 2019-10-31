@@ -2,9 +2,12 @@ package com.king.hhczy.entity.model;
 
 import lombok.Data;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+
 /**
  * <p>
- * 
+ *
  * </p>
  *
  * @author ningjinxiang
@@ -12,15 +15,13 @@ import lombok.Data;
  */
 @Data
 public class WxGroupBuyModel {
+    @NotNull(message ="creatorId不能为空")
+    private Integer creatorId;
 
-    private Integer id;
-
-    private String userCode;
-
+    @NotBlank(message = "title不能为空")
     private String title;
 
-    private String creator;
-
-    private String lastEditor;
-
+    private Integer lastEditorId;
+    @NotBlank(message = "contents不能为空")
+    private String contents;
 }

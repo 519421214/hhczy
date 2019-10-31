@@ -2,6 +2,7 @@ package com.king.hhczy.entity.domain;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -15,7 +16,7 @@ import java.time.LocalDateTime;
  * </p>
  *
  * @author ningjinxiang
- * @since 2019-10-17
+ * @since 2019-10-19
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
@@ -29,11 +30,11 @@ public class WxGroupBuy implements Serializable {
 
     private String title;
 
-    private String creator;
-
+    private Integer creatorId;
+    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createTime;
 
-    private String lastEditor;
+    private Integer lastEditorId;
 
     private LocalDateTime updateTime;
 

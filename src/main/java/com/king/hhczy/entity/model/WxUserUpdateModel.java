@@ -1,8 +1,6 @@
-package com.king.hhczy.entity.domain;
+package com.king.hhczy.entity.model;
 
 import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -16,13 +14,11 @@ import java.time.LocalDateTime;
  * @since 2019-10-19
  */
 @Data
-@EqualsAndHashCode(callSuper = false)
-@Accessors(chain = true)
-public class WxUser implements Serializable {
+public class WxUserUpdateModel implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private Integer id;
+    private Integer userId;
 
     private String nickName;
     private String avatarUrl;
@@ -39,12 +35,6 @@ public class WxUser implements Serializable {
     private String province;
 
     private String city;
-
-    private String openid;
-
-    private String shareTo;
-
-    private LocalDateTime createTime;
 
     private LocalDateTime updateTime;
 
