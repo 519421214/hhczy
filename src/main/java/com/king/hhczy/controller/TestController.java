@@ -2,6 +2,7 @@ package com.king.hhczy.controller;
 
 import com.king.hhczy.base.config.CityCodeConfig;
 import com.king.hhczy.common.result.RespBody;
+import com.king.hhczy.common.util.FilesUtils;
 import com.king.hhczy.mapper.RestTemplateMapper;
 import com.king.hhczy.service.ITblAccountService;
 import io.swagger.annotations.*;
@@ -106,5 +107,9 @@ public class TestController {
             e.printStackTrace();
         }
         return null;
+    }
+    @GetMapping("/download")
+    public ResponseEntity<Resource> download() {
+        return FilesUtils.downloadFile(Paths.get("g:\\庞靖.jpg"));
     }
 }
