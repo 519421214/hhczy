@@ -2,19 +2,21 @@ package com.king.hhczy.controller;
 
 import com.king.hhczy.base.config.CityCodeConfig;
 import com.king.hhczy.common.result.RespBody;
-import com.king.hhczy.common.util.WxAppUtil;
 import com.king.hhczy.mapper.RestTemplateMapper;
 import com.king.hhczy.service.ITblAccountService;
 import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -50,7 +52,7 @@ public class TestController {
         List<Map<String, String>> list = cityCodeConfig.getList();
 //        return "完全OJBK";
 //        return testService.getAreaByAreaId(areaId);
-        return null;
+        return new RespBody();
     }
     @GetMapping("/test-mybatis-plus")
     @ApiOperation("测试各种分页查询")
@@ -93,10 +95,16 @@ public class TestController {
                                @RequestParam(required=true) String name, @RequestParam(required=true) String companyCode, @RequestParam(required=false) String personCode) {
         return ResponseEntity.ok(type+name+companyCode+personCode);
     }
-    @RequestMapping("/wx-user")
-    public Object doLogin() {
-        String code = "043Vy03X15SnG01MdxZW1UCR2X1Vy03a";
-        //appid=APPID&secret=SECRET&js_code=JSCODE&grant_type=authorization_code
-        return restTemplateMapper.getResult(WxAppUtil.code2SessionUrl, new String[]{"appid="+WxAppUtil.appId,"secret="+WxAppUtil.secret,"js_code="+code,"grant_type=authorization_code"});
+    @GetMapping("/html")
+    public ResponseEntity<Resource> html() {
+        //拿到网页源码
+//        String urlSource = HtmlRequest.getURLSource("https://www.baidu.com");
+//        return urlSource;
+        try {
+            return ResponseEntity.ok().body(new UrlResource(Paths.get("C:\\test.txt").toUri()));//直接读内容到页面
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }
