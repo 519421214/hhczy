@@ -51,6 +51,7 @@ public class WxUserServiceImpl extends ServiceImpl<WxUserMapper, WxUser> impleme
         if (wxUser==null) {
             wxUser = new WxUser();
             wxUser.setOpenid(openid);
+            wxUser.setShareTo("/");
             wxUser.setCreateTime(LocalDateTime.now());
             wxUser.setUpdateTime(LocalDateTime.now());
             this.save(wxUser);
@@ -64,23 +65,28 @@ public class WxUserServiceImpl extends ServiceImpl<WxUserMapper, WxUser> impleme
     public RespBody addSharer(Integer userId,Integer sharerId) {
         sharerId = sharerId - 10000;
         RespBody respBody = new RespBody();
-        WxUser sharerUser = userMapper.selectById(sharerId);
-        WxUser curUser = userMapper.selectById(userId);
-        if (sharerUser!=null) {
-            if (curUser.getShareTo().indexOf("/".concat(sharerId.toString()).concat("/"))==-1) {
-                if (userMapper.updateSharersById(userId,sharerId)>0) {
-                    respBody.result(BaseResultCode.SUCCESS);
-                    respBody.setData(userMapper.getSharersByUserId(userId));
-                    return respBody;
-                }else {
-                    respBody.setMsg("数据库异常");
-                }
-            }else {
-                respBody.setMsg("该用户已共享");
-            }
-
+        if (sharerId==userId) {
+            respBody.setMsg("不必共享给自己");
         }else {
-            respBody.setMsg("该用户ID不存在");
+            WxUser sharerUser = userMapper.selectById(sharerId);
+            WxUser curUser = userMapper.selectById(userId);
+            if (sharerUser!=null) {
+                String shareTo = curUser.getShareTo();
+                if (shareTo==null||shareTo.indexOf("/".concat(sharerId.toString()).concat("/"))==-1) {
+                    if (userMapper.updateSharersById(userId,sharerId)>0) {
+                        respBody.result(BaseResultCode.SUCCESS);
+                        respBody.setData(userMapper.getSharersByUserId(userId));
+                        return respBody;
+                    }else {
+                        respBody.setMsg("数据库异常");
+                    }
+                }else {
+                    respBody.setMsg("该用户已共享");
+                }
+
+            }else {
+                respBody.setMsg("该用户ID不存在");
+            }
         }
         respBody.setCode(BaseResultCode.FAILED.getCode());
         return respBody;
