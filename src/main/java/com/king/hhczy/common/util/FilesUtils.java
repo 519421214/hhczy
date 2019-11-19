@@ -1,5 +1,6 @@
 package com.king.hhczy.common.util;
 
+import org.slf4j.Logger;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpHeaders;
@@ -17,6 +18,7 @@ import java.util.*;
  * date 20190918
  */
 public class FilesUtils {
+    private final static Logger LOGGER = org.slf4j.LoggerFactory.getLogger(FilesUtils.class);
 	/**
 	 * 遍历获取整个文件夹（包括子文件夹）的文件路径(不遍历文件夹)
 	 * @param path
@@ -31,6 +33,17 @@ public class FilesUtils {
 			e.printStackTrace();
 		}
 		return result;
+    }
+    public static Integer getDirFilesSize(String path) {
+        Path startingDir = Paths.get(path);
+        Map<String, Integer> count = new HashMap<>();
+        count.put("count", 0);
+        try {
+			Files.walkFileTree(startingDir, new CountJavaVisitor(count));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return count.get("count");
     }
 
     /**
@@ -68,8 +81,8 @@ public class FilesUtils {
             contentLength = resource.contentLength();
         } catch (IOException e) {/*ignore*/}
 
-        if (Log.isInfoEnabled()) {
-            Log.info("下载文件: {}, 文件大小: {}", fileRealPath, contentLength);
+        if (LOGGER.isInfoEnabled()) {
+            LOGGER.info("下载文件: {}, 文件大小: {}", fileRealPath, contentLength);
         }
 
         ResponseEntity.BodyBuilder bodyBuilder = ResponseEntity.ok().contentLength(contentLength);
@@ -102,6 +115,20 @@ public class FilesUtils {
         @Override
         public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
             result.add(file.getFileName());
+            return FileVisitResult.CONTINUE;
+        }
+
+    }
+    private static class CountJavaVisitor extends SimpleFileVisitor<Path> {
+
+        private Map<String,Integer> count;
+        public CountJavaVisitor(Map count) {
+            this.count = count;
+        }
+
+        @Override
+        public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
+            count.put("count",count.get("count")+1);
             return FileVisitResult.CONTINUE;
         }
 
