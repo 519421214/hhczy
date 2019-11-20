@@ -33,19 +33,17 @@ public class FilesUtils {
 		return result;
     }
 
-    private static class FindJavaVisitor extends SimpleFileVisitor<Path> {
-        private List<Path> result;
-
-        public FindJavaVisitor(List<Path> result) {
-            this.result = result;
-        }
-
-        @Override
-        public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
-            result.add(file.getFileName());
-            return FileVisitResult.CONTINUE;
-        }
+    /**
+     * 拷贝目录下所以子文件
+     * @param sourceStr 原目录
+     * @param targetStr 目标文件夹
+     * @param deleteSource true：剪切 false:复制
+     * @throws IOException
+     */
+    public static void copyAll(String sourceStr,String targetStr,boolean deleteSource) throws IOException {
+        Files.walkFileTree(Paths.get(sourceStr), new CopyFindJavaVisitor(sourceStr,targetStr,deleteSource));
     }
+
     public static ResponseEntity<Resource> downloadFile(Path fileRealPath) {
         String filePath = fileRealPath.getFileName().toString();
         Resource resource = null;
@@ -91,6 +89,55 @@ public class FilesUtils {
         dispositionValue += "filename=\"" + resource.getFilename() + "\"";
         bodyBuilder.header(HttpHeaders.CONTENT_DISPOSITION, dispositionValue);
         return bodyBuilder.body(resource);
+    }
+
+
+    private static class FindJavaVisitor extends SimpleFileVisitor<Path> {
+
+        private List<Path> result;
+        public FindJavaVisitor(List<Path> result) {
+            this.result = result;
+        }
+
+        @Override
+        public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
+            result.add(file.getFileName());
+            return FileVisitResult.CONTINUE;
+        }
+
+    }
+    private static class CopyFindJavaVisitor extends SimpleFileVisitor<Path> {
+        private Path source;
+        private Path target;
+        private boolean deleteSource;
+
+        public CopyFindJavaVisitor(String source, String target, boolean deleteSource) {
+            this.source = Paths.get(source);
+            this.target = Paths.get(target);
+            this.deleteSource = deleteSource;
+        }
+
+        public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+            // 在目标文件夹中创建dir对应的子文件夹
+            Path subDir =null;
+            if (dir.compareTo(source) == 0) {
+                subDir = target;
+            } else {
+                subDir = target.resolve(dir.subpath(source.getNameCount(), dir.getNameCount()));
+            }
+
+            Files.createDirectories(subDir);
+            return FileVisitResult.CONTINUE;
+        }
+        public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+            if (deleteSource) {
+                Files.move(file, target.resolve(file.subpath(source.getNameCount(), file.getNameCount())));
+            }else {
+                Files.copy(file, target.resolve(file.subpath(source.getNameCount(), file.getNameCount())),StandardCopyOption.REPLACE_EXISTING);
+            }
+            return FileVisitResult.CONTINUE;
+        }
+
     }
     private final static Set<String> imageSuffixs = Collections.unmodifiableSet(new HashSet<>(Arrays.asList(
             ".bmp", ".dib", ".gif", ".jfif", ".jpe", ".jpeg", ".jpg", ".png", ".tif", ".tiff", ".ico")));
