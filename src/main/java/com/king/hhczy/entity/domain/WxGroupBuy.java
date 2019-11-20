@@ -35,6 +35,7 @@ public class WxGroupBuy implements Serializable {
     private LocalDateTime createTime;
 
     private Integer lastEditorId;
+    private Integer number;
 
     private LocalDateTime updateTime;
 

@@ -1,6 +1,7 @@
 package com.king.hhczy.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.king.hhczy.common.result.BaseResultCode;
 import com.king.hhczy.common.result.RespBody;
@@ -38,6 +39,8 @@ public class WxGroupBuyServiceImpl extends ServiceImpl<WxGroupBuyMapper, WxGroup
     private WxUserMapper userMapper;
     @Autowired
     private IWxGroupBuyDetailService groupBuyDetailService;
+    @Autowired
+    private WxGroupBuyMapper groupBuyMapper;
     @Override
     public RespBody listAllOfAllow(Integer userId) {
          RespBody respBody = new RespBody<>();
@@ -52,10 +55,12 @@ public class WxGroupBuyServiceImpl extends ServiceImpl<WxGroupBuyMapper, WxGroup
         }
         //加上自己的
         creatorsId.add(userId);
-        QueryWrapper<WxGroupBuy> gbWrapper = new QueryWrapper<>();
-        gbWrapper.in("creator_id",creatorsId);
+        String userIds = creatorsId.stream().map(v -> v.toString()).reduce("0", (x, y) -> x.concat(",").concat(y));
+//        QueryWrapper<WxGroupBuy> gbWrapper = new QueryWrapper<>();
+//        gbWrapper.in("creator_id",creatorsId);
         respBody.result(BaseResultCode.SUCCESS);
-        respBody.setData(this.list(gbWrapper));
+        respBody.setData(groupBuyMapper.listDetail(userIds));
+
         return respBody;
     }
 
@@ -64,9 +69,13 @@ public class WxGroupBuyServiceImpl extends ServiceImpl<WxGroupBuyMapper, WxGroup
     public RespBody add(WxGroupBuyModel groupBuyModel) {
         RespBody<Object> respBody = new RespBody<>();
         WxGroupBuy groupBuy = new WxGroupBuy();
+
+        Integer creatorId = groupBuyModel.getCreatorId();
+
         groupBuy.setCreateTime(LocalDateTime.now());
         groupBuy.setUpdateTime(LocalDateTime.now());
-        groupBuy.setCreatorId(groupBuyModel.getCreatorId());
+        groupBuy.setCreatorId(creatorId);
+        groupBuy.setLastEditorId(creatorId);
         groupBuy.setTitle(groupBuyModel.getTitle());
         this.save(groupBuy);
 
@@ -77,13 +86,14 @@ public class WxGroupBuyServiceImpl extends ServiceImpl<WxGroupBuyMapper, WxGroup
 
             for (int i = 1; i < split.length; i++) {
                 Pattern pattern = Pattern.compile("\\d+.*");//一定记住加“.”
-                if (!pattern.matcher(split[i]).matches()) {
+                if (!pattern.matcher(split[i]).matches()||split[i].length()<5) {
                     continue;
                 }
 
                 WxGroupBuyDetail wxGroupBuyDetail = new WxGroupBuyDetail();
                 wxGroupBuyDetail.setGroupBuyId(groupBuy.getId());
                 wxGroupBuyDetail.setContent(split[i]);
+                wxGroupBuyDetail.setLastEditorId(creatorId);
                 wxGroupBuyDetail.setCreateTime(LocalDateTime.now());
                 wxGroupBuyDetail.setUpdateTime(LocalDateTime.now());
                 groupBuyDetails.add(wxGroupBuyDetail);
@@ -91,6 +101,12 @@ public class WxGroupBuyServiceImpl extends ServiceImpl<WxGroupBuyMapper, WxGroup
             if (groupBuyDetails.size()>0) {
                 groupBuyDetailService.saveBatch(groupBuyDetails);
             }
+            //更新参团人数
+            UpdateWrapper<WxGroupBuy> wrapper = new UpdateWrapper<>();
+            wrapper.set("number",groupBuyDetails.size());
+            wrapper.eq("id",groupBuy.getId());
+            this.update(wrapper);
+
             respBody.result(BaseResultCode.SUCCESS);
             return respBody;
         }
