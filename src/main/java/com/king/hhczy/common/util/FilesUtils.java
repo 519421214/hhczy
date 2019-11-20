@@ -17,22 +17,68 @@ import java.util.*;
  * date 20190918
  */
 public class FilesUtils {
-	/**
-	 * 遍历获取整个文件夹（包括子文件夹）的文件路径(不遍历文件夹)
-	 * @param path
-	 * @return
-	 */
+    /**
+     * 遍历获取整个文件夹（包括子文件夹）的文件路径(不遍历文件夹)
+     * @param path
+     * @return
+     */
     public static List<Path> getAllFilesPaths(String path) {
-        Path startingDir = Paths.get(path);
+        return getAllFilesPaths(Paths.get(path));
+    }
+    public static List<Path> getAllFilesPaths(Path path) {
         List<Path> result = new LinkedList<Path>();
-		try {
-			Files.walkFileTree(startingDir, new FindJavaVisitor(result));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return result;
+        try {
+            Files.walkFileTree(path, new FindJavaVisitor(result));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return result;
     }
 
+    /**
+     * 获取文件夹的所有子文件个数
+     * @param path
+     * @return
+     */
+    public static Integer getDirFilesSize(String path) {
+        return getDirFilesSize(Paths.get(path));
+    }
+    public static Integer getDirFilesSize(Path path) {
+        Map<String, Integer> count = new HashMap<>();
+        count.put("count", 0);
+        try {
+            Files.walkFileTree(path, new CountJavaVisitor(count));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return count.get("count");
+    }
+
+    /**
+     * 并行拷贝目录下所以子文件
+     * @param sourceStr 原目录
+     * @param targetRoot 目标根文件夹
+     * @param deleteSource true：剪切 false:复制
+     * @throws IOException
+     */
+    public static void copyAllParallel(Path sourceStr,String sourceRoot,String targetRoot,boolean deleteSource) {
+        List<Path> allFilesPaths = getAllFilesPaths(sourceStr);
+        allFilesPaths.parallelStream().forEach(x->{
+            try {
+                //备份路径创建
+                Path bakPath = Paths.get(x.getParent().toString().replace(sourceRoot, targetRoot));
+                Files.createDirectories(bakPath);
+                if (deleteSource) {
+                    Files.move(x, bakPath);
+                }else {
+                    //执行复制
+                    Files.copy(x, bakPath,StandardCopyOption.REPLACE_EXISTING);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+    }
     /**
      * 拷贝目录下所以子文件
      * @param sourceStr 原目录
@@ -41,7 +87,10 @@ public class FilesUtils {
      * @throws IOException
      */
     public static void copyAll(String sourceStr,String targetStr,boolean deleteSource) throws IOException {
-        Files.walkFileTree(Paths.get(sourceStr), new CopyFindJavaVisitor(sourceStr,targetStr,deleteSource));
+        copyAll(Paths.get(sourceStr), targetStr,deleteSource);
+    }
+    public static void copyAll(Path source,String targetStr,boolean deleteSource) throws IOException {
+        Files.walkFileTree(source, new CopyFindJavaVisitor(source,targetStr,deleteSource));
     }
 
     public static ResponseEntity<Resource> downloadFile(Path fileRealPath) {
@@ -101,7 +150,21 @@ public class FilesUtils {
 
         @Override
         public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
-            result.add(file.getFileName());
+            result.add(file);
+            return FileVisitResult.CONTINUE;
+        }
+
+    }
+    private static class CountJavaVisitor extends SimpleFileVisitor<Path> {
+
+        private Map<String,Integer> count;
+        public CountJavaVisitor(Map count) {
+            this.count = count;
+        }
+
+        @Override
+        public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
+            count.put("count",count.get("count")+1);
             return FileVisitResult.CONTINUE;
         }
 
@@ -111,15 +174,15 @@ public class FilesUtils {
         private Path target;
         private boolean deleteSource;
 
-        public CopyFindJavaVisitor(String source, String target, boolean deleteSource) {
-            this.source = Paths.get(source);
+        public CopyFindJavaVisitor(Path source, String target, boolean deleteSource) {
+            this.source = source;
             this.target = Paths.get(target);
             this.deleteSource = deleteSource;
         }
 
         public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
             // 在目标文件夹中创建dir对应的子文件夹
-            Path subDir =null;
+            Path subDir;
             if (dir.compareTo(source) == 0) {
                 subDir = target;
             } else {
