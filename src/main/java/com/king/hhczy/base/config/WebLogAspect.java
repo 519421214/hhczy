@@ -1,7 +1,6 @@
 package com.king.hhczy.base.config;
 
 import com.alibaba.fastjson.JSONObject;
-import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.king.hhczy.common.result.ReqtBody;
 import com.king.hhczy.common.util.Log;
 import com.king.hhczy.common.util.UUIDUtil;
@@ -93,7 +92,8 @@ public class WebLogAspect {
         }
 
         if (Log.isInfoEnabled()) {
-            Log.info("request : {} ", JSONObject.toJSONString(requestMap, SerializerFeature.WriteMapNullValue));
+//            Log.info("request : {} ", JSONObject.toJSONString(requestMap, SerializerFeature.WriteMapNullValue));
+            Log.info("request : {} ", JSONObject.toJSONString(requestMap, true));
         }
 
         REQUEST_MAP_THREAD_LOCAL.set(requestMap);
@@ -114,7 +114,8 @@ public class WebLogAspect {
         responseParams.put("responseBody", ret);
         // 处理完请求，返回内容
         if (Log.isInfoEnabled()) {
-            Log.info("response : {} ", JSONObject.toJSONString(responseParams, SerializerFeature.WriteMapNullValue));
+//            Log.info("response : {} ", JSONObject.toJSONString(responseParams, SerializerFeature.WriteMapNullValue));
+            Log.info("response : {} ", JSONObject.toJSONString(responseParams, true));
         }
 
         START_TIME_THREAD_LOCAL.remove();
