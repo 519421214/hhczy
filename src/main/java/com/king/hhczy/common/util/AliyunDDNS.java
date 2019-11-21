@@ -167,7 +167,7 @@ public class AliyunDDNS {
                 updateDomainRecordRequest.setValue(currentHostIP);
                 // 解析记录类型
                 updateDomainRecordRequest.setType(type);
-//                UpdateDomainRecordResponse updateDomainRecordResponse = ddns.updateDomainRecord(updateDomainRecordRequest, client);
+                UpdateDomainRecordResponse updateDomainRecordResponse = ddns.updateDomainRecord(updateDomainRecordRequest, client);
 //				log_print("updateDomainRecord",updateDomainRecordResponse);
                 if (!firstTime) {
                     System.out.println("--->当前主机公网IP为：" + currentHostIP);
