@@ -38,9 +38,9 @@ public class ScheduledTasks {
 //    @Scheduled(cron = "${task.cron}")//每15分钟执行（）
 
     /**
-     * 每天0点
+     * 每天22点
      */
-    @Scheduled(cron = "0 0 0 * * ?")
+    @Scheduled(cron = "0 0 22 * * ? ")
 //    @Scheduled(initialDelay=60000,fixedRate = 190000)
     public void tip1() {
         if (isOpen()) {
@@ -52,9 +52,9 @@ public class ScheduledTasks {
         }
     }
     /**
-     * 每天3点
+     * 每天2点结束
      */
-    @Scheduled(cron = "0 1 3 * * ?")
+    @Scheduled(cron = "0 1 2 * * ?")
 //    @Scheduled(initialDelay=180000,fixedRate = 180000)
     public void tip2() {
         if (isOpen()) {
@@ -64,9 +64,9 @@ public class ScheduledTasks {
     }
 
     /**
-     * 每天0点开始，5分钟一次，3点结束
+     * 每天22点开始，每小时+5分钟一次，2点结束
      */
-    @Scheduled(cron = "5 0/5 0-3 * * ?")
+    @Scheduled(cron = "0 5 22-2 * * ? ")
 //    @Scheduled(initialDelay=61000,fixedRate = 60000)
     public void ddnsTask() {
         if (isOpen()) {

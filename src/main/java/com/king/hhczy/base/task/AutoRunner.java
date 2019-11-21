@@ -26,7 +26,9 @@ public class AutoRunner implements ApplicationRunner {
         System.out.print("--->");
         System.out.print(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").format(LocalDateTime.now()));
         System.out.println(" ##开启阿里云解析任务##");
-        System.out.println("--->程序第一次启动扫描一次，之后每天凌晨0点至3点每5分钟扫描一次");
+        System.out.println("--->由于IP变换时间未知，客服说48小时变一次，也有人说晚上10点、0点或2点");
+        System.out.println("--->因此建议晚上10点至凌晨2点选一个整点重启一次光猫（之后无需再重启），已确保本程序的正确执行");
+        System.out.println("--->程序第一次启动扫描一次，之后每天晚上10点至凌晨2点每整点+5分钟扫描一次");
         System.out.println("--->成功修改一次后48小时内不再扫描");
         System.out.println("--->任务执行中...");
         aliyunDDNS.ddns(true);
