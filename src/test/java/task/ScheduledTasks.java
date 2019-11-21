@@ -1,6 +1,5 @@
-package com.king.hhczy.base.task;
+package task;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -14,10 +13,7 @@ import org.springframework.stereotype.Component;
 @Component
 @Configurable
 @EnableScheduling
-@Slf4j
 public class ScheduledTasks {
-//    @Autowired
-//    private DataSourceService dataSourceService;
     /**
      * @Author:ningjinxiang
      * @Description:定时导出任务
@@ -33,18 +29,16 @@ public class ScheduledTasks {
     /**
      * 定时同步通道状态
      */
-//    @Scheduled(fixedDelay = 120000)//两分钟执行一次
-    public void buildToLocal() {
-//        dataSourceService.updateChannelStatus(this.getClass().getSimpleName(), UUIDUtil.uuid());
+    @Scheduled(fixedDelay = 1200)//两分钟执行一次
+    private void buildToLocal() {
     }
-
     /**
      * 每天闲时同步按月查询数据到redis
      */
-    @Scheduled(fixedDelay = 12000)//两分钟执行一次
+//    @Scheduled(fixedDelay = 12000)//两分钟执行一次
 //    @Scheduled(cron = "0 0 2 * * ?")//每天凌晨2点同步一次
-    public void syncWhithDayHasDataOfMonth() {
+//    public void syncWhithDayHasDataOfMonth() {
 //        dataSourceService.syncWhithDayHasDataOfMonth(this.getClass().getSimpleName(), UUIDUtil.uuid());
-    }
+//    }
 
 }
