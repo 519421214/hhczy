@@ -18,103 +18,12 @@
 
     <dependencies>
 
-        <!--aop start-->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-aop</artifactId>
-        </dependency>
-        <!--aop end-->
-
         <!--web及模板 start-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-thymeleaf</artifactId>
-        </dependency>
-        <!-- thymeleaf的LEGACYHTML5格式（非严格H5格式）需要搭配NekoHTML才可用 -->
-        <dependency>
-            <groupId>net.sourceforge.nekohtml</groupId>
-            <artifactId>nekohtml</artifactId>
-        </dependency>
-        <!--web及模板 end-->
 
-        <!--数据库连接相关 start-->
-        <!--mysql-->
-        <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-            <scope>runtime</scope>
-        </dependency>
-        <!--阿里 * 德鲁伊-->
-        <dependency>
-            <groupId>com.alibaba</groupId>
-            <artifactId>druid-spring-boot-starter</artifactId>
-            <version>${druid.version}</version>
-        </dependency>
-
-        <!--
-            pagehelper-spring-boot-starter会自动引入
-            mybatis-spring-boot-starter
-            然后mybatis-spring-boot-starter会自动引入
-            spring-boot-starter-jdbc
-            接着spring-boot-starter-jdbc会自动引入
-            HikariCP
-            所以最后在pagehelper-spring-boot-starter中
-            去掉HikariCP
-        -->
-        <!--<dependency>
-            <groupId>org.mybatis.spring.boot</groupId>
-            <artifactId>mybatis-spring-boot-starter</artifactId>
-            <version>${mybatis.version}</version>
-        </dependency>-->
-
-        <!--pagehelper分页-->
-        <!--<dependency>
-            <groupId>com.github.pagehelper</groupId>
-            <artifactId>pagehelper-spring-boot-starter</artifactId>
-            <version>${pagehelper.version}</version>
-            <exclusions>
-                <exclusion>&lt;!&ndash;使用druid数据连接池，所以这里去掉spring-boot默认的HikariCP&ndash;&gt;
-                    <groupId>com.zaxxer</groupId>
-                    <artifactId>HikariCP</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>-->
-        <!--// https://mvnrepository.com/artifact/com.baomidou/mybatis-plus 与pagehelp冲突，只能二选一-->
-        <dependency>
-            <groupId>com.baomidou</groupId>
-            <artifactId>mybatis-plus-boot-starter</artifactId>
-            <version>3.1.0</version>
-        </dependency>
-        <dependency>
-            <groupId>com.baomidou</groupId>
-            <artifactId>mybatis-plus-generator</artifactId>
-            <version>3.1.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.velocity</groupId>
-            <artifactId>velocity-engine-core</artifactId>
-            <version>2.1</version>
-        </dependency>
-        <!--数据库连接相关 end-->
-
-        <!--redis缓存 start-->
-        <!--使用redisson来操作redis缓存-->
-        <!--3.10.7该版本优化了序列化器，可以存储数字等（key/value转成16进制存）-->
-        <dependency><!--配置请看RedissonConfiguration.java-->
-            <groupId>org.redisson</groupId>
-            <artifactId>redisson</artifactId>
-            <version>3.11.2</version>
-        </dependency>
-        <!--redisson不需要spring-boot-starter-data-redis的依赖-->
-        <!--<dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-redis</artifactId>
-        </dependency>-->
-        <!--redis缓存 end-->
         <!-- https://mvnrepository.com/artifact/com.alibaba/fastjson -->
         <!--https://www.cnblogs.com/chaos-li/p/11139992.html 漏洞问题-->
         <dependency>
@@ -149,63 +58,18 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
-        <!--Apache Commons csv工具-->
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-csv</artifactId>
-            <version>1.6</version>
-        </dependency>
-        <!-- https://mvnrepository.com/artifact/com.jcraft/jsch -->
-        <!--利用JSch包实现FTP下载、上传文件 -->
-        <dependency>
-            <groupId>com.jcraft</groupId>
-            <artifactId>jsch</artifactId>
-            <version>0.1.55</version>
-        </dependency>
-        <dependency>
-            <groupId>commons-net</groupId>
-            <artifactId>commons-net</artifactId>
-            <version>3.6</version>
-        </dependency>
-        <!--以下引入会导致缓存失败Cannot find cache named 'emp' for Builder-->
-        <!--<dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-cache</artifactId>
-        </dependency>-->
 
-        <!--ehcache-->
+        <!-- https://mvnrepository.com/artifact/com.aliyun/aliyun-java-sdk-core -->
         <dependency>
-            <groupId>net.sf.ehcache</groupId>
-            <artifactId>ehcache</artifactId>
-            <version>2.10.6</version>
+            <groupId>com.aliyun</groupId>
+            <artifactId>aliyun-java-sdk-core</artifactId>
+            <version>4.4.3</version>
         </dependency>
-        <!--ehcache需要support支持，否则启动报错,内部方法调用无效-->
+        <!-- https://mvnrepository.com/artifact/com.aliyun/aliyun-java-sdk-alidns -->
         <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-context-support</artifactId>
-            <version>5.1.5.RELEASE</version>
-        </dependency>
-        <!--swagger 在线API文档-->
-        <dependency>
-            <groupId>io.springfox</groupId>
-            <artifactId>springfox-swagger2</artifactId>
-            <version>2.9.2</version>
-        </dependency>
-        <!--swagger 在线api 文档-->
-        <dependency>
-            <groupId>io.springfox</groupId>
-            <artifactId>springfox-swagger-ui</artifactId>
-            <version>2.9.2</version>
-        </dependency>
-        <!--swagger-doc 在线API文档，支持导出doc-->
-        <dependency>
-            <groupId>com.github.xiaoymin</groupId>
-            <artifactId>swagger-bootstrap-ui</artifactId>
-            <version>1.8.8</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-websocket</artifactId>
+            <groupId>com.aliyun</groupId>
+            <artifactId>aliyun-java-sdk-alidns</artifactId>
+            <version>2.0.10</version>
         </dependency>
     </dependencies>
     <name>hhczy</name>

@@ -1,10 +1,17 @@
 package com.king.hhczy.base.task;
 
+import com.king.hhczy.base.constant.HhczyConstant;
+import com.king.hhczy.common.util.AliyunDDNS;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 /**
  * @author ningjinxiang
@@ -16,8 +23,8 @@ import org.springframework.stereotype.Component;
 @EnableScheduling
 @Slf4j
 public class ScheduledTasks {
-//    @Autowired
-//    private DataSourceService dataSourceService;
+    @Autowired
+    private AliyunDDNS aliyunDDNS;
     /**
      * @Author:ningjinxiang
      * @Description:定时导出任务
@@ -31,20 +38,48 @@ public class ScheduledTasks {
 //    @Scheduled(cron = "${task.cron}")//每15分钟执行（）
 
     /**
-     * 定时同步通道状态
+     * 每天0点
      */
-//    @Scheduled(fixedDelay = 120000)//两分钟执行一次
-    public void buildToLocal() {
-//        dataSourceService.updateChannelStatus(this.getClass().getSimpleName(), UUIDUtil.uuid());
+    @Scheduled(cron = "0 0 0 * * ?")
+//    @Scheduled(initialDelay=60000,fixedRate = 190000)
+    public void tip1() {
+        if (isOpen()) {
+            System.out.println();
+            System.out.print("--->");
+            System.out.print(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").format(LocalDateTime.now()));
+            System.out.println(" ##开启阿里云解析任务##");
+            System.out.println("--->任务进行中...");
+        }
+    }
+    /**
+     * 每天3点
+     */
+    @Scheduled(cron = "0 1 3 * * ?")
+//    @Scheduled(initialDelay=180000,fixedRate = 180000)
+    public void tip2() {
+        if (isOpen()) {
+            System.out.print(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").format(LocalDateTime.now()));
+            System.out.println(" ##任务完毕##");
+        }
     }
 
     /**
-     * 每天闲时同步按月查询数据到redis
+     * 每天0点开始，5分钟一次，3点结束
      */
-    @Scheduled(fixedDelay = 12000)//两分钟执行一次
-//    @Scheduled(cron = "0 0 2 * * ?")//每天凌晨2点同步一次
-    public void syncWhithDayHasDataOfMonth() {
-//        dataSourceService.syncWhithDayHasDataOfMonth(this.getClass().getSimpleName(), UUIDUtil.uuid());
+    @Scheduled(cron = "5 0/5 0-3 * * ?")
+//    @Scheduled(initialDelay=61000,fixedRate = 60000)
+    public void ddnsTask() {
+        if (isOpen()) {
+            aliyunDDNS.ddns(false);
+        }
+    }
+
+    private boolean isOpen() {
+        LocalDateTime updateTime = HhczyConstant.updateTime.get("updateTime");
+        if (updateTime != null && Duration.between(updateTime, LocalDateTime.now()).toHours() < 28) {
+            return false;
+        }
+        return true;
     }
 
 }
