@@ -66,7 +66,7 @@ public class ScheduledTasks {
     /**
      * 每天22点开始，每小时+5分钟一次，2点结束
      */
-    @Scheduled(cron = "0 5 22-2 * * ? ")
+    @Scheduled(cron = "0 5 0-2,22-23 * * ?")
 //    @Scheduled(initialDelay=61000,fixedRate = 60000)
     public void ddnsTask() {
         if (isOpen()) {
