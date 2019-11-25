@@ -125,9 +125,15 @@ public class AliyunDDNS {
                 accessKeyId,// 您的AccessKey ID
                 accessKeySecret);// 您的AccessKey Secret
         IAcsClient client = new DefaultAcsClient(profile);
-
         AliyunDDNS ddns = new AliyunDDNS();
-
+        // 当前主机公网IP
+        String currentHostIP = ddns.getCurrentHostIP();
+        //公网IP无变化，不往下处理
+        if (HhczyConstant.FORWARD_IP!=null&&HhczyConstant.FORWARD_IP.equals(currentHostIP)) {
+            return;
+        }
+        //公网IP发生变化，更新标记值
+        HhczyConstant.FORWARD_IP = currentHostIP;
         // 查询指定二级域名的最新解析记录
         DescribeDomainRecordsRequest describeDomainRecordsRequest = new DescribeDomainRecordsRequest();
         // 主域名
@@ -150,8 +156,7 @@ public class AliyunDDNS {
             String recordId = record.getRecordId();
             // 记录值
             String recordsValue = record.getValue();
-            // 当前主机公网IP
-            String currentHostIP = ddns.getCurrentHostIP();
+
             if (firstTime) {
                 System.out.println("--->当前主机公网IP为：" + currentHostIP);
                 System.out.println("--->阿里云解析IP为：" + recordsValue);
@@ -174,8 +179,8 @@ public class AliyunDDNS {
                     System.out.println("--->阿里云解析IP为：" + recordsValue);
                 }
                 System.out.println("--->当前主机公网IP发生变化，已与阿里云域名解析同步完成");
-                System.out.println("--->任务将于两天后0点再次开启");
-                HhczyConstant.updateTime.put("updateTime", LocalDateTime.now());
+                System.out.println("--->任务将于两天后凌晨再次开启");
+                HhczyConstant.UPDATE_TIME = LocalDateTime.now();
             } else {
                 if (firstTime) {
                     System.out.println("--->公网IP没有变更，任务将于凌晨再次开启");

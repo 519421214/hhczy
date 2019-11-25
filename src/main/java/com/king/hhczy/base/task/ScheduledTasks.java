@@ -38,9 +38,9 @@ public class ScheduledTasks {
 //    @Scheduled(cron = "${task.cron}")//每15分钟执行（）
 
     /**
-     * 每天22点
+     * 每天23点
      */
-    @Scheduled(cron = "0 0 22 * * ? ")
+    @Scheduled(cron = "0 0 23 * * ? ")
 //    @Scheduled(initialDelay=60000,fixedRate = 190000)
     public void tip1() {
         if (isOpen()) {
@@ -52,9 +52,9 @@ public class ScheduledTasks {
         }
     }
     /**
-     * 每天2点结束
+     * 每天1点结束
      */
-    @Scheduled(cron = "0 1 2 * * ?")
+    @Scheduled(cron = "0 1 1 * * ?")
 //    @Scheduled(initialDelay=180000,fixedRate = 180000)
     public void tip2() {
         if (isOpen()) {
@@ -66,7 +66,8 @@ public class ScheduledTasks {
     /**
      * 每天22点开始，每小时+5分钟一次，2点结束
      */
-    @Scheduled(cron = "0 5 0-2,22-23 * * ?")
+//    @Scheduled(cron = "0 5 0-2,22-23 * * ?")
+    @Scheduled(cron = "0 0/5 0,23 * * ?")
 //    @Scheduled(initialDelay=61000,fixedRate = 60000)
     public void ddnsTask() {
         if (isOpen()) {
@@ -75,7 +76,7 @@ public class ScheduledTasks {
     }
 
     private boolean isOpen() {
-        LocalDateTime updateTime = HhczyConstant.updateTime.get("updateTime");
+        LocalDateTime updateTime = HhczyConstant.UPDATE_TIME;
         if (updateTime != null && Duration.between(updateTime, LocalDateTime.now()).toHours() < 28) {
             return false;
         }
