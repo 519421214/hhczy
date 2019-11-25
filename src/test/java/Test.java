@@ -23,7 +23,14 @@ import java.util.stream.Stream;
 
 public class Test {
 
-    public static void main(String[] args) throws InterruptedException {
+    public static void main(String[] args) throws Exception {
+        Path path = Paths.get("F:\\1.log");
+        List<String> vals = Files.readAllLines(path,StandardCharsets.UTF_8);
+        Set<String> objects = new HashSet<>();
+        Arrays.stream(vals.get(0).split("certificateNo ")).map(x -> x.split("查找不到对应人员")[0]).forEach(y->{
+            objects.add(y);
+        });
+        System.out.println(objects);
 //        BigDecimal b1 = new BigDecimal("3.14");
 //        BigDecimal b2 = new BigDecimal("100");
 //        BigDecimal b = b1.multiply(b2);
@@ -37,7 +44,7 @@ public class Test {
 //        System.out.println(compile.matcher("192.168.2.1").matches());
         //还可以这么写
 //        List<Integer> cost = Lists.newArrayList(1, 3, 7, 9, 34);
-        searchFileByContent2("C:\\Users\\ningjinxiang\\Desktop\\sac\\log", "checkinSync");
+//        searchFileByContent2("C:\\Users\\ningjinxiang\\Desktop\\sac\\log", "checkinSync");
 //        System.out.println(LocalDate.of(2019, 2, 1).lengthOfMonth());
 //        Path path = Paths.get("C:\\Users\\ningjinxiang\\Desktop\\sac\\tencent\\cert\\15558554155303.jpg");
 //        try {
