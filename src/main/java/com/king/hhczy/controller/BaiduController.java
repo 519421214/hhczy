@@ -2,15 +2,12 @@ package com.king.hhczy.controller;
 
 import com.baidu.aip.ocr.AipOcr;
 import com.king.hhczy.common.util.JsonUtils;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
 import org.json.JSONObject;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -25,10 +22,14 @@ import java.util.Map;
 @RestController
 @RequestMapping("/baidu")
 public class BaiduController {
-
-    @PostMapping(value = "/ocr",headers = "content-type=multipart/form-date")
-    @ApiOperation(value="图片上传", notes="图片上传")
-    public Map ocr(@ApiParam(value = "上传的文件" ,required = true) MultipartFile file, HttpServletRequest request) throws Exception{
+    /**
+     * 图片文字识别、中英文识别
+     * @param file
+     * @return
+     * @throws Exception
+     */
+    @PostMapping(value = "/ocr")
+    public Map ocr(MultipartFile file) throws Exception{
         //接收图像二进制数据
         byte[] buf = file.getBytes();
         //初始化百度接口

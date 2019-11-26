@@ -13,6 +13,7 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -86,6 +87,8 @@ public class WebLogAspect {
                         || o instanceof ServletResponse
                         || o instanceof HttpSession) {
                     clone[i] = o.toString();//防止JsonUtils.toJsonStr操作报错
+                }else if(o instanceof MultipartFile){
+                    clone[i] = o.toString().substring(0,50);
                 }
             }
             requestMap.put("requestBody", clone);

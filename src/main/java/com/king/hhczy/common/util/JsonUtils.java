@@ -22,7 +22,7 @@ public class JsonUtils {
         return JSONObject.toJSONString(obj);
     }
     /**
-     * 005.json字符串转换为map
+     * 【fastjson】json字符串转换为map
      */
     public static <T> Map<String, Object> json2map(String jsonString) throws Exception {
         ObjectMapper mapper = new ObjectMapper();
