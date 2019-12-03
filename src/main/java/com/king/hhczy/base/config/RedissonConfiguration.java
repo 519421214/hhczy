@@ -33,7 +33,8 @@
 //
 //    @Value("${redis.host}")
 //    private String host;
-//
+//    @Value("${spring.redis.database}")
+//    private int database;
 //    @Value("${redis.port}")
 //    private int port;
 //
@@ -56,6 +57,7 @@
 //        //指定使用单节点部署方式
 //        SingleServerConfig singleServerConfig = config.useSingleServer();
 //        singleServerConfig.setAddress("redis://" + host + ":" + port);
+//        singleServerConfig.setDatabase(database);
 //        if (StringUtils.hasText(password)) {
 //            singleServerConfig.setPassword(password);//设置密码
 //        }
