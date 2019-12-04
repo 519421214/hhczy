@@ -2,6 +2,7 @@ package com.king.hhczy.controller;
 
 import com.king.hhczy.service.impl.BaiduService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -29,10 +30,9 @@ public class BaiduController {
      * @throws Exception
      */
     @PostMapping(value = "/ocr")
-    public Map ocr(MultipartFile file) throws Exception{
+    public ResponseEntity<Map> ocr(MultipartFile file) throws Exception{
         //接收图像二进制数据
         byte[] buf = file.getBytes();
-        return baiduService.ocr(buf);
+        return ResponseEntity.ok(baiduService.ocr(buf));
     }
 }
-

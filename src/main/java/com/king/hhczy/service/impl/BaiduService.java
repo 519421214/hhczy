@@ -23,8 +23,6 @@ import java.util.Map;
 public class BaiduService{
     //自定义成功返回码
     private Integer SUCCESS_CODE=0;
-    //自定义失败返回码
-    private Integer ERROR_CODE=1;
     //每日超出限额错误码
     private Integer REACHED_ERROR_CODE=17;
     //图片尺寸超出范围
@@ -37,6 +35,8 @@ public class BaiduService{
      * @return
      */
     public Map ocr(byte[] image) {
+        String msg = null;
+        int code = 0;
         //参数配置
         HashMap<String, String> options = new HashMap();
         options.put("language_type", "CHN_ENG"); //中英语言
@@ -48,21 +48,23 @@ public class BaiduService{
         JSONObject res = aipOcr.basicAccurateGeneral(image, options);
         //如果超过次数，换接口
         if (res.getString("error_code")!=null) {
-            int error_code = res.getInt("error_code");
-            if (error_code ==REACHED_ERROR_CODE) {
+            code = res.getInt("error_code");
+            if (code ==REACHED_ERROR_CODE) {
                 log.warn("高精度ocr次数已用完");
                 //通用ocr，免费次数50000次/天
                 res = aipOcr.basicGeneral(image, options);
-            }else if(error_code ==IMAGE_SIZE_ERROR_CODE){
-                log.error("OCR识别图片尺寸超出范围");
+                code = SUCCESS_CODE;
+            }else if(code ==IMAGE_SIZE_ERROR_CODE){
+                msg = "OCR识别图片尺寸超出范围";
             }else {
-                log.error(res.getString("error_msg"));
+                msg = res.getString("error_msg");
             }
+            log.error(msg);
         }
         try {
             Map<String, Object> result = JsonUtils.json2map(res.toString());
-            result.put("code",SUCCESS_CODE);
-            result.put("msg",SUCCESS_CODE);
+            result.put("code",code);
+            result.put("msg",msg);
             return result;
         } catch (Exception e) {
             return null;
