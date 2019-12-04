@@ -47,7 +47,7 @@ public class BaiduService{
         //高精度，免费次数500次/天
         JSONObject res = aipOcr.basicAccurateGeneral(image, options);
         //如果超过次数，换接口
-        if (res.getString("error_code")!=null) {
+        if (res.has("error_code")) {
             code = res.getInt("error_code");
             if (code ==REACHED_ERROR_CODE) {
                 log.warn("高精度ocr次数已用完");
@@ -63,8 +63,8 @@ public class BaiduService{
         }
         try {
             Map<String, Object> result = JsonUtils.json2map(res.toString());
-            result.put("code",code);
-            result.put("msg",msg);
+            result.put("error_code",code);
+            result.put("error_msg",msg);
             return result;
         } catch (Exception e) {
             return null;
