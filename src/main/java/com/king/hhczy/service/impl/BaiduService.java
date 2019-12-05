@@ -27,12 +27,15 @@ public class BaiduService{
     private Integer REACHED_ERROR_CODE=17;
     //图片尺寸超出范围
     private Integer IMAGE_SIZE_ERROR_CODE=216202;
+    //次数用完标记，1表示没用完，0表示已用完，角标从0开始为第一级使用情况
+    private static Integer[] useUpTip = {1,1};
     @Autowired
     private AipOcr aipOcr;
     /**
      * ocr图片的中英文
+     * 接口优先使用高精度ocr，用完后使用通用ocr
      * @param image 图片字节
-     * @return
+     * @return error_code=0 表示操作成功
      */
     public Map ocr(byte[] image) {
         String msg = null;
@@ -45,11 +48,39 @@ public class BaiduService{
 //        options.put("probability", "false");//是否返回识别结果中每一行的置信度
 
         //高精度，免费次数500次/天
-        JSONObject res = aipOcr.basicAccurateGeneral(image, options);
+        JSONObject res = null;
+        if (useUpTip[0]==1) {//标记使用情况，避免用完后多次调接口
+            res = aipOcr.basicAccurateGeneral(image, options);
+        }
         //如果超过次数，换接口
-        if (res.has("error_code")) {
+        if (useUpTip[0]==0) {
+            log.warn("高精度ocr次数已用完");
+            if (useUpTip[1]==0) {
+                code = REACHED_ERROR_CODE;
+                msg = "ocr已被刷爆，请明天再试";
+                log.warn("通用ocr次数已用完");
+            }else {
+                //通用ocr，免费次数50000次/天
+                res = aipOcr.basicGeneral(image, options);
+                if (res.has("error_code")) {
+                    code = res.getInt("error_code");
+                    if (code == REACHED_ERROR_CODE) {
+                        log.warn("通用ocr次数已用完");
+                        useUpTip[1]=0;
+                    } else if (code == IMAGE_SIZE_ERROR_CODE) {
+                        msg = "OCR识别图片尺寸超出范围";
+                    } else {
+                        msg = res.getString("error_msg");
+                    }
+                    log.error(msg);
+                }else {
+                    code = SUCCESS_CODE;
+                }
+            }
+        }else if (res.has("error_code")){
             code = res.getInt("error_code");
             if (code ==REACHED_ERROR_CODE) {
+                useUpTip[0] = 0;
                 log.warn("高精度ocr次数已用完");
                 //通用ocr，免费次数50000次/天
                 res = aipOcr.basicGeneral(image, options);
