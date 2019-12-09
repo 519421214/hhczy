@@ -309,6 +309,10 @@ public class Test {
 //            }
 //        }).start();
 //        System.out.println("主线程");
+        //获取List ID最大的一条
+        List<Integer> m = new ArrayList<>();
+        m.add(1);m.add(1);m.add(5);m.add(2);
+        System.out.println(m.parallelStream().max(Comparator.comparing(Integer::intValue)).get());
     }
 
 
