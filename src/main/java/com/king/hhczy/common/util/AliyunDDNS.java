@@ -178,10 +178,10 @@ public class AliyunDDNS {
                     System.out.println("--->当前主机公网IP为：" + currentHostIP);
                     System.out.println("--->阿里云解析IP为：" + recordsValue);
                     System.out.println("--->当前主机公网IP发生变化，已与阿里云域名解析同步完成");
-                    System.out.println("--->任务将于凌晨再次开启");
+                    System.out.println("--->任务将于两天后凌晨再次开启");
                 }else {
                     System.out.println("--->当前主机公网IP发生变化，已与阿里云域名解析同步完成");
-                    System.out.println("--->任务将于两天后凌晨再次开启");
+                    System.out.println("--->任务将于凌晨再次开启");
                     HhczyConstant.UPDATE_TIME = LocalDateTime.now();
                 }
             } else {
