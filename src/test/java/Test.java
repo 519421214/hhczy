@@ -10,6 +10,7 @@ import java.net.URI;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributeView;
 import java.sql.Timestamp;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
@@ -24,13 +25,11 @@ import java.util.stream.Stream;
 public class Test {
 
     public static void main(String[] args) throws Exception {
-        Path path = Paths.get("F:\\1.log");
-        List<String> vals = Files.readAllLines(path,StandardCharsets.UTF_8);
-        Set<String> objects = new HashSet<>();
-        Arrays.stream(vals.get(0).split("certificateNo ")).map(x -> x.split("查找不到对应人员")[0]).forEach(y->{
-            objects.add(y);
-        });
-        System.out.println(objects);
+        Path path = Paths.get("G:\\ideaWorkspace\\svn\\csv\\backups\\127.0.0.1\\000000_34_0000005_20191211113640_1_107.csv");
+//        Object attribute = Files.getAttribute(path, "updatetime");
+        BasicFileAttributeView fileAttributeView = Files.getFileAttributeView(path, BasicFileAttributeView.class,
+                LinkOption.NOFOLLOW_LINKS);
+        System.out.println(fileAttributeView.readAttributes().creationTime().toMillis());
 //        BigDecimal b1 = new BigDecimal("3.14");
 //        BigDecimal b2 = new BigDecimal("100");
 //        BigDecimal b = b1.multiply(b2);
@@ -561,7 +560,7 @@ public class Test {
             Files.copy(path1.resolve("log.log"), path1.resolve("log_copy1.log"), StandardCopyOption.REPLACE_EXISTING);//存在则替换
             //从输入流复制到文件
             //从控制台输入获取
-            Files.copy(System.in, path1.resolve("log_copy2.log"), StandardCopyOption.REPLACE_EXISTING);//
+            Files.copy(System.in, path1.resolve("log_copy2.log"), StandardCopyOption.REPLACE_EXISTING);//存在则覆盖
             //读取和设置文件权限：省略
 
         } catch (IOException e) {
@@ -587,5 +586,13 @@ public class Test {
         System.out.println(atomicInteger.incrementAndGet());
         System.out.println(atomicInteger.decrementAndGet());
 
+    }
+    //关于jdk8一些方法
+    public static void jdk8() {
+        //补足 前面补0
+        String.format("%07d",1);//用0补足7位
+        //list截取
+        List<Object> list = new ArrayList<>();
+        list.subList(0, 10);//list截取0-10个记录
     }
 }

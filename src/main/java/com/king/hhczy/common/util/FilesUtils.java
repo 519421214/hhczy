@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributeView;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.*;
 
@@ -42,6 +43,25 @@ public class FilesUtils {
      */
     public static Integer getDirFilesSize(String path) {
         return getDirFilesSize(Paths.get(path));
+    }
+    /**
+     * 获取文件创建、最后修改、最后访问时间戳
+     * @param path
+     * @return
+     */
+    public static Map<String, Long> getFileTime(String path) {
+        BasicFileAttributeView fileAttributeView = Files.getFileAttributeView(Paths.get(path), BasicFileAttributeView.class,
+                LinkOption.NOFOLLOW_LINKS);
+        Map<String, Long> result = new HashMap<>();
+        try {
+            BasicFileAttributes basicFileAttributes = fileAttributeView.readAttributes();
+            result.put("creationTime",basicFileAttributes.creationTime().toMillis());
+            result.put("lastModifiedTime",basicFileAttributes.lastModifiedTime().toMillis());
+            result.put("lastAccessTime",basicFileAttributes.lastAccessTime().toMillis());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return result;
     }
     public static Integer getDirFilesSize(Path path) {
         Map<String, Integer> count = new HashMap<>();
