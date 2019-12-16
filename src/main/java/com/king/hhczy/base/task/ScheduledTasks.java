@@ -47,4 +47,42 @@ public class ScheduledTasks {
 //        dataSourceService.syncWhithDayHasDataOfMonth(this.getClass().getSimpleName(), UUIDUtil.uuid());
     }
 
+//    @Value("${local.clean.path}")
+//    private String[] cleanPaths;
+    /**
+     * 每天0点清理大于30天的文件
+     */
+//    @Scheduled(cron = "0 0 0 1/1 * ?")
+//    @Scheduled(initialDelay=1000,fixedDelay = 10000)
+//    public void clean() {
+//        System.out.println("-->开始执行定期清理任务（清理计划：每天零晨扫描清理一次30天后的文件）");
+//        System.out.println("-->待扫描路径：");
+//        Arrays.stream(cleanPaths).forEach(System.out::println);
+//        Arrays.stream(cleanPaths).forEach(x->{
+//            log.info("开始清理路径：{}",x);
+//            Path first = Paths.get(x);
+//            if (Files.exists(first)&&Files.isDirectory(first)) {
+//                //遍历所有子文件，获取路径
+//                List<Path> allFilesPaths = FilesUtils.getAllFilesPaths(x);
+//                allFilesPaths.stream().parallel().forEach(y->{
+//                    //拿到文件最后更新时间戳
+//                    long fileCreateTime = FilesUtils.getFileTime(y, FilesUtils.FilesAttribute.LAST_MODIFIED_TIME);
+//                    //获取30天前的时间戳
+//                    long before30Time = LocalDateTime.now().minusDays(30).toInstant(ZoneOffset.of("+8")).toEpochMilli();
+//                    if(fileCreateTime<before30Time){
+//                        try {
+//                            if (Files.deleteIfExists(y)) {
+//                                log.info(y.getFileName()+" 过期删除成功");
+//                            }
+//                        } catch (IOException e) {
+//
+//                        }
+//                    }
+//                });
+//            }else {
+//                log.error("错误的文件目录：{}",x);
+//            }
+//        });
+//        log.info("当次任务执行完毕\r\n");
+//    }
 }

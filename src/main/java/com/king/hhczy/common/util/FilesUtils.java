@@ -1,5 +1,6 @@
 package com.king.hhczy.common.util;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpHeaders;
@@ -17,6 +18,7 @@ import java.util.*;
  * @author ningjinxiang
  * date 20190918
  */
+@Slf4j
 public class FilesUtils {
     /**
      * 遍历获取整个文件夹（包括子文件夹）的文件路径(不遍历文件夹)
@@ -45,7 +47,7 @@ public class FilesUtils {
         return getDirFilesSize(Paths.get(path));
     }
     /**
-     * 获取文件创建、最后修改、最后访问时间戳
+     * 获取文件创建、最后修改、最后访问时间戳Map
      * @param path
      * @return
      */
@@ -62,6 +64,31 @@ public class FilesUtils {
             e.printStackTrace();
         }
         return result;
+    }
+    /**
+     * 指定获取文件创建、最后修改、最后访问时间戳
+     * @param path
+     * @return
+     */
+    public static Long getFileTime(String path,FilesAttribute filesAttribute) {
+        return getFileTime(Paths.get(path),filesAttribute);
+    }
+    public static Long getFileTime(Path path,FilesAttribute filesAttribute) {
+        BasicFileAttributeView fileAttributeView = Files.getFileAttributeView(path, BasicFileAttributeView.class,
+                LinkOption.NOFOLLOW_LINKS);
+        try {
+            BasicFileAttributes basicFileAttributes = fileAttributeView.readAttributes();
+            if (filesAttribute== FilesAttribute.CREATION_TIME) {
+                return basicFileAttributes.creationTime().toMillis();
+            }else if (filesAttribute== FilesAttribute.LAST_ACCESS_TIME){
+                return basicFileAttributes.lastAccessTime().toMillis();
+            }else if (filesAttribute== FilesAttribute.LAST_MODIFIED_TIME){
+                return basicFileAttributes.lastModifiedTime().toMillis();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
     public static Integer getDirFilesSize(Path path) {
         Map<String, Integer> count = new HashMap<>();
@@ -137,8 +164,8 @@ public class FilesUtils {
             contentLength = resource.contentLength();
         } catch (IOException e) {/*ignore*/}
 
-        if (Log.isInfoEnabled()) {
-            Log.info("下载文件: {}, 文件大小: {}", fileRealPath, contentLength);
+        if (log.isInfoEnabled()) {
+            log.info("下载文件: {}, 文件大小: {}", fileRealPath, contentLength);
         }
 
         ResponseEntity.BodyBuilder bodyBuilder = ResponseEntity.ok().contentLength(contentLength);
@@ -224,4 +251,10 @@ public class FilesUtils {
     }
     private final static Set<String> imageSuffixs = Collections.unmodifiableSet(new HashSet<>(Arrays.asList(
             ".bmp", ".dib", ".gif", ".jfif", ".jpe", ".jpeg", ".jpg", ".png", ".tif", ".tiff", ".ico")));
+
+    public enum FilesAttribute{
+        CREATION_TIME,
+        LAST_MODIFIED_TIME,
+        LAST_ACCESS_TIME;
+    }
 }
