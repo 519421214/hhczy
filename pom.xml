@@ -17,7 +17,24 @@
     </parent>
 
     <dependencies>
-
+        <!--输入dep可以快速打出格式模板-->
+        <!--初始包↓-->
+        <!--spring MVC整合-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <!--单元测试支持-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <!--监控工具-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
         <!--aop start-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -26,10 +43,6 @@
         <!--aop end-->
 
         <!--web及模板 start-->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-        </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-thymeleaf</artifactId>
@@ -123,10 +136,10 @@
             <version>1.2.58</version>
         </dependency>
         <!--rabbitmq消息中间件 start-->
-        <dependency>
+        <!--<dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-amqp</artifactId>
-        </dependency>
+        </dependency>-->
         <!--rabbitmq消息中间件 end-->
 
         <!--懒人框架 在idea中要配合idea插件(: Lombok Plugin)使用，否则无法编译 start-->
@@ -144,11 +157,6 @@
             <optional>true</optional>
         </dependency>
 
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
-        </dependency>
         <!--Apache Commons csv工具-->
         <dependency>
             <groupId>org.apache.commons</groupId>
