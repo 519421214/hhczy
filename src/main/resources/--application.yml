@@ -1,0 +1,14 @@
+﻿#所有环境公共配置属性
+
+#连接符,默认配置环境
+spring:
+  profiles:
+    active: dev
+---
+#开发环境，启动项配置值
+spring:
+  profiles: dev
+---
+#生产环境
+spring:
+  profiles: prod
