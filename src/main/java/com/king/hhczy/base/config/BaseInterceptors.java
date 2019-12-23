@@ -1,7 +1,9 @@
 package com.king.hhczy.base.config;
 
+import com.king.hhczy.common.util.JwtUtils;
 import com.king.hhczy.common.util.Log;
 import com.king.hhczy.common.util.UUIDUtil;
+import io.jsonwebtoken.Claims;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
@@ -9,8 +11,10 @@ import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.Optional;
 
 /**
@@ -33,6 +37,8 @@ public class BaseInterceptors implements WebMvcConfigurer {
         registry.addInterceptor(tokenInterceptor).addPathPatterns("/**")
                 //排除在线文档的拦截
                 .excludePathPatterns("/doc.html","/error")
+                //排除测试接口
+                .excludePathPatterns("/test-*")
                 //去除对swagger api doc的拦截
                 .excludePathPatterns("/swagger-resources/**", "/webjars/**", "/v2/**", "/swagger-ui.html", "/csrf/**");
     }
@@ -44,8 +50,9 @@ public class BaseInterceptors implements WebMvcConfigurer {
      */
     @Component
     private class TokenInterceptor implements HandlerInterceptor {
+        private boolean OFF = false;// true关闭jwt令牌验证功能
         @Override
-        public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
+        public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws IOException, ServletException {
             //请求信息
             String requestId = Optional.ofNullable(request.getHeader("request-id")).orElse(UUIDUtil.uuid());
             request.setAttribute("requestId",requestId);
@@ -59,27 +66,36 @@ public class BaseInterceptors implements WebMvcConfigurer {
             Log.info("QueryString= {}", request.getQueryString());
             String token = request.getHeader("Authorization");
             Log.info("preHandle:token="+token);
-//            String token = null;
-//            if ("GET".equals(request.getMethod())) {
-//                token = request.getParameter("Token");
-//            }else {
-//                token = request.getHeader("Authorization");
-//            }
-            //token认证，先写死 todo 可以从他们缓存到redis里面获取（参照sac）
-//            if ("GosuncnToken".equals(token)) {
-//            if (StringUtils.hasText(token)) {//先不做本地token校验 服务不公开20190330
-//                //一些不需要走govideo认证的接口 begin
-//                String requestURI = request.getRequestURI();
-//                StringBuffer localInterface = new StringBuffer();
-//                localInterface.append("/getAllArea").append("/getAreaDevice").append("/getBuildingIpcOfArea").append("/getIpcOfBuilding");
-//                //一些不需要走govideo认证的接口 end
-//                if (localInterface.toString().contains(requestURI.substring(requestURI.lastIndexOf("/")))|| govideoMapper.loginGovideo(token, false)) {
-//                    return true;
-//                }
-////                throw new CustomizedException(ErrorCodeConstant.TOKEN_ERROR, "govide-token获取失败");
-//            }
-//            throw new CustomizedException(ErrorCodeConstant.TOKEN_ERROR, "token认证失败");
+
+            if (OFF) {// 登陆直接放行
+                return true;
+            }
+            // 从客户端请求头中获得令牌并验证
+            String jwt = request.getHeader(JwtUtils.JWT_HEADER_KEY);
+            Claims claims = this.validateJwtToken(jwt);
+            if (null == claims) {
+                // resp.setCharacterEncoding("UTF-8");
+                response.sendError(403, "JWT令牌已过期或已失效");
+                return false;
+            } else {
+                String newJwt = JwtUtils.copyJwt(jwt, JwtUtils.JWT_WEB_TTL);
+                response.setHeader(JwtUtils.JWT_HEADER_KEY, newJwt);
+            }
             return true;
+        }
+        /**
+         * 验证jwt令牌，验证通过返回声明(包括公有和私有)，返回null则表示验证失败
+         */
+        private Claims validateJwtToken(String jwt) {
+            Claims claims = null;
+            try {
+                if (null != jwt) {
+                    claims = JwtUtils.parseJwt(jwt);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return claims;
         }
     }
 

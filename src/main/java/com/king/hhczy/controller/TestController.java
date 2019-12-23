@@ -3,6 +3,7 @@ package com.king.hhczy.controller;
 import com.king.hhczy.base.config.CityCodeConfig;
 import com.king.hhczy.common.result.RespBody;
 import com.king.hhczy.common.util.FilesUtils;
+import com.king.hhczy.common.util.JwtUtils;
 import com.king.hhczy.mapper.RestTemplateMapper;
 import com.king.hhczy.service.ITblAccountService;
 import io.swagger.annotations.*;
@@ -13,15 +14,20 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -32,7 +38,6 @@ import java.util.Map;
  * @date 2019年3月29日
  */
 @RestController
-@RequestMapping(value = "/api/V1")
 @Slf4j
 @Validated
 @Api(value = "测试层接口")
@@ -45,7 +50,10 @@ public class TestController {
     private CityCodeConfig cityCodeConfig;
     @Autowired
     private RestTemplateMapper restTemplateMapper;
-
+    @GetMapping("/result")
+    public ResponseEntity testResult() {
+        return ResponseEntity.ok("成功");
+    }
     @GetMapping("/test-cache")
     @Cacheable(value = "myCache", key = "#areaId")
     @ApiOperation("测试springCache")
@@ -61,6 +69,16 @@ public class TestController {
         List<Map<String, String>> list = cityCodeConfig.getList();
 //        return "完全OJBK";
         return accountService.listAccounts();
+    }
+    @GetMapping("/test-what")
+    @ApiOperation("测试啥")
+    public ResponseEntity testWhat(HttpServletResponse response) {
+        Map<String, Object> claims = new HashMap<String, Object>();
+        claims.put("uname","admin");
+        claims.put("pwd", "123456");
+        String jwt = JwtUtils.createJwt(claims, JwtUtils.JWT_WEB_TTL);
+        response.setHeader(JwtUtils.JWT_HEADER_KEY, jwt);
+        return ResponseEntity.ok(JwtUtils.JWT_HEADER_KEY+":"+jwt);
     }
 
     @GetMapping("/writeToFile")
