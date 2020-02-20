@@ -55,7 +55,7 @@ public class TestController {
         return ResponseEntity.ok("成功");
     }
     @GetMapping("/test-cache")
-    @Cacheable(value = "myCache", key = "#areaId")
+    @Cacheable(value = "myCache  ", key = "#areaId")
     @ApiOperation("测试springCache")
     public RespBody testResult(Integer areaId) {
         List<Map<String, String>> list = cityCodeConfig.getList();

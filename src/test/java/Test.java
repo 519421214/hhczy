@@ -7,10 +7,11 @@ import org.springframework.util.StringUtils;
 
 import java.io.*;
 import java.net.URI;
+import java.net.URL;
+import java.net.URLConnection;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
-import java.nio.file.attribute.BasicFileAttributeView;
 import java.sql.Timestamp;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
@@ -25,11 +26,8 @@ import java.util.stream.Stream;
 public class Test {
 
     public static void main(String[] args) throws Exception {
-        Path path = Paths.get("G:\\ideaWorkspace\\svn\\csv\\backups\\127.0.0.1\\000000_34_0000005_20191211113640_1_107.csv");
-//        Object attribute = Files.getAttribute(path, "updatetime");
-        BasicFileAttributeView fileAttributeView = Files.getFileAttributeView(path, BasicFileAttributeView.class,
-                LinkOption.NOFOLLOW_LINKS);
-        System.out.println(fileAttributeView.readAttributes().creationTime().toMillis());
+        LocalDate date1 = LocalDate.parse("2019-02-20");
+        System.out.println(LocalDate.now().isEqual(date1));
 //        BigDecimal b1 = new BigDecimal("3.14");
 //        BigDecimal b2 = new BigDecimal("100");
 //        BigDecimal b = b1.multiply(b2);
@@ -310,7 +308,10 @@ public class Test {
 //        System.out.println("主线程");
         //获取List ID最大的一条
         List<Integer> m = new ArrayList<>();
-        m.add(1);m.add(1);m.add(5);m.add(2);
+        m.add(1);
+        m.add(1);
+        m.add(5);
+        m.add(2);
         System.out.println(m.parallelStream().max(Comparator.comparing(Integer::intValue)).get());
     }
 
@@ -358,6 +359,9 @@ public class Test {
         System.out.println(LocalDateTime.now().toInstant(ZoneOffset.of("+8")).toEpochMilli());//获取当前时间戳2
         System.out.println(LocalDate.now().minusDays(30).toString());//30天前的日期
         System.out.println(Timestamp.valueOf(LocalDateTime.now().minusDays(30)));//30天前的日期的TimeStamp
+        //判断是不是同一天
+        LocalDate date1 = LocalDate.parse("2019-02-20");
+        System.out.println(LocalDate.now().isEqual(date1));
     }
 
     private static void test4() {
@@ -506,14 +510,14 @@ public class Test {
      */
     public static void FilesAndPaths() {
         //路径拼接方法
-        Path path1 = Paths.get("G:/","Xmp");
+        Path path1 = Paths.get("G:/", "Xmp");
         Path path2 = Paths.get("G:/Xmp");
         URI u = URI.create("file:///G:/Xmp");//创建UIR供paths使用，并不是本地创建
         Path path3 = Paths.get(u);
         Path path4 = FileSystems.getDefault().getPath("G:/", "Xmp");
 
         try {
-            Path path5 = Paths.get("G:/","Xmp","dd.txt");//这种写法就不用加斜杠
+            Path path5 = Paths.get("G:/", "Xmp", "dd.txt");//这种写法就不用加斜杠
             //文件夹、文件均属判断范围
             if (!Files.exists(path5)) {
                 //创建文件前先建文件夹
@@ -527,24 +531,26 @@ public class Test {
             //System.getProperty("user.dir") source:vdu_sz; jar:bin 都指向工作环境路径
             Files.createDirectories(Paths.get(System.getProperty("user.dir")).getParent());
             //读取文件夹的文件
-            DirectoryStream<Path> files = Files.newDirectoryStream(Paths.get("G:/","Xmp"));
+            DirectoryStream<Path> files = Files.newDirectoryStream(Paths.get("G:/", "Xmp"));
             //文件内容读取
             //比下面newBufferedReader耗时，不过此方法可以用并行处理提高效率
-            List<String> lines1 = Files.readAllLines(path1.resolve("log.log"),StandardCharsets.UTF_8);//resolve作用：path拼接字符串返回path
+            List<String> lines1 = Files.readAllLines(path1.resolve("log.log"), StandardCharsets.UTF_8);//resolve作用：path拼接字符串返回path
             for (String line1 : lines1) {
 //                System.out.println(line1);
             }
             //拿到BufferedReader，处理比上面快一点
             BufferedReader br = Files.newBufferedReader(path1.resolve("log.log"), StandardCharsets.UTF_8);
             String line2 = null;
-            while ((line2 = br.readLine())!=null){
+            while ((line2 = br.readLine()) != null) {
 //                System.out.println(line2);
             }
             //写文件测试
-            Files.write(path1.resolve("copy1.log"), lines1,StandardCharsets.UTF_8);
+            Files.write(path1.resolve("copy1.log"), lines1, StandardCharsets.UTF_8);
             BufferedWriter bw = Files.newBufferedWriter(path1.resolve("copy2.log"), StandardCharsets.UTF_8);
-            bw.write("测试文件写操作");bw.newLine();//换行
-            bw.flush();bw.close();
+            bw.write("测试文件写操作");
+            bw.newLine();//换行
+            bw.flush();
+            bw.close();
 
             //遍历文件夹测试
             //单目录遍历
@@ -567,9 +573,11 @@ public class Test {
             e.printStackTrace();
         }
     }
+
     public static void ImageTest() {
 
     }
+
     public static void StringTest() {
         //截最后一个.的前段
         org.apache.commons.lang3.StringUtils.substringBeforeLast("a.jpg", ".");
@@ -587,12 +595,79 @@ public class Test {
         System.out.println(atomicInteger.decrementAndGet());
 
     }
+
     //关于jdk8一些方法
     public static void jdk8() {
         //补足 前面补0
-        String.format("%07d",1);//用0补足7位
+        String.format("%07d", 1);//用0补足7位
         //list截取
         List<Object> list = new ArrayList<>();
         list.subList(0, 10);//list截取0-10个记录
+    }
+    //URL下载图片
+    public static void urlDownloadPic(String source) {
+        try {
+            URL url = new URL(source);
+            URLConnection con = url.openConnection();
+            try (InputStream inputStream = con.getInputStream()){
+                if (!Files.exists(Paths.get("D:\\ABCd.jpg"))) {
+                    Files.copy(inputStream, Paths.get("D:\\ABCd.jpg"));
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    //模拟大乐透
+    public static void dlt(List<int[]> as, List<int[]> bs) {
+        int bugNum = 0;
+        int getOne = 0, getTwo = 0, getThree = 0, getFour = 0, getFive = 0, getSix = 0, getSeven = 0, getEight = 0, getNine = 0;
+        while (true) {
+            Set<Integer> lotteryNumbers1 = new HashSet<>();
+            Set<Integer> lotteryNumbers2 = new HashSet<>();
+            //生成1-35的随机数
+            while (true) {
+                int lotteryNumber = (int) (Math.random() * 35 + 1);
+                lotteryNumbers1.add(lotteryNumber);
+                if (lotteryNumbers1.size() == 5) {
+                    break;
+                }
+            }
+            //生成1-12的随机数
+            while (true) {
+                int lotteryNumber = (int) (Math.random() * 12 + 1);
+                lotteryNumbers2.add(lotteryNumber);
+                if (lotteryNumbers2.size() == 2) {
+                    break;
+                }
+            }
+            for (int i = 0; i < as.size(); i++) {
+                bugNum++;
+                //中几个
+                long sum1 = Arrays.stream(as.get(i)).filter(lotteryNumbers1::contains).count();
+                long sum2 = Arrays.stream(bs.get(i)).filter(lotteryNumbers2::contains).count();
+                if (sum2 == 2) {
+                    if (sum1 == 5) getOne++;
+                    else if (sum1 == 4) getFour++;
+                    else if (sum1 == 3) getSix++;
+                    else if (sum1 == 2) getEight++;
+                    else getNine++;
+                } else if (sum2 == 1) {
+                    if (sum1 == 5) getTwo++;
+                    else if (sum1 == 4) getFive++;
+                    else if (sum1 == 3) getEight++;
+                    else if (sum1 == 2) getNine++;
+                } else {
+                    if (sum1 == 5) getThree++;
+                    else if (sum1 == 4) getSeven++;
+                    else if (sum1 == 3) getNine++;
+                }
+
+                System.out.println("花费:" + (bugNum * 2) + ",一等奖：" + getOne + " 注,二等奖：" + getTwo + " 注,三等奖：" + (getThree * 10000) + "元,四等奖："
+                        + (getFour * 3000) + "元,五等奖：" + (getFive * 300) + "元,六等奖：" + getSix * 200 + "元,七等奖：" + getSeven * 100 + "元,八等奖：" + getEight * 15 + "元,九等奖：" + getNine * 5 + "元");
+            }
+        }
     }
 }

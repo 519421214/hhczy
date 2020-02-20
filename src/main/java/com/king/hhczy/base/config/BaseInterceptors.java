@@ -50,7 +50,7 @@ public class BaseInterceptors implements WebMvcConfigurer {
      */
     @Component
     private class TokenInterceptor implements HandlerInterceptor {
-        private boolean OFF = false;// true关闭jwt令牌验证功能
+        private boolean OFF = true;// true关闭jwt令牌验证功能
         @Override
         public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws IOException, ServletException {
             //请求信息

@@ -1,6 +1,8 @@
 package com.king.hhczy.base.task;
 
+import com.king.hhczy.common.util.PaChongUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -18,6 +20,8 @@ import org.springframework.stereotype.Component;
 public class ScheduledTasks {
 //    @Autowired
 //    private DataSourceService dataSourceService;
+    @Autowired
+    private PaChongUtil paChongUtil;
     /**
      * @Author:ningjinxiang
      * @Description:定时导出任务
@@ -41,10 +45,19 @@ public class ScheduledTasks {
     /**
      * 每天闲时同步按月查询数据到redis
      */
-    @Scheduled(fixedDelay = 12000)//两分钟执行一次
+//    @Scheduled(fixedDelay = 10000)//两分钟执行一次
 //    @Scheduled(cron = "0 0 2 * * ?")//每天凌晨2点同步一次
     public void syncWhithDayHasDataOfMonth() {
 //        dataSourceService.syncWhithDayHasDataOfMonth(this.getClass().getSimpleName(), UUIDUtil.uuid());
+    }
+    /**
+     * 每天闲时同步按月查询数据到redis
+     */
+    @Scheduled(fixedDelay = 60000)//两分钟执行一次
+//    @Scheduled(cron = "0 0 2 * * ?")//每天凌晨2点同步一次
+    public void paGovNews() {
+        paChongUtil.govNews();
+        paChongUtil.motNews();
     }
 
 //    @Value("${local.clean.path}")

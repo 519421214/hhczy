@@ -1,8 +1,8 @@
 package com.king.hhczy;
 
 import org.mybatis.spring.annotation.MapperScan;
-import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.cache.annotation.EnableCaching;
 
 /**
@@ -16,7 +16,10 @@ import org.springframework.cache.annotation.EnableCaching;
 public class MainApplication {
 	//启动类
 	public static void main(String[] args) {
-		SpringApplication.run(MainApplication.class, args);
+//		SpringApplication.run(MainApplication.class, args);
+		//headless相关异常解决方法
+		SpringApplicationBuilder builder = new SpringApplicationBuilder(MainApplication.class);
+		builder.headless(false).run(args);
 	}
 }
 

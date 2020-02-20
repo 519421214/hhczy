@@ -15,4 +15,6 @@ public final class CacheConstants {
      */
     public final static String LASTING_CACHE_PREFIX = COMMON_CACHE_PREFIX+"lasting:";
 
+    public final static String PA_CHONG = LASTING_CACHE_PREFIX+"pa-chong:";
+
 }
