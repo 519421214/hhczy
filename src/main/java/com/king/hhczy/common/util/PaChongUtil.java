@@ -94,6 +94,6 @@ public class PaChongUtil {
         //推邮箱
         mailUtil.sendMail(title,details,sendGovNewMails);
         //推微信
-        KeyboardUtil.copyAndSend(title+details);
+//        KeyboardUtil.copyAndSend(title+details);
     }
 }
