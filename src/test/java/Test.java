@@ -26,71 +26,26 @@ import java.util.stream.Stream;
 public class Test {
 
     public static void main(String[] args) throws Exception {
-        LocalDate date1 = LocalDate.parse("2019-02-20");
-        System.out.println(LocalDate.now().isEqual(date1));
-//        BigDecimal b1 = new BigDecimal("3.14");
-//        BigDecimal b2 = new BigDecimal("100");
-//        BigDecimal b = b1.multiply(b2);
-//        System.out.println(b);
-//        String ip = "192.168.2.1";
-        //
-//        if (!IpV4Util.isSameAddress("192.168.3.1", ip.trim(),"255.255.255.0")) {
-//            System.out.println(12345678);
-//        }
-//        Pattern compile = Pattern.compile("^\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}$");
-//        System.out.println(compile.matcher("192.168.2.1").matches());
-        //还可以这么写
-//        List<Integer> cost = Lists.newArrayList(1, 3, 7, 9, 34);
-//        searchFileByContent2("C:\\Users\\ningjinxiang\\Desktop\\sac\\log", "checkinSync");
-//        System.out.println(LocalDate.of(2019, 2, 1).lengthOfMonth());
-//        Path path = Paths.get("C:\\Users\\ningjinxiang\\Desktop\\sac\\tencent\\cert\\15558554155303.jpg");
-//        try {
-//            BASE64Encoder encoder = new BASE64Encoder();
-//            System.out.println(encoder.encode(Files.readAllBytes(path)));
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-        // 加密
-//        System.out.println(StringUtils.countOccurrencesOf("[asss,sadd,22266666666666666666666,,]", ","));
-//        Integer a = 0;
-//        Integer b = null;
-//        BiFunction<Integer,Integer,Integer> initVal = (x,y) -> Optional.ofNullable(x).orElse(y);
-//        System.out.println(initVal.apply(a, 1)+":"+initVal.apply(b, 10));
-//        List a = null;
-//        if (a.isEmpty()) {
-//            System.out.println("null");
-//        }
-        //今年
-//        String s = decodeString("049053056049052049050052049054053");
-//        System.out.println(s);
-//        Path path = Paths.get("G:\\1.log");
-//        try {
-//            List<String> vals = Files.readAllLines(path,StandardCharsets.UTF_8);
-//            for (String val : vals) {
-//                if (val.length()<10) {
-//                    continue;
-//                }
-////                System.out.println("'"+decodeString(val)+"',");
-//                System.out.println(decodeString(val));
-//            }
-//        } catch (IOException e) {
-//
-//        }
-//        "admin".chars().boxed().forEach(System.out::println);
-//        String a = "123456789";
-//        System.out.println(String.copyValueOf(a.toCharArray(), 9, 3));
-//        System.out.println(a.chars().parallel().filter(x->x>127||x<0).findFirst().orElse(0));
-//        System.out.println(a.chars().boxed().map(String::valueOf).reduce("",(s1, s2) -> s1 + "0" + s2));
-//        System.out.println((int)65297);
-//        System.out.println(encodeString("15017607945"));
-//        System.out.println(a.charAt(0));
-//        System.out.println(decodeString("049053048054050052049057057057048055049049048051051055"));
-//        System.out.println(encodeString("666666666666666666"));
-//        System.out.println("052053050049050054049057055049048056050050048051052052");
-//        searchFileByContent("G:\\log\\uploadEventAndFile","00000000973E1007");
-//        System.out.println(LocalDateTime.ofInstant(Instant.ofEpochMilli(1564364487290L), ZoneId.systemDefault()));
-//        optionalTest();
-//        FilesAndPaths();
+//        Map<String, Object> data = new HashMap<>();
+//        List data = new ArrayList<>();
+//        data.add(1);
+//        data.add("李武");
+//        data.add(10);
+//        // 写法1
+//        String fileName = "D:\\simpleWrite" + System.currentTimeMillis() + ".xlsx";
+//        // 这里 需要指定写用哪个class去写，然后写到第一个sheet，名字为模板 然后文件流会自动关闭
+//        // 如果这里想使用03 则 传入excelType参数即可
+//        EasyExcel.write(fileName, Students.class).sheet("模板").doWrite(data);
+
+//        // 写法2
+//        fileName = TestFileUtil.getPath() + "simpleWrite" + System.currentTimeMillis() + ".xlsx";
+//        // 这里 需要指定写用哪个class去写
+//        ExcelWriter excelWriter = EasyExcel.write(fileName, DemoData.class).build();
+//        WriteSheet writeSheet = EasyExcel.writerSheet("模板").build();
+//        excelWriter.write(data(), writeSheet);
+//        /// 千万别忘记finish 会帮忙关闭流
+//        excelWriter.finish();
+        searchFileByContent3("D:\\log2");
     }
 
     //二进制
@@ -145,6 +100,23 @@ public class Test {
         return ii++;
     }
 
+    //内容检索2
+    private static void searchFileByContent3(String path) {
+        Path filesPath = Paths.get(path);
+        try {
+            DirectoryStream<Path> files = Files.newDirectoryStream(filesPath);
+            for (Path file : files) {
+                List<String> lines = Files.readAllLines(file, StandardCharsets.UTF_8);
+                for (String line : lines) {
+                    if (line.contains(",颜诗然,")) {
+                        System.out.println(file.getFileName());
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
     //内容检索
     private static void searchFileByContent(String path, String words) {
         Path filesPath = Paths.get(path);
@@ -355,11 +327,12 @@ public class Test {
         System.out.println(now3);
         System.out.println(end);
         System.out.println("发送短信耗时【 " + days + "天：" + hours + " 小时：" + minutes + " 分钟：" + millis + " 毫秒：" + nanos + " 纳秒】");
+        System.currentTimeMillis();//获取当前时间戳0
         System.out.println(Instant.now().toEpochMilli());//获取当前时间戳1
         System.out.println(LocalDateTime.now().toInstant(ZoneOffset.of("+8")).toEpochMilli());//获取当前时间戳2
         System.out.println(LocalDate.now().minusDays(30).toString());//30天前的日期
         System.out.println(Timestamp.valueOf(LocalDateTime.now().minusDays(30)));//30天前的日期的TimeStamp
-        //判断是不是同一天
+        //判断是不是同一天，两个日期是否相等
         LocalDate date1 = LocalDate.parse("2019-02-20");
         System.out.println(LocalDate.now().isEqual(date1));
     }

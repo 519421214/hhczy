@@ -28,13 +28,14 @@ public class HtmlRequest {
             URL url = new URL(urlStr);
             HttpURLConnection conn = (HttpURLConnection)url.openConnection();
             conn.setRequestMethod("GET");
-            conn.setConnectTimeout(10 * 1000);
+            conn.setConnectTimeout(60 * 1000);
             InputStream inStream =  conn.getInputStream();  //通过输入流获取html二进制数据
             byte[] data = readInputStream(inStream);        //把二进制数据转化为byte字节数据
             String htmlSource = new String(data);
+            inStream.close();
             return htmlSource;
         } catch (Exception e) {
-            e.printStackTrace();
+//            e.printStackTrace();
         }
         return null;
     }

@@ -9,6 +9,7 @@ import org.redisson.api.RMapCache;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import java.time.LocalDate;
 import java.util.concurrent.TimeUnit;
@@ -23,8 +24,8 @@ import java.util.concurrent.TimeUnit;
 public class PaChongUtil {
     @Autowired
     private RedissonClient redissonClient;
-    @Autowired
-    private MailUtil mailUtil;
+//    @Autowired
+//    private MailUtil mailUtil;
     private String[] sendGovNewMails = {"519421214@qq.com","694268341@qq.com","1282550688@qq.com"};
 
     //爬gwy新闻数据
@@ -33,6 +34,7 @@ public class PaChongUtil {
 
         //拿到网页源码
         String urlSource = HtmlRequest.getURLSource("http://www.gov.cn/xinwen/gundong.htm");
+        if (!StringUtils.hasText(urlSource)) return;
         //采用jsoup解析
         Document doc = Jsoup.parse(urlSource);
         //定位到集合内容
@@ -41,15 +43,17 @@ public class PaChongUtil {
             //拿到跳转地址
             String href = ele.select("a").attr("href");
             //拿到唯一key
-            String idKey = href.substring(href.lastIndexOf("/"), href.lastIndexOf("."));
+            String idKey = href.substring(href.lastIndexOf("/")+1, href.lastIndexOf("."));
             //拿到日期
-            String date = ele.select("span").text();
+            int span = ele.select("span").size();
+            String date = ele.select("span[class='date']").text();
             //判断新闻是不是当天的
             if (LocalDate.parse(date).isEqual(LocalDate.now())) {
                 //已经提醒过的新闻不再提醒
                 if (mapCache.get(idKey)==null) {
                     //拿到主题
-                    String title = ele.select("a").text()+"。";
+                    Elements a = ele.select("a");
+                    String title = StringUtils.hasText(a.select("span").text())?a.select("span").text():a.text()+"。";
                     String details = "详情：http://www.gov.cn" + href;
                     sendTo(title,details);
                     mapCache.put(idKey,1,3, TimeUnit.DAYS,3,TimeUnit.DAYS);
@@ -64,6 +68,7 @@ public class PaChongUtil {
 
         //拿到网页源码
         String urlSource = HtmlRequest.getURLSource("http://www.mot.gov.cn/jiaotongyaowen");
+        if (!StringUtils.hasText(urlSource)) return;
         //采用jsoup解析
         Document doc = Jsoup.parse(urlSource);
         //定位到集合内容
@@ -89,11 +94,17 @@ public class PaChongUtil {
             }
         }
     }
+    //爬图片到本地
+    public void getPicture() {
+
+    }
 
     private void sendTo(String title,String details){
         //推邮箱
-        mailUtil.sendMail(title,details,sendGovNewMails);
+//        mailUtil.sendMail(title,details,sendGovNewMails);
         //推微信
+//        KeyboardUtil.copyAndSend(title+details);
+        //本地保存
 //        KeyboardUtil.copyAndSend(title+details);
     }
 }

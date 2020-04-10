@@ -229,6 +229,11 @@
             <artifactId>jjwt</artifactId>
             <version>0.7.0</version>
         </dependency>
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>easyexcel</artifactId>
+            <version>2.1.6</version>
+        </dependency>
     </dependencies>
     <name>hhczy</name>
 

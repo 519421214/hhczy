@@ -59,7 +59,7 @@ public abstract class KeyboardUtil {
     }
 
     public static void main(String[] args) throws Exception {
-        Clipboard clip = Toolkit.getDefaultToolkit().getSystemClipboard();
+
 //        openApp();
 //        String[] lists = {"我只爱你四天,春天夏天秋天冬天", "我只爱你三天,昨天,今天,明天.", "我只爱你两天,白天,黑天", "我只爱你一天,每一天", "爱你么么哒"};
 //        copyAndSend("123");

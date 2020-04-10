@@ -3,6 +3,8 @@ package bean;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
+import java.util.Date;
+
 /**
  * @Getter 和 @Setter:添加 @Getter 和 @Setter 注解用在 Java Bean 类上面，无需生成 get/ set 方法，会自动生成所有的 get/ set 方法及一个默认的构造方法。
  *                      注解也可以单独使用在字段上面，同样也会生成对应的 get/ set 方法及一个默认的构造方法。
@@ -21,16 +23,11 @@ public class Students {
     private Integer id;
     private String name;
     private Integer age;
+    private Date createTime;
 
-
-
-
-
-
-
-
-
-
-
-
+    public Students(Integer id, String name, Integer age) {
+        this.id = id;
+        this.name = name;
+        this.age = age;
+    }
 }

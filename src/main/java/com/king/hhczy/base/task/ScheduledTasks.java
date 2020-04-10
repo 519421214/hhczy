@@ -1,5 +1,6 @@
 package com.king.hhczy.base.task;
 
+import com.king.hhczy.common.util.GupiaoUtil;
 import com.king.hhczy.common.util.PaChongUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,6 +8,14 @@ import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+
+import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
+import java.awt.datatransfer.Transferable;
+import java.awt.event.KeyEvent;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 
 /**
  * @author ningjinxiang
@@ -41,6 +50,12 @@ public class ScheduledTasks {
     public void buildToLocal() {
 //        dataSourceService.updateChannelStatus(this.getClass().getSimpleName(), UUIDUtil.uuid());
     }
+    @Autowired
+    private GupiaoUtil gupiaoUtil;
+    @Scheduled(fixedDelay = 5000)//
+    public void test() {
+        gupiaoUtil.showDetail();
+    }
 
     /**
      * 每天闲时同步按月查询数据到redis
@@ -53,13 +68,50 @@ public class ScheduledTasks {
     /**
      * 每天闲时同步按月查询数据到redis
      */
-    @Scheduled(fixedDelay = 60000)//两分钟执行一次
+//    @Scheduled(fixedDelay = 60000)//两分钟执行一次
 //    @Scheduled(cron = "0 0 2 * * ?")//每天凌晨2点同步一次
+    @Scheduled(cron = "0 0/1 6-23 * * ?")//6-23点每分钟执行一次
     public void paGovNews() {
         paChongUtil.govNews();
         paChongUtil.motNews();
     }
 
+    private static int tip = 0;
+//    @Scheduled(fixedDelay = 1000)//两分钟执行一次
+//    @Scheduled(cron = "0 0 2 * * ?")//每天凌晨2点同步一次
+    public void aaa() throws AWTException {
+        if (tip==3) {
+            return;
+        }
+        Robot robot = new Robot();
+        BufferedImage screenCapture = robot.createScreenCapture(new Rectangle(1746, 592, 1, 1));
+        int rgb = screenCapture.getRGB(0, 0);
+        if (rgb!=-240029) {
+            tip++;
+            Runtime runtime = Runtime.getRuntime();
+            Process p = null;
+//        String path = "C:\\Program Files (x86)\\Tencent\\WeChat\\WeChat.exe";
+            try {
+                for (int i = 0; i < 3; i++) {
+                    p = runtime.exec("C:\\\\Program Files (x86)\\\\Tencent\\\\WeChat\\\\WeChat.exe");
+                    Clipboard clip = Toolkit.getDefaultToolkit().getSystemClipboard();
+                    Transferable tText = new StringSelection("警告：你的电脑被人动，请查监控快速确认"); //自己定义就需要把这行注释，下行取消注释
+//            tText = new StringSelection("爱你每一天");//如果爱得深，把这行取消注释，把内容更换掉你自己想说的
+                    clip.setContents(tText, null);
+                    robot.keyPress(KeyEvent.VK_CONTROL);
+                    robot.keyPress(KeyEvent.VK_V);
+                    robot.keyRelease(KeyEvent.VK_CONTROL);//释放所有按键
+                    robot.delay(100);
+                    robot.keyPress(KeyEvent.VK_ENTER);
+                    robot.keyRelease(KeyEvent.VK_CONTROL);//释放所有按键
+                    robot.delay(100);
+                }
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+    }
 //    @Value("${local.clean.path}")
 //    private String[] cleanPaths;
     /**
