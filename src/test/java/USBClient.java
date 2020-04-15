@@ -105,7 +105,7 @@ public class USBClient {
         String d = null;
 
         a = "adb -s " + device.getDeviceId()+ " shell am broadcast -a NotifyServiceStop";
-        b = "adb -s " + device.getDeviceId() + " forward tcp:"+device.getPort()+" tcp:6066";
+        b = "adb -s " + device.getDeviceId() + " forward tcp:"+device.getPort()+" tcp:1080";
         c = "adb -s " + device.getDeviceId()+ " shell am broadcast -a NotifyServiceStart";
         d= "adb -s " + device.getDeviceId()+ " shell am start -n com.newland.realmobiledetection/com.newland.realmobiledetection.system.activity.WelcomeActivity";
         log.error("......device...a.."+a);
