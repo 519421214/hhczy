@@ -22,13 +22,8 @@ public class GupiaoUtil {
 //    private String[] codes = {"sz300098,sz000100,sh600105,sz000625,sz300050,sz002446,sh600936,sh600699,sh600050"};002584,300366,300796,300706
     private String[] codes = {"sz300098,sz000100,sz000625,sh600699,sz000505,sz002352,sh600127,sz002370,sz002770"};
 
-    public void testSout() {
-        System.out.println("来了老弟：");
-    }
     //GP信息输出到控制台
     public void showDetail() {
-        MethodUtil.executeTargrtMethod(GupiaoUtil.class, "testSout");//反射，取代if/else
-
         String codesStr = Arrays.stream(codes).reduce((s1, s2) -> s1 + "," + s2).orElse(null);
         DecimalFormat df = new DecimalFormat("0.00");
 
