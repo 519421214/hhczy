@@ -1,6 +1,7 @@
 import com.alibaba.fastjson.JSONObject;
 import com.king.hhczy.common.util.FilesUtils;
 import com.king.hhczy.common.util.Log;
+import com.king.hhczy.common.util.MethodUtil;
 import com.king.hhczy.entity.domain.TblAccount;
 import lombok.Cleanup;
 import org.springframework.util.StringUtils;
@@ -48,7 +49,7 @@ public class Test {
 //        /// 千万别忘记finish 会帮忙关闭流
 //        excelWriter.finish();
 //        searchFileByContent3("D:\\log2");
-//        MethodUtil.executeTargrtMethod(Test.class, "testSout");//反射，取代if/else
+        MethodUtil.executeTargrtMethod(Test.class, "testSout");//反射，取代if/else
     }
     public void testSout() {
         System.out.println("来了老弟：");
