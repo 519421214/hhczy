@@ -21,9 +21,9 @@ import java.util.*;
 /**
  * 写的常见写法
  *
- * @author Jiaju Zhuang
+ * @author NingJinxiang
  */
-public class ExcelTest {
+public class AlibabaExcel {
     private static String rootPath = "D:\\";
     
     public static void main(String[] args) throws Exception {
@@ -35,9 +35,11 @@ public class ExcelTest {
         String fileName = rootPath + "simpleWrite" + System.currentTimeMillis() + ".xlsx";
         // 这里 需要指定写用哪个class去写，然后写到第一个sheet，名字为模板 然后文件流会自动关闭
         // 如果这里想使用03 则 传入excelType参数即可
-        //ExcelTestModel 通过注解设定格式、样式
+        //ExcelTestModel 通过注解设定格式、样式，表头配置在类中
         EasyExcel.write(fileName, ExcelTestModel.class).sheet("模板").doWrite(data2());
-//        EasyExcel.write(fileName).head(head()).sheet("模板").registerWriteHandler(new LongestMatchColumnWidthStyleStrategy()).doWrite(data());
+
+        //head：设置表头；registerWriteHandler：自适应列宽,自定义表头
+        EasyExcel.write(fileName).head(head()).sheet("模板").registerWriteHandler(new LongestMatchColumnWidthStyleStrategy()).doWrite(data());
 
 //        // 写法2
 //        fileName = rootPath + "simpleWrite" + System.currentTimeMillis() + ".xlsx";
