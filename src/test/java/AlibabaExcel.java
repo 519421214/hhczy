@@ -4,6 +4,7 @@ import bean.ExcelTestModel;
 import bean.Students;
 import com.alibaba.excel.EasyExcel;
 import com.alibaba.excel.ExcelWriter;
+import com.alibaba.excel.write.handler.WriteHandler;
 import com.alibaba.excel.write.merge.LoopMergeStrategy;
 import com.alibaba.excel.write.metadata.WriteSheet;
 import com.alibaba.excel.write.metadata.WriteTable;
@@ -12,11 +13,13 @@ import com.alibaba.excel.write.metadata.style.WriteFont;
 import com.alibaba.excel.write.style.HorizontalCellStyleStrategy;
 import com.alibaba.excel.write.style.column.LongestMatchColumnWidthStyleStrategy;
 import com.sun.scenario.effect.ImageData;
+import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.IndexedColors;
 
 import java.io.File;
 import java.util.*;
+import java.util.function.Function;
 
 /**
  * 写的常见写法
@@ -25,34 +28,36 @@ import java.util.*;
  */
 public class AlibabaExcel {
     private static String rootPath = "D:\\";
-    
+
     public static void main(String[] args) throws Exception {
-        simpleWrite();
+        repeatedWrite();
     }
-    
+
     public static void simpleWrite() {
         // 写法1
-        String fileName = rootPath + "simpleWrite" + System.currentTimeMillis() + ".xlsx";
+        Function<String, String> fileName = x -> rootPath + "simpleWrite" + x + System.currentTimeMillis() + ".xlsx";
         // 这里 需要指定写用哪个class去写，然后写到第一个sheet，名字为模板 然后文件流会自动关闭
         // 如果这里想使用03 则 传入excelType参数即可
-        //ExcelTestModel 通过注解设定格式、样式，表头配置在类中
-        EasyExcel.write(fileName, ExcelTestModel.class).sheet("模板").doWrite(data2());
+        //ExcelTestModel 通过注解设定格式、样式，表头配置在类中,registerWriteHandler:Excel 表格样式
+        EasyExcel.write(fileName.apply("1"), ExcelTestModel.class).sheet("模板1").registerWriteHandler(createTableStyle()).doWrite(data2());
 
         //head：设置表头；registerWriteHandler：自适应列宽,自定义表头
-        EasyExcel.write(fileName).head(head()).sheet("模板").registerWriteHandler(new LongestMatchColumnWidthStyleStrategy()).doWrite(data());
+        EasyExcel.write(fileName.apply("2")).head(head()).sheet("模板1").registerWriteHandler(new LongestMatchColumnWidthStyleStrategy()).doWrite(data());
 
-//        // 写法2
-//        fileName = rootPath + "simpleWrite" + System.currentTimeMillis() + ".xlsx";
-//        // 这里 需要指定写用哪个class去写
-//        ExcelWriter excelWriter = EasyExcel.write(fileName, Students.class).build();
-//        WriteSheet writeSheet = EasyExcel.writerSheet("模板").build();
-//        excelWriter.write(data(), writeSheet);
-//        /// 千万别忘记finish 会帮忙关闭流
-//        excelWriter.finish();
+        // 写法2(可以写多sheet)
+        // 这里 需要指定写用哪个class去写
+        ExcelWriter excelWriter = EasyExcel.write(fileName.apply("3"), ExcelTestModel.class).build();
+        //这个遍历几次就有几个sheet begin----
+        WriteSheet writeSheet = EasyExcel.writerSheet("模板").build();
+        excelWriter.write(data(), writeSheet);
+        //这个遍历几次就有几个sheet end----
+
+        /// 千万别忘记finish 会帮忙关闭流
+        excelWriter.finish();
     }
 
     /**
-     * 根据参数只导出指定列300658jjd0182909xkskakw
+     * 根据参数只导出指定列（可以要求导出哪些字段，不要哪些字段）
      * <p>
      * 1. 创建excel对应的实体对象 参照{@link Students}
      * <p>
@@ -62,7 +67,6 @@ public class AlibabaExcel {
      *
      * @since 2.1.1
      */
-
     public static void excludeOrIncludeWrite() {
         String fileName = rootPath + "excludeOrIncludeWrite" + System.currentTimeMillis() + ".xlsx";
 
@@ -83,65 +87,32 @@ public class AlibabaExcel {
     }
 
     /**
-     * 指定写入的列
+     * 重复多次写入，一列一列地写
      * <p>
      * 1. 创建excel对应的实体对象 参照{@link Device}
      * <p>
-     * 2. 使用{@link ExcelProperty}注解指定写入的列
-     * <p>
-     * 3. 直接写即可
-     */
-
-    public static void indexWrite() {
-        String fileName = rootPath + "indexWrite" + System.currentTimeMillis() + ".xlsx";
-        // 这里 需要指定写用哪个class去写，然后写到第一个sheet，名字为模板 然后文件流会自动关闭
-        EasyExcel.write(fileName, Device.class).sheet("模板").doWrite(data());
-    }
-
-    /**
-     * 复杂头写入
-     * <p>
-     * 1. 创建excel对应的实体对象 参照{@link Device}
-     * <p>
-     * 2. 使用{@link ExcelProperty}注解指定复杂的头
-     * <p>
-     * 3. 直接写即可
-     */
-
-    public static void complexHeadWrite() {
-        String fileName = rootPath + "complexHeadWrite" + System.currentTimeMillis() + ".xlsx";
-        // 这里 需要指定写用哪个class去写，然后写到第一个sheet，名字为模板 然后文件流会自动关闭
-        EasyExcel.write(fileName, Device.class).sheet("模板").doWrite(data());
-    }
-
-    /**
-     * 重复多次写入
-     * <p>
-     * 1. 创建excel对应的实体对象 参照{@link Device}
-     * <p>
-     * 2. 使用{@link ExcelProperty}注解指定复杂的头
      * <p>
      * 3. 直接调用二次写入即可
      */
 
     public static void repeatedWrite() {
         // 方法1 如果写到同一个sheet
-        String fileName = rootPath + "repeatedWrite" + System.currentTimeMillis() + ".xlsx";
+        String fileName = rootPath + "repeatedWrite1" + System.currentTimeMillis() + ".xlsx";
         // 这里 需要指定写用哪个class去写
-        ExcelWriter excelWriter = EasyExcel.write(fileName, Students.class).build();
+        ExcelWriter excelWriter = EasyExcel.write(fileName, ExcelTestModel.class).build();
         // 这里注意 如果同一个sheet只要创建一次
         WriteSheet writeSheet = EasyExcel.writerSheet("模板").build();
         // 去调用写入,这里我调用了五次，实际使用时根据数据库分页的总的页数来
         for (int i = 0; i < 5; i++) {
             // 分页去数据库查询数据 这里可以去数据库查询每一页的数据
-            List<Students> data = data();
+            List data = data();
             excelWriter.write(data, writeSheet);
         }
         /// 千万别忘记finish 会帮忙关闭流
         excelWriter.finish();
 
         // 方法2 如果写到不同的sheet 同一个对象
-        fileName = rootPath + "repeatedWrite" + System.currentTimeMillis() + ".xlsx";
+        fileName = rootPath + "repeatedWrite2" + System.currentTimeMillis() + ".xlsx";
         // 这里 指定文件
         excelWriter = EasyExcel.write(fileName, Students.class).build();
         // 去调用写入,这里我调用了五次，实际使用时根据数据库分页的总的页数来。这里最终会写到5个sheet里面
@@ -156,7 +127,7 @@ public class AlibabaExcel {
         excelWriter.finish();
 
         // 方法3 如果写到不同的sheet 不同的对象
-        fileName = rootPath + "repeatedWrite" + System.currentTimeMillis() + ".xlsx";
+        fileName = rootPath + "repeatedWrite3" + System.currentTimeMillis() + ".xlsx";
         // 这里 指定文件
         excelWriter = EasyExcel.write(fileName).build();
         // 去调用写入,这里我调用了五次，实际使用时根据数据库分页的总的页数来。这里最终会写到5个sheet里面
@@ -169,22 +140,6 @@ public class AlibabaExcel {
         }
         /// 千万别忘记finish 会帮忙关闭流
         excelWriter.finish();
-    }
-
-    /**
-     * 日期、数字或者自定义格式转换
-     * <p>
-     * 1. 创建excel对应的实体对象 参照{@link Device}
-     * <p>
-     * 2. 使用{@link ExcelProperty}配合使用注解{@link DateTimeFormat}、{@link NumberFormat}或者自定义注解
-     * <p>
-     * 3. 直接写即可
-     */
-
-    public static void converterWrite() {
-        String fileName = rootPath + "converterWrite" + System.currentTimeMillis() + ".xlsx";
-        // 这里 需要指定写用哪个class去写，然后写到第一个sheet，名字为模板 然后文件流会自动关闭
-        EasyExcel.write(fileName, Device.class).sheet("模板").doWrite(data());
     }
 
     /**
@@ -498,19 +453,55 @@ public class AlibabaExcel {
         return list;
     }
 
+    /***
+     * 设置 excel 的样式
+     * @return
+     */
+    private static WriteHandler createTableStyle() {
+        // 头的策略
+        WriteCellStyle headWriteCellStyle = new WriteCellStyle();
+        // 背景设置为红色
+        headWriteCellStyle.setFillForegroundColor(IndexedColors.PINK.getIndex());
+        // 设置字体
+        WriteFont headWriteFont = new WriteFont();
+        headWriteFont.setFontHeightInPoints((short) 20);
+        headWriteCellStyle.setWriteFont(headWriteFont);
+        // 内容的策略
+        WriteCellStyle contentWriteCellStyle = new WriteCellStyle();
+        // 这里需要指定 FillPatternType 为FillPatternType.SOLID_FOREGROUND 不然无法显示背景颜色.头默认了 FillPatternType所以可以不指定
+        contentWriteCellStyle.setFillPatternType(FillPatternType.SOLID_FOREGROUND);
+        // 背景绿色
+        contentWriteCellStyle.setFillForegroundColor(IndexedColors.LEMON_CHIFFON.getIndex());
+
+        WriteFont contentWriteFont = new WriteFont();
+        // 字体大小
+        contentWriteFont.setFontHeightInPoints((short) 20);
+        contentWriteCellStyle.setWriteFont(contentWriteFont);
+        // 设置边框的样式
+        contentWriteCellStyle.setBorderBottom(BorderStyle.DASHED);
+        contentWriteCellStyle.setBorderLeft(BorderStyle.DASHED);
+        contentWriteCellStyle.setBorderRight(BorderStyle.DASHED);
+        contentWriteCellStyle.setBorderTop(BorderStyle.DASHED);
+
+        // 这个策略是 头是头的样式 内容是内容的样式 其他的策略可以自己实现
+        HorizontalCellStyleStrategy horizontalCellStyleStrategy =
+                new HorizontalCellStyleStrategy(headWriteCellStyle, contentWriteCellStyle);
+        return horizontalCellStyleStrategy;
+    }
+
     private static List<List<String>> head() {
         //如果每一列的相同行数的内容相同，将会自动合并单元格。通过这个规则，我们创建复杂的表头。
         List<List<String>> list = new ArrayList<List<String>>();
         List<String> head0 = new ArrayList<String>();
-        head0.add("字符串" + System.currentTimeMillis());
-        head0.add("字符串" + System.currentTimeMillis());
+        head0.add("字符串");
+        head0.add("字符串");
         List<String> head1 = new ArrayList<String>();
-        head1.add("字符串" + System.currentTimeMillis());
-        head1.add("数字" + System.currentTimeMillis());
+        head1.add("字符串");
+        head1.add("数字");
         List<String> head2 = new ArrayList<String>();
-        head2.add("年龄" + System.currentTimeMillis());
+        head2.add("年龄");
         List<String> head3 = new ArrayList<String>();
-        head3.add("创建日期" + System.currentTimeMillis());
+        head3.add("创建日期");
         list.add(head0);
         list.add(head1);
         list.add(head2);
@@ -532,18 +523,20 @@ public class AlibabaExcel {
 
     private static List<Students> data() {
         List<Students> list = new ArrayList<Students>();
-        for (int i = 0; i < 10; i++) {
-            Students data = new Students(i,"宁"+i,i+1, new Date());//不认localdatetime
+        for (int i = 0; i < 1; i++) {
+            Students data = new Students(i, "宁" + i, i + 1, new Date());//不认localdatetime,DATE数据会被默认转格式yyyy-MM-dd hh:mm:ss
             list.add(data);
         }
         return list;
     }
+
     private static List<ExcelTestModel> data2() {
         List<ExcelTestModel> list = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
-            ExcelTestModel data = new ExcelTestModel("宁"+i,new Date(),(double)i, ExcelTestEnum.Man);//不认localdatetime
+            ExcelTestModel data = new ExcelTestModel("宁" + i, new Date(), (double) i, ExcelTestEnum.Man);//不认localdatetime
             list.add(data);
         }
         return list;
     }
+
 }

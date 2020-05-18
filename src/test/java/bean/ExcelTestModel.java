@@ -20,13 +20,13 @@ public class ExcelTestModel {
      * 单独设置该列宽度
      */
     @ColumnWidth(50)
-    @ExcelProperty("字符串标题")
+    @ExcelProperty({"字符串标题","字符串标题2"})//数组可以处理复杂的标题,复杂表头
     private String string;
     /**
      * 年月日时分秒格式
      */
     @DateTimeFormat("yyyy年MM月dd日HH时mm分ss秒")
-    @ExcelProperty(value = "日期标题")
+    @ExcelProperty({"字符串标题","日期标题"})
     private Date date;
     /**
      * 格式化百分比
