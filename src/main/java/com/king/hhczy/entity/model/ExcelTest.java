@@ -1,4 +1,4 @@
-package bean;
+package com.king.hhczy.entity.model;
 
 import com.alibaba.excel.annotation.ExcelIgnore;
 import com.alibaba.excel.annotation.ExcelProperty;
@@ -15,18 +15,18 @@ import java.util.Date;
 @HeadRowHeight(20)// 表头行高
 @ColumnWidth(35)// 列宽
 @Data
-public class ExcelTestModel {
+public class ExcelTest {
     /**
      * 单独设置该列宽度
      */
     @ColumnWidth(50)
-    @ExcelProperty({"字符串标题","字符串标题2"})//数组可以处理复杂的标题,复杂表头
+    @ExcelProperty("字符串标题")
     private String string;
     /**
      * 年月日时分秒格式
      */
     @DateTimeFormat("yyyy年MM月dd日HH时mm分ss秒")
-    @ExcelProperty({"字符串标题","日期标题"})
+    @ExcelProperty(value = "日期标题")
     private Date date;
     /**
      * 格式化百分比
@@ -34,18 +34,9 @@ public class ExcelTestModel {
     @NumberFormat("#.##%")
     @ExcelProperty("数字标题")
     private Double doubleData;
-    @ExcelProperty(value = "枚举类",converter = DemoEnumConvert.class)
-    private ExcelTestEnum demoEnum;
     /**
      * 忽略这个字段
      */
     @ExcelIgnore
     private String ignore;
-
-    public ExcelTestModel(String string, Date date, Double doubleData, ExcelTestEnum demoEnum) {
-        this.string = string;
-        this.date = date;
-        this.doubleData = doubleData;
-        this.demoEnum = demoEnum;
-    }
 }

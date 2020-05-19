@@ -101,26 +101,26 @@ public class USBClient {
     public static void portForwardBydevice(Device device){
         String a = null;
         String b = null;
-        String c = null;
-        String d = null;
+//        String c = null;
+//        String d = null;
 
-        a = "adb -s " + device.getDeviceId()+ " shell am broadcast -a NotifyServiceStop";
+        a = "adb -s " + device.getDeviceId()+ " shell am broadcast -a com.gosuncn.zfyusb.USBCONNECT";
         b = "adb -s " + device.getDeviceId() + " forward tcp:"+device.getPort()+" tcp:1080";
-        c = "adb -s " + device.getDeviceId()+ " shell am broadcast -a NotifyServiceStart";
-        d= "adb -s " + device.getDeviceId()+ " shell am start -n com.newland.realmobiledetection/com.newland.realmobiledetection.system.activity.WelcomeActivity";
+//        c = "adb -s " + device.getDeviceId()+ " shell am broadcast -a com.gosuncn.zfyusb.USBCONNECT";
+//        d= "adb -s " + device.getDeviceId()+ " shell am start -n com.newland.realmobiledetection/com.newland.realmobiledetection.system.activity.WelcomeActivity";
         log.error("......device...a.."+a);
         log.error("......device...b.."+b);
-        log.error("......device...c.."+c);
-        log.error("......device...d.."+d);
+//        log.error("......device...c.."+c);
+//        log.error("......device...d.."+d);
         try {
-            Runtime.getRuntime().exec(d);
-            Thread.sleep(500);
+//            Runtime.getRuntime().exec(d);
+//            Thread.sleep(500);
             Runtime.getRuntime().exec(a);
             Thread.sleep(500);
             Runtime.getRuntime().exec(b);
             Thread.sleep(500);
-            Runtime.getRuntime().exec(c);
-            Thread.sleep(500);
+//            Runtime.getRuntime().exec(c);
+//            Thread.sleep(500);
             log.error("端口映射完成。。");
         } catch (IOException e) {
 

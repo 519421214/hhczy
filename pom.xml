@@ -229,11 +229,18 @@
             <artifactId>jjwt</artifactId>
             <version>0.7.0</version>
         </dependency>
+        <!--导出excel的两种流行方法B-->
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>easyexcel</artifactId>
             <version>2.1.6</version>
         </dependency>
+        <dependency>
+            <groupId>com.pig4cloud.excel</groupId>
+            <artifactId>excel-spring-boot-starter</artifactId>
+            <version>0.0.2</version>
+        </dependency>
+        <!--导出excel的两种流行方法E-->
     </dependencies>
     <name>hhczy</name>
 

@@ -1,7 +1,6 @@
 import com.alibaba.fastjson.JSONObject;
 import com.king.hhczy.common.util.FilesUtils;
 import com.king.hhczy.common.util.Log;
-import com.king.hhczy.common.util.MethodUtil;
 import com.king.hhczy.entity.domain.TblAccount;
 import lombok.Cleanup;
 import org.springframework.util.StringUtils;
@@ -27,6 +26,7 @@ import java.util.stream.Stream;
 public class Test {
 
     public static void main(String[] args) throws Exception {
+        System.out.println(LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME));
 //        double a = 62.21345856456465;
 //        System.out.println(String.format("%.5f",a));
 //        Map<String, Object> data = new HashMap<>();
@@ -36,7 +36,7 @@ public class Test {
 //        data.add(10);
 //        // 写法1
 //        String fileName = "D:\\simpleWrite" + System.currentTimeMillis() + ".xlsx";
-//        // 这里 需要指定写用哪个class去写，然后写到第一个sheet，名字为模板 然后文件流会自动关闭
+//        // 这里 需要指定写用哪个class去写，然后写到第一个sheet，名字为模板 然后文件流会自动关闭-
 //        // 如果这里想使用03 则 传入excelType参数即可
 //        EasyExcel.write(fileName, Students.class).sheet("模板").doWrite(data);
 
@@ -49,7 +49,23 @@ public class Test {
 //        /// 千万别忘记finish 会帮忙关闭流
 //        excelWriter.finish();
 //        searchFileByContent3("D:\\log2");
-        MethodUtil.executeTargrtMethod(Test.class, "testSout");//反射，取代if/else
+//        MethodUtil.executeTargrtMethod(Test.class, "testSout");//反射，取代if/else
+        System.out.println(gbEncoding("航航粗壮圆"));
+    }
+    /*
+     * 中文转unicode编码
+     */
+    public static String gbEncoding(final String gbString) {
+        char[] utfBytes = gbString.toCharArray();
+        String unicodeBytes = "";
+        for (int i = 0; i < utfBytes.length; i++) {
+            String hexB = Integer.toHexString(utfBytes[i]);
+            if (hexB.length() <= 2) {
+                hexB = "00" + hexB;
+            }
+            unicodeBytes = unicodeBytes + "\\u" + hexB;
+        }
+        return unicodeBytes;
     }
     public void testSout() {
         System.out.println("来了老弟：");
