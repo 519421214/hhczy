@@ -6,7 +6,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.awt.*;
@@ -52,7 +51,7 @@ public class ScheduledTasks {
     }
     @Autowired
     private GupiaoUtil gupiaoUtil;
-    @Scheduled(fixedDelay = 5000)//
+//    @Scheduled(fixedDelay = 5000)//
     public void test() {
         gupiaoUtil.showDetail();
     }
@@ -70,7 +69,7 @@ public class ScheduledTasks {
      */
 //    @Scheduled(fixedDelay = 60000)//两分钟执行一次
 //    @Scheduled(cron = "0 0 2 * * ?")//每天凌晨2点同步一次
-    @Scheduled(cron = "0 0/1 6-23 * * ?")//6-23点每分钟执行一次
+//    @Scheduled(cron = "0 0/1 6-23 * * ?")//6-23点每分钟执行一次
     public void paGovNews() {
         paChongUtil.govNews();
         paChongUtil.motNews();

@@ -1,5 +1,6 @@
 package com.king.hhczy.controller;
 
+import com.king.hhczy.common.util.FilesUtils;
 import com.king.hhczy.common.util.NonStaticResourceHttpRequestHandler;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
@@ -14,6 +15,9 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 通过接口直接获取视频流播放
@@ -35,6 +39,10 @@ public class VideoController {
      */
     @GetMapping("/vip1")
     public void videoPreview1(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        List<Path> videoList = new ArrayList<>();
+        videoList.addAll(FilesUtils.getAllFilesPaths("F:\\迅雷下载2"));
+        videoList.addAll(FilesUtils.getAllFilesPaths("H:\\迅雷下载"));
+        List<Path> collect = videoList.parallelStream().filter(x -> x.toString().toUpperCase().lastIndexOf(".MP4") != -1).collect(Collectors.toList());
         preview(request,response,"F:\\迅雷下载2\\00后软萌小萝莉约小帅哥直播啪啪\\00后软萌小萝莉约小帅哥直播啪啪.mp4");
     }
     @GetMapping("/vip2")
