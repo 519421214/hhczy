@@ -1,4 +1,5 @@
 import com.alibaba.fastjson.JSONObject;
+import com.google.gson.Gson;
 import com.king.hhczy.common.util.FilesUtils;
 import com.king.hhczy.common.util.Log;
 import com.king.hhczy.entity.domain.TblAccount;
@@ -26,7 +27,7 @@ import java.util.stream.Stream;
 public class Test {
 
     public static void main(String[] args) throws Exception {
-        System.out.println(LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME));
+        System.out.println(encodeString("ruanjian"));
 //        double a = 62.21345856456465;
 //        System.out.println(String.format("%.5f",a));
 //        Map<String, Object> data = new HashMap<>();
@@ -50,7 +51,37 @@ public class Test {
 //        excelWriter.finish();
 //        searchFileByContent3("D:\\log2");
 //        MethodUtil.executeTargrtMethod(Test.class, "testSout");//反射，取代if/else
-        System.out.println(gbEncoding("航航粗壮圆"));
+    }
+    private static String createTranData(String subCmdType, String rootName , Object inputMap){
+        StringBuilder stringBuilder = new StringBuilder();
+
+        stringBuilder.append("<SubCmdType>");
+        stringBuilder.append(subCmdType);
+        stringBuilder.append("</SubCmdType>");
+
+        stringBuilder.append("<" + rootName + ">");
+        if(inputMap instanceof Map){
+            Gson gson = new Gson();
+            Map mapVal = gson.fromJson(gson.toJson(inputMap), Map.class);
+            mapVal.forEach((k,v)->{
+                stringBuilder.append("<" + k + ">");
+                if (v instanceof Map) {
+                    Map mapVal2 = gson.fromJson(gson.toJson(v), Map.class);
+                    mapVal2.forEach((k2,v2)->{
+                        stringBuilder.append("<" + k2 + ">" +v2 +"</" + k2 + ">" );
+                    });
+                }else {
+                    stringBuilder.append(v);
+                }
+                stringBuilder.append("<" + k + ">");
+            });
+        }else {
+            stringBuilder.append(""+inputMap);
+        }
+
+
+        stringBuilder.append("</" + rootName + ">");
+        return stringBuilder.toString();
     }
     /*
      * 中文转unicode编码
@@ -481,22 +512,18 @@ public class Test {
 
     public static String decodeString(String source) {// 解密
         if (securityString) {
-            if (StringUtils.isEmpty(source)) {
-                return "";
-            }
             StringBuilder builder = new StringBuilder();
             source = source.trim();
             int length = source.length();
             for (int i = 0; i < length; i = i + 3) {
-                String numStr = source.substring(i, length >= (i + 3) ? (i + 3) : length);
-                char charAt = (char) (Integer.valueOf(numStr)).intValue();
+                String numStr = source.substring(i, length >= (i+3) ? (i+3):length);
+                char charAt= (char)(Integer.valueOf(numStr)).intValue();
                 builder.append(charAt);
             }
             return builder.toString();
-        } else {
+        }else {
             return source;
         }
-
     }
 
     /**

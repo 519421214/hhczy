@@ -28,15 +28,26 @@ public class USBClient {
                     if (!echoSocket.isConnected()) {
                         break;
                     }
-                    readMsg = readMsgFromSocket(in);
-                    if (readMsg.length() == 0) {
-                        break;
-                    }
-                    log.info(readMsg);
+//                    readMsg = readMsgFromSocket(in);
+//                    if (readMsg.length() == 0) {
+//                        break;
+//                    }
+//                    log.info(readMsg);
                     //todo 测试，console输入
                     Scanner sc = new Scanner(System.in);
-                    out.write((sc.nextLine()).getBytes());
+
+//                    BufferedReader的readLine方法，只要读到流结束或者流关闭，就会返回null
+//                    在读取文件的时候，文件结尾就是流的结尾，但对于Socket而言不是的。不能认为流中数据读完了就是流的结尾了。Socket流还在，还是能够继续读写的。所以用Socket的输入流封装的BufferedReader调用readLine方法，是不会返回null的。也就发生阻塞了
+//                    解决方案：(https://www.cnblogs.com/sherrykid/p/6224380.html)
+//                    第一种：读取socket流不用BufferedReader，就用InputStream
+//                    第二种：客户端发送的时候，末尾添加换行符。取系统换行符  System.lineSeparator()
+                    out.write(("GS_ZFY_TCP_JSON_HEADER"+System.lineSeparator()).getBytes("utf-8"));
                     out.flush();
+                    out.write((sc.nextLine()+System.lineSeparator()).getBytes("utf-8"));
+                    out.flush();
+                    out.write(("GS_ZFY_TCP_JSON_FOOTER"+System.lineSeparator()).getBytes("utf-8"));
+                    out.flush();
+//                    out.write((sc.nextLine()).getBytes("utf-8"));
                 } catch (IOException e) {
                     log.error("设备已断开");
                     e.printStackTrace();
