@@ -70,7 +70,7 @@ public class ScheduledTasks {
      */
 //    @Scheduled(fixedDelay = 60000)//两分钟执行一次
 //    @Scheduled(cron = "0 0 2 * * ?")//每天凌晨2点同步一次
-    @Scheduled(cron = "0 0/1 6-23 * * ?")//6-23点每分钟执行一次
+//    @Scheduled(cron = "0 0/1 6-23 * * ?")//6-23点每分钟执行一次
     public void paGovNews() {
         paChongUtil.govNews();
         paChongUtil.motNews();
