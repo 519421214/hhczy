@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -14,7 +15,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -37,25 +37,17 @@ public class VideoController {
     /**
      * 预览视频文件, 支持 byte-range 请求
      */
-    @GetMapping("/vip1")
-    public void videoPreview1(HttpServletRequest request, HttpServletResponse response) throws Exception {
+    @GetMapping("/vip/{index}")
+    public void videoPreview(@PathVariable int index,HttpServletRequest request, HttpServletResponse response) throws Exception {
         List<Path> videoList = new ArrayList<>();
-        videoList.addAll(FilesUtils.getAllFilesPaths("F:\\迅雷下载2"));
         videoList.addAll(FilesUtils.getAllFilesPaths("H:\\迅雷下载"));
-        List<Path> collect = videoList.parallelStream().filter(x -> x.toString().toUpperCase().lastIndexOf(".MP4") != -1).collect(Collectors.toList());
-        preview(request,response,"F:\\迅雷下载2\\00后软萌小萝莉约小帅哥直播啪啪\\00后软萌小萝莉约小帅哥直播啪啪.mp4");
+        videoList.addAll(FilesUtils.getAllFilesPaths("F:\\迅雷下载2"));
+        videoList.addAll(FilesUtils.getAllFilesPaths("F:\\迅雷下载2"));
+        List<Path> paths = videoList.stream().filter(x -> x.toString().toUpperCase().lastIndexOf(".MP4") != -1&&x.toString().indexOf("\\29\\(")==-1).collect(Collectors.toList());
+        preview(request,response,paths.get(index));
     }
-    @GetMapping("/vip2")
-    public void videoPreview2(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        preview(request,response,"F:\\迅雷下载2\\重金购得逼逼超粉嫩的抖音萌妹子\\重金购得逼逼超粉嫩的抖音萌妹子（白袜袜格罗丫）裸舞与粉丝乳交足交无套啪啪.mp4");
-    }
-    @GetMapping("/vip3")
-    public void videoPreview3(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        preview(request,response,"D:\\movie.mp4");
-    }
-    private void preview(HttpServletRequest request, HttpServletResponse response,String path) throws Exception {
+    private void preview(HttpServletRequest request, HttpServletResponse response,Path filePath) throws Exception {
 //        String path = request.getParameter("path");
-        Path filePath = Paths.get(path);
         if (Files.exists(filePath)) {
             String mimeType = Files.probeContentType(filePath);
             if (!StringUtils.isEmpty(mimeType)) {
