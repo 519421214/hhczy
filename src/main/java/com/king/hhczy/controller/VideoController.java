@@ -33,17 +33,37 @@ import java.util.stream.Collectors;
 public class VideoController {
     @Autowired
     private NonStaticResourceHttpRequestHandler nonStaticResourceHttpRequestHandler;
-
+    private static List<Path> paths;
+    /**
+     * 预览视频文件, 支持 byte-range 请求
+     */
+    @GetMapping("/vip")
+    public String videoPath() {
+        StringBuffer pathStr = new StringBuffer();
+        if (paths == null) {
+            List<Path> videoList = new ArrayList<>();
+            videoList.addAll(FilesUtils.getAllFilesPaths("H:\\迅雷下载"));
+            videoList.addAll(FilesUtils.getAllFilesPaths("F:\\迅雷下载2"));
+            videoList.addAll(FilesUtils.getAllFilesPaths("F:\\迅雷下载2"));
+            paths = videoList.stream().filter(x -> x.toString().toUpperCase().lastIndexOf(".MP4") != -1&&x.toString().indexOf("\\29\\(")==-1).collect(Collectors.toList());
+        }
+        for (int i = 0; i < paths.size(); i++) {
+            pathStr.append("<p>").append(i).append(":").append(paths.get(i)).append("</p>");
+        }
+        return pathStr.toString();
+    }
     /**
      * 预览视频文件, 支持 byte-range 请求
      */
     @GetMapping("/vip/{index}")
     public void videoPreview(@PathVariable int index,HttpServletRequest request, HttpServletResponse response) throws Exception {
-        List<Path> videoList = new ArrayList<>();
-        videoList.addAll(FilesUtils.getAllFilesPaths("H:\\迅雷下载"));
-        videoList.addAll(FilesUtils.getAllFilesPaths("F:\\迅雷下载2"));
-        videoList.addAll(FilesUtils.getAllFilesPaths("F:\\迅雷下载2"));
-        List<Path> paths = videoList.stream().filter(x -> x.toString().toUpperCase().lastIndexOf(".MP4") != -1&&x.toString().indexOf("\\29\\(")==-1).collect(Collectors.toList());
+        if (paths == null) {
+            List<Path> videoList = new ArrayList<>();
+            videoList.addAll(FilesUtils.getAllFilesPaths("H:\\迅雷下载"));
+            videoList.addAll(FilesUtils.getAllFilesPaths("F:\\迅雷下载2"));
+            videoList.addAll(FilesUtils.getAllFilesPaths("F:\\迅雷下载2"));
+            paths = videoList.stream().filter(x -> x.toString().toUpperCase().lastIndexOf(".MP4") != -1&&x.toString().indexOf("\\29\\(")==-1).collect(Collectors.toList());
+        }
         preview(request,response,paths.get(index));
     }
     private void preview(HttpServletRequest request, HttpServletResponse response,Path filePath) throws Exception {
