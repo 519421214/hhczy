@@ -4,6 +4,9 @@ import com.king.hhczy.common.util.FilesUtils;
 import com.king.hhczy.common.util.NonStaticResourceHttpRequestHandler;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -12,6 +15,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.net.InetAddress;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -38,17 +43,19 @@ public class VideoController {
      * 预览视频文件, 支持 byte-range 请求
      */
     @GetMapping("/vip")
-    public String videoPath() {
+    public String videoPath() throws Exception {
         StringBuffer pathStr = new StringBuffer();
+        //獲取公网IP
+        //访问地址
+        String url = "http://" + getInternetIp() + ":6066/hhczy/v/vip/";
         if (paths == null) {
             List<Path> videoList = new ArrayList<>();
             videoList.addAll(FilesUtils.getAllFilesPaths("H:\\迅雷下载"));
-            videoList.addAll(FilesUtils.getAllFilesPaths("F:\\迅雷下载2"));
-            videoList.addAll(FilesUtils.getAllFilesPaths("F:\\迅雷下载2"));
             paths = videoList.stream().filter(x -> x.toString().toUpperCase().lastIndexOf(".MP4") != -1&&x.toString().indexOf("\\29\\(")==-1).collect(Collectors.toList());
         }
         for (int i = 0; i < paths.size(); i++) {
-            pathStr.append("<p>").append(i).append(":").append(paths.get(i)).append("</p>");
+            String name = paths.get(i).toString();
+            pathStr.append(String.format("<p><a href=\"%s%d\">%d.%s</a></p>",url,i,++i, name.substring(name.lastIndexOf("\\")+1)));
         }
         return pathStr.toString();
     }
@@ -81,4 +88,21 @@ public class VideoController {
         }
     }
 
+    /**
+     * 获取公网IP
+     * @return
+     * @throws Exception
+     */
+    private static String getInternetIp() throws Exception{
+        try {
+            // 打开连接
+            Document doc = Jsoup.connect("http://chaipip.com/").get();
+            Elements eles = doc.select("#ip");
+            return eles.attr("value");
+        }catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return InetAddress.getLocalHost().getHostAddress();
+    }
 }
