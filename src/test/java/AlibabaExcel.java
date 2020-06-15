@@ -4,6 +4,7 @@ import bean.ExcelTestModel;
 import bean.Students;
 import com.alibaba.excel.EasyExcel;
 import com.alibaba.excel.ExcelWriter;
+import com.alibaba.excel.util.FileUtils;
 import com.alibaba.excel.write.handler.WriteHandler;
 import com.alibaba.excel.write.merge.LoopMergeStrategy;
 import com.alibaba.excel.write.metadata.WriteSheet;
@@ -12,25 +13,36 @@ import com.alibaba.excel.write.metadata.style.WriteCellStyle;
 import com.alibaba.excel.write.metadata.style.WriteFont;
 import com.alibaba.excel.write.style.HorizontalCellStyleStrategy;
 import com.alibaba.excel.write.style.column.LongestMatchColumnWidthStyleStrategy;
+import com.king.hhczy.entity.model.alibaba.excel.ImageModel;
 import com.sun.scenario.effect.ImageData;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.IndexedColors;
 
 import java.io.File;
+import java.io.InputStream;
+import java.net.URL;
 import java.util.*;
 import java.util.function.Function;
 
 /**
- * 写的常见写法
- *
+ * 常见写法整理
  * @author NingJinxiang
+ */
+
+/**
+ * https://github.com/alibaba/easyexcel
+ * 官方说明：
+ * Java解析、生成Excel比较有名的框架有Apache poi、jxl。但他们都存在一个严重的问题就是非常的耗内存，
+ * poi有一套SAX模式的API可以一定程度的解决一些内存溢出的问题，但POI还是有一些缺陷，比如07版Excel解压缩以及解压后存储都是在内存中完成的，内存消耗依然很大。
+ * easyexcel重写了poi对07版Excel的解析，能够原本一个3M的excel用POI sax依然需要100M左右内存降低到几M，并且再大的excel不会出现内存溢出，
+ * 03版依赖POI的sax模式。在上层做了模型转换的封装，让使用者更加简单方便
  */
 public class AlibabaExcel {
     private static String rootPath = "D:\\";
 
     public static void main(String[] args) throws Exception {
-        repeatedWrite();
+        imageWrite();
     }
 
     public static void simpleWrite() {
@@ -87,7 +99,7 @@ public class AlibabaExcel {
     }
 
     /**
-     * 重复多次写入，一列一列地写
+     * 重复多次写入，一列一列地写，边查数据库边写
      * <p>
      * 1. 创建excel对应的实体对象 参照{@link Device}
      * <p>
@@ -150,30 +162,30 @@ public class AlibabaExcel {
      * 2. 直接写即可
      */
 
-//    public static void imageWrite() throws Exception {
-//        String fileName = rootPath + "imageWrite" + System.currentTimeMillis() + ".xlsx";
-//        // 如果使用流 记得关闭
-//        InputStream inputStream = null;
-//        try {
-//            List<ImageData> list = new ArrayList<ImageData>();
-//            ImageData imageData = new ImageData();
-//            list.add(imageData);
-//            String imagePath = rootPath + "converter" + File.separator + "img.jpg";
-//            // 放入五种类型的图片 实际使用只要选一种即可
-//            imageData.setByteArray(FileUtils.readFileToByteArray(new File(imagePath)));
-//            imageData.setFile(new File(imagePath));
-//            imageData.setString(imagePath);
-//            inputStream = FileUtils.openInputStream(new File(imagePath));
-//            imageData.setInputStream(inputStream);
-//            imageData.setUrl(new URL(
-//                    "https://raw.githubusercontent.com/alibaba/easyexcel/master/src/test/resources/converter/img.jpg"));
-//            EasyExcel.write(fileName, ImageData.class).sheet().doWrite(list);
-//        } finally {
-//            if (inputStream != null) {
-//                inputStream.close();
-//            }
-//        }
-//    }
+    public static void imageWrite() throws Exception {
+        String fileName = rootPath + "imageWrite" + System.currentTimeMillis() + ".xlsx";
+        // 如果使用流 记得关闭
+        InputStream inputStream = null;
+        try {
+            List<ImageModel> list = new ArrayList<ImageModel>();
+            ImageModel imageData = new ImageModel();
+            list.add(imageData);
+            String imagePath = rootPath + "converter" + File.separator + "img.jpg";//File.separator:只是一条斜杠/
+            // 放入五种类型的图片 实际使用只要选一种即可
+            imageData.setByteArray(FileUtils.readFileToByteArray(new File(imagePath)));
+            imageData.setFile(new File(imagePath));
+            imageData.setString(imagePath);
+            inputStream = FileUtils.openInputStream(new File(imagePath));
+            imageData.setInputStream(inputStream);
+            imageData.setUrl(new URL(
+                    "https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=1418098423,3040751320&fm=26&gp=0.jpg"));
+            EasyExcel.write(fileName, ImageData.class).sheet().doWrite(list);
+        } finally {
+            if (inputStream != null) {
+                inputStream.close();
+            }
+        }
+    }
 
     /**
      * 根据模板写入
