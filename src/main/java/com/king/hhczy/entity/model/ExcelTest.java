@@ -18,8 +18,10 @@ import java.util.Date;
 public class ExcelTest {
     /**
      * 单独设置该列宽度
+     * converter：可对值进行另外处理，这里是--字符串前面加上"自定义："三个字
      */
     @ColumnWidth(50)
+//    @ExcelProperty(value = "字符串标题",converter = CustomStringStringConverter.class)
     @ExcelProperty("字符串标题")
     private String string;
     /**
