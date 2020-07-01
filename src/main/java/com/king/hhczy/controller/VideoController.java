@@ -40,7 +40,7 @@ public class VideoController {
     //视频扫描路径
     private static String[] videoPaths = {"H:\\迅雷下载"};
     //视频格式
-    private static String[] videoFormat = {"MP4"};
+    private static String[] videoFormat = {"MP4","AVI"};
 
     /**
      * 预览视频文件, 支持 byte-range 请求

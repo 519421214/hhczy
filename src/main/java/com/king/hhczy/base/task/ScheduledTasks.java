@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.awt.*;
@@ -51,7 +52,7 @@ public class ScheduledTasks {
     }
     @Autowired
     private GupiaoUtil gupiaoUtil;
-//    @Scheduled(fixedDelay = 5000)//
+    @Scheduled(fixedDelay = 5000)//
     public void test() {
         gupiaoUtil.showDetail();
     }
