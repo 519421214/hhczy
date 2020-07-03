@@ -1,6 +1,7 @@
 package bean;
 
-import lombok.AllArgsConstructor;
+import com.alibaba.excel.annotation.ExcelProperty;
+import com.alibaba.excel.converters.string.StringImageConverter;
 import lombok.Data;
 
 import java.util.Date;
@@ -17,10 +18,12 @@ import java.util.Date;
  * @NonNull： 用在属性上，用于字段的非空检查，如果传入到 set 方法中的值为空，则抛出空指针异常，该注解也会生成一个默认的构造方法。
  */
 @Data
-@AllArgsConstructor
 public class Students {
 //    @Getter
     private Integer id;
+    //头像
+    @ExcelProperty(converter = StringImageConverter.class)
+    private String head;
     private String name;
     private Integer age;
     private Date createTime;
@@ -29,5 +32,12 @@ public class Students {
         this.id = id;
         this.name = name;
         this.age = age;
+    }
+    public Students(Integer id,String head, String name, Integer age,Date createTime) {
+        this.id = id;
+        this.head = head;
+        this.name = name;
+        this.age = age;
+        this.createTime = createTime;
     }
 }

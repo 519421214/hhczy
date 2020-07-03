@@ -1,7 +1,6 @@
-import bean.Device;
-import bean.ExcelTestEnum;
-import bean.ExcelTestModel;
-import bean.Students;
+package alibaba;
+
+import bean.*;
 import com.alibaba.excel.EasyExcel;
 import com.alibaba.excel.ExcelWriter;
 import com.alibaba.excel.util.FileUtils;
@@ -31,6 +30,7 @@ import java.util.function.Function;
  */
 
 /**
+ * 文档：https://www.yuque.com/easyexcel/doc/write
  * https://github.com/alibaba/easyexcel
  * 官方说明：
  * Java解析、生成Excel比较有名的框架有Apache poi、jxl。但他们都存在一个严重的问题就是非常的耗内存，
@@ -42,9 +42,15 @@ public class AlibabaWriteExcel {
     private static String rootPath = "D:\\";
 
     public static void main(String[] args) throws Exception {
-        imageWrite();
+        simpleWrite();
     }
-
+    /**
+     * 最简单的写
+     * <p>
+     * 1. 创建excel对应的实体对象 参照{@link }
+     * <p>
+     * 2. 直接写即可
+     */
     public static void simpleWrite() {
         // 写法1
         Function<String, String> fileName = x -> rootPath + "simpleWrite" + x + System.currentTimeMillis() + ".xlsx";
@@ -52,20 +58,27 @@ public class AlibabaWriteExcel {
         // 如果这里想使用03 则 传入excelType参数即可
         //ExcelTestModel 通过注解设定格式、样式，表头配置在类中,registerWriteHandler:Excel 表格样式
         EasyExcel.write(fileName.apply("1"), ExcelTestModel.class).sheet("模板1").registerWriteHandler(createTableStyle()).doWrite(data2());
+        //与上面比多了图片导出
+        EasyExcel.write(fileName.apply("1"), Students.class).sheet("模板1").registerWriteHandler(createTableStyle()).doWrite(data());
 
         //head：设置表头；registerWriteHandler：自适应列宽,自定义表头
         EasyExcel.write(fileName.apply("2")).head(head()).sheet("模板1").registerWriteHandler(new LongestMatchColumnWidthStyleStrategy()).doWrite(data());
 
         // 写法2(可以写多sheet)
         // 这里 需要指定写用哪个class去写
-        ExcelWriter excelWriter = EasyExcel.write(fileName.apply("3"), ExcelTestModel.class).build();
-        //这个遍历几次就有几个sheet begin----
-        WriteSheet writeSheet = EasyExcel.writerSheet("模板").build();
-        excelWriter.write(data(), writeSheet);
-        //这个遍历几次就有几个sheet end----
-
-        /// 千万别忘记finish 会帮忙关闭流
-        excelWriter.finish();
+        ExcelWriter excelWriter = null;
+        try {
+            excelWriter = EasyExcel.write(fileName.apply("3"), ExcelTestModel.class).build();
+            //这个遍历几次就有几个sheet begin----
+            WriteSheet writeSheet = EasyExcel.writerSheet("模板").build();
+            excelWriter.write(data(), writeSheet);
+            //这个遍历几次就有几个sheet end----
+        } finally {
+            // 千万别忘记finish 会帮忙关闭流
+            if (excelWriter != null) {
+                excelWriter.finish();
+            }
+        }
     }
 
     /**
@@ -97,7 +110,28 @@ public class AlibabaWriteExcel {
         EasyExcel.write(fileName, Students.class).includeColumnFiledNames(includeColumnFiledNames).sheet("模板")
                 .doWrite(data());
     }
-
+    /**
+     * 复杂头写入
+     * <p>
+     * 1. 创建excel对应的实体对象 参照{@link ComplexHeadData}
+     * <p>
+     * 2. 使用{@link }注解指定复杂的头
+     * <p>
+     * 3. 直接写即可
+     */
+    public static void complexHeadWrite() {
+        String fileName = rootPath + "complexHeadWrite" + System.currentTimeMillis() + ".xlsx";
+        // 这里 需要指定写用哪个class去写，然后写到第一个sheet，名字为模板 然后文件流会自动关闭
+        ArrayList<ComplexHeadData> complexHeadDatas = new ArrayList<>();
+        ComplexHeadData complexHeadData = new ComplexHeadData();
+        complexHeadData.setString0("0");
+        complexHeadData.setString1("1");
+        complexHeadData.setString2("2");
+        complexHeadData.setString3("3");
+        complexHeadData.setString4("4");
+        complexHeadDatas.add(complexHeadData);
+        EasyExcel.write(fileName, ComplexHeadData.class).sheet("模板").doWrite(complexHeadDatas);
+    }
     /**
      * 重复多次写入，一列一列地写，边查数据库边写
      * <p>
@@ -110,48 +144,64 @@ public class AlibabaWriteExcel {
     public static void repeatedWrite() {
         // 方法1 如果写到同一个sheet
         String fileName = rootPath + "repeatedWrite1" + System.currentTimeMillis() + ".xlsx";
-        // 这里 需要指定写用哪个class去写
-        ExcelWriter excelWriter = EasyExcel.write(fileName, ExcelTestModel.class).build();
-        // 这里注意 如果同一个sheet只要创建一次
-        WriteSheet writeSheet = EasyExcel.writerSheet("模板").build();
-        // 去调用写入,这里我调用了五次，实际使用时根据数据库分页的总的页数来
-        for (int i = 0; i < 5; i++) {
-            // 分页去数据库查询数据 这里可以去数据库查询每一页的数据
-            List data = data();
-            excelWriter.write(data, writeSheet);
+        ExcelWriter excelWriter = null;
+        try {
+            // 这里 需要指定写用哪个class去写
+            excelWriter = EasyExcel.write(fileName, DemoData.class).build();
+            // 这里注意 如果同一个sheet只要创建一次
+            WriteSheet writeSheet = EasyExcel.writerSheet("模板").build();
+            // 去调用写入,这里我调用了五次，实际使用时根据数据库分页的总的页数来
+            for (int i = 0; i < 5; i++) {
+                // 分页去数据库查询数据 这里可以去数据库查询每一页的数据
+                List<Students> data = data();
+                excelWriter.write(data, writeSheet);
+            }
+        } finally {
+            // 千万别忘记finish 会帮忙关闭流
+            if (excelWriter != null) {
+                excelWriter.finish();
+            }
         }
-        /// 千万别忘记finish 会帮忙关闭流
-        excelWriter.finish();
 
         // 方法2 如果写到不同的sheet 同一个对象
-        fileName = rootPath + "repeatedWrite2" + System.currentTimeMillis() + ".xlsx";
-        // 这里 指定文件
-        excelWriter = EasyExcel.write(fileName, Students.class).build();
-        // 去调用写入,这里我调用了五次，实际使用时根据数据库分页的总的页数来。这里最终会写到5个sheet里面
-        for (int i = 0; i < 5; i++) {
-            // 每次都要创建writeSheet 这里注意必须指定sheetNo 而且sheetName必须不一样
-            writeSheet = EasyExcel.writerSheet(i, "模板" + i).build();
-            // 分页去数据库查询数据 这里可以去数据库查询每一页的数据
-            List<Students> data = data();
-            excelWriter.write(data, writeSheet);
+        fileName = rootPath + "repeatedWrite" + System.currentTimeMillis() + ".xlsx";
+        try {
+            // 这里 指定文件
+            excelWriter = EasyExcel.write(fileName, DemoData.class).build();
+            // 去调用写入,这里我调用了五次，实际使用时根据数据库分页的总的页数来。这里最终会写到5个sheet里面
+            for (int i = 0; i < 5; i++) {
+                // 每次都要创建writeSheet 这里注意必须指定sheetNo 而且sheetName必须不一样
+                WriteSheet writeSheet = EasyExcel.writerSheet(i, "模板" + i).build();
+                // 分页去数据库查询数据 这里可以去数据库查询每一页的数据
+                List<Students> data = data();
+                excelWriter.write(data, writeSheet);
+            }
+        } finally {
+            // 千万别忘记finish 会帮忙关闭流
+            if (excelWriter != null) {
+                excelWriter.finish();
+            }
         }
-        /// 千万别忘记finish 会帮忙关闭流
-        excelWriter.finish();
 
         // 方法3 如果写到不同的sheet 不同的对象
-        fileName = rootPath + "repeatedWrite3" + System.currentTimeMillis() + ".xlsx";
-        // 这里 指定文件
-        excelWriter = EasyExcel.write(fileName).build();
-        // 去调用写入,这里我调用了五次，实际使用时根据数据库分页的总的页数来。这里最终会写到5个sheet里面
-        for (int i = 0; i < 5; i++) {
-            // 每次都要创建writeSheet 这里注意必须指定sheetNo 而且sheetName必须不一样。这里注意Students.class 可以每次都变，我这里为了方便 所以用的同一个class 实际上可以一直变
-            writeSheet = EasyExcel.writerSheet(i, "模板" + i).head(Students.class).build();
-            // 分页去数据库查询数据 这里可以去数据库查询每一页的数据
-            List<Students> data = data();
-            excelWriter.write(data, writeSheet);
+        fileName = rootPath + "repeatedWrite" + System.currentTimeMillis() + ".xlsx";
+        try {
+            // 这里 指定文件
+            excelWriter = EasyExcel.write(fileName).build();
+            // 去调用写入,这里我调用了五次，实际使用时根据数据库分页的总的页数来。这里最终会写到5个sheet里面
+            for (int i = 0; i < 5; i++) {
+                // 每次都要创建writeSheet 这里注意必须指定sheetNo 而且sheetName必须不一样。这里注意DemoData.class 可以每次都变，我这里为了方便 所以用的同一个class 实际上可以一直变
+                WriteSheet writeSheet = EasyExcel.writerSheet(i, "模板" + i).head(DemoData.class).build();
+                // 分页去数据库查询数据 这里可以去数据库查询每一页的数据
+                List<Students> data = data();
+                excelWriter.write(data, writeSheet);
+            }
+        } finally {
+            // 千万别忘记finish 会帮忙关闭流
+            if (excelWriter != null) {
+                excelWriter.finish();
+            }
         }
-        /// 千万别忘记finish 会帮忙关闭流
-        excelWriter.finish();
     }
 
     /**
@@ -171,15 +221,16 @@ public class AlibabaWriteExcel {
             ImageModel imageData = new ImageModel();
             list.add(imageData);
             String imagePath = rootPath + "converter" + File.separator + "img.jpg";//File.separator:只是一条斜杠/
-            // 放入五种类型的图片 实际使用只要选一种即可
+            // 放入五种类型的图片 实际使用只要选一种即可（下面5种set都是导出图片）
             imageData.setByteArray(FileUtils.readFileToByteArray(new File(imagePath)));
             imageData.setFile(new File(imagePath));
             imageData.setString(imagePath);
             inputStream = FileUtils.openInputStream(new File(imagePath));
             imageData.setInputStream(inputStream);
+            //来自网上的图片，存到excel的url字段，这里并不是跳转
             imageData.setUrl(new URL(
                     "https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=1418098423,3040751320&fm=26&gp=0.jpg"));
-            EasyExcel.write(fileName, ImageData.class).sheet().doWrite(list);
+            EasyExcel.write(fileName, ImageModel.class).sheet().doWrite(list);//官方的ImageData，是自定义那个，不是包里的
         } finally {
             if (inputStream != null) {
                 inputStream.close();
@@ -536,7 +587,8 @@ public class AlibabaWriteExcel {
     private static List<Students> data() {
         List<Students> list = new ArrayList<Students>();
         for (int i = 0; i < 1; i++) {
-            Students data = new Students(i, "宁" + i, i + 1, new Date());//不认localdatetime,DATE数据会被默认转格式yyyy-MM-dd hh:mm:ss
+            String imagePath = rootPath + "converter" + File.separator + "img.jpg";//File.separator:只是一条斜杠/
+            Students data = new Students(i, imagePath,"宁" + i, i + 1, new Date());//不认localdatetime,DATE数据会被默认转格式yyyy-MM-dd hh:mm:ss
             list.add(data);
         }
         return list;
