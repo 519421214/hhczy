@@ -27,7 +27,8 @@ public class PaChongUtil {
 //    @Autowired
 //    private MailUtil mailUtil;
     private String[] sendGovNewMails = {"519421214@qq.com","694268341@qq.com","1282550688@qq.com"};
-
+    @Autowired
+    private MailUtil mailUtil;
     //爬gwy新闻数据
     public void govNews() {
         RMapCache<Object, Object> mapCache = redissonClient.getMapCache(CacheConstants.PA_CHONG + "gov-news");
@@ -55,7 +56,7 @@ public class PaChongUtil {
                     Elements a = ele.select("a");
                     String title = StringUtils.hasText(a.select("span").text())?a.select("span").text():a.text()+"。";
                     String details = "详情：http://www.gov.cn" + href;
-                    sendTo(title,details);
+//                    sendTo(title,details);
                     mapCache.put(idKey,1,3, TimeUnit.DAYS,3,TimeUnit.DAYS);
                     Log.info("推送了消息：{}{}", title,details);
                 }
@@ -87,7 +88,7 @@ public class PaChongUtil {
                     //拿到主题
                     String title = ele.select("span").first().text()+"。";
                     String details = "详情：http://www.mot.gov.cn/jiaotongyaowen/" + href;
-                    sendTo(title,details);
+//                    sendTo(title,details);
                     mapCache.put(idKey,1,3, TimeUnit.DAYS,3,TimeUnit.DAYS);
                     Log.info("推送了消息：{}{}", title,details);
                 }
@@ -95,8 +96,9 @@ public class PaChongUtil {
         }
     }
     //爬图片到本地
-    public void getPicture() {
-
+    public void test() {
+        //推邮箱
+        mailUtil.sendMail("这是一个标题","这是详细内容", new String[]{"519421214@qq.com"});
     }
 
     private void sendTo(String title,String details){

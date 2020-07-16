@@ -68,12 +68,13 @@ public class ScheduledTasks {
     /**
      * 每天闲时同步按月查询数据到redis
      */
-//    @Scheduled(fixedDelay = 60000)//两分钟执行一次
+    @Scheduled(fixedDelay = 60000)//两分钟执行一次
 //    @Scheduled(cron = "0 0 2 * * ?")//每天凌晨2点同步一次
 //    @Scheduled(cron = "0 0/1 6-23 * * ?")//6-23点每分钟执行一次
     public void paGovNews() {
         paChongUtil.govNews();
         paChongUtil.motNews();
+//        paChongUtil.test();
     }
 
     private static int tip = 0;
