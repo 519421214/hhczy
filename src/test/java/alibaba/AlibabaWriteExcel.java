@@ -42,7 +42,7 @@ public class AlibabaWriteExcel {
     private static String rootPath = "D:\\";
 
     public static void main(String[] args) throws Exception {
-        simpleWrite();
+        templateWrite();
     }
     /**
      * 最简单的写
@@ -239,11 +239,11 @@ public class AlibabaWriteExcel {
     }
 
     /**
-     * 根据模板写入
+     * 根据模板写入，测试发现只是复制表头模板样式
      * <p>
      * 1. 创建excel对应的实体对象 参照{@link Device}
      * <p>
-     * 2. 使用{@link ExcelProperty}注解指定写入的列
+     * 2. 使用{@link //ExcelProperty}注解指定写入的列
      * <p>
      * 3. 使用withTemplate 写取模板
      * <p>
@@ -251,7 +251,7 @@ public class AlibabaWriteExcel {
      */
 
     public static void templateWrite() {
-        String templateFileName = rootPath + "demo" + File.separator + "demo.xlsx";
+        String templateFileName = rootPath + "converter" + File.separator + "demo.xlsx";
         String fileName = rootPath + "templateWrite" + System.currentTimeMillis() + ".xlsx";
         // 这里 需要指定写用哪个class去写，然后写到第一个sheet，名字为模板 然后文件流会自动关闭
         EasyExcel.write(fileName, Students.class).withTemplate(templateFileName).sheet().doWrite(data());
@@ -262,7 +262,7 @@ public class AlibabaWriteExcel {
      * <p>
      * 1. 创建excel对应的实体对象 参照{@link Device}
      * <p>
-     * 2. 使用注解{@link ColumnWidth}、{@link HeadRowHeight}、{@link ContentRowHeight}指定宽度或高度
+     * 2. 使用注解{@link //ColumnWidth}、{@link //HeadRowHeight}、{@link //ContentRowHeight}指定宽度或高度
      * <p>
      * 3. 直接写即可
      */
