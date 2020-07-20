@@ -42,7 +42,7 @@ public class AlibabaWriteExcel {
     private static String rootPath = "D:\\";
 
     public static void main(String[] args) throws Exception {
-        templateWrite();
+        annotationStyleWrite();
     }
     /**
      * 最简单的写
@@ -258,25 +258,9 @@ public class AlibabaWriteExcel {
     }
 
     /**
-     * 列宽、行高
-     * <p>
-     * 1. 创建excel对应的实体对象 参照{@link Device}
-     * <p>
-     * 2. 使用注解{@link //ColumnWidth}、{@link //HeadRowHeight}、{@link //ContentRowHeight}指定宽度或高度
-     * <p>
-     * 3. 直接写即可
-     */
-
-    public static void widthAndHeightWrite() {
-        String fileName = rootPath + "widthAndHeightWrite" + System.currentTimeMillis() + ".xlsx";
-        // 这里 需要指定写用哪个class去写，然后写到第一个sheet，名字为模板 然后文件流会自动关闭
-        EasyExcel.write(fileName, Device.class).sheet("模板").doWrite(data());
-    }
-
-    /**
      * 注解形式自定义样式
      * <p>
-     * 1. 创建excel对应的实体对象 参照{@link Device}
+     * 1. 创建excel对应的实体对象 参照{@link DemoStyleData}
      * <p>
      * 3. 直接写即可
      *
@@ -286,7 +270,7 @@ public class AlibabaWriteExcel {
     public static void annotationStyleWrite() {
         String fileName = rootPath + "annotationStyleWrite" + System.currentTimeMillis() + ".xlsx";
         // 这里 需要指定写用哪个class去写，然后写到第一个sheet，名字为模板 然后文件流会自动关闭
-        EasyExcel.write(fileName, Device.class).sheet("模板").doWrite(data());
+        EasyExcel.write(fileName, DemoStyleData.class).sheet("模板").doWrite(data3());
     }
 
     /**
@@ -598,6 +582,14 @@ public class AlibabaWriteExcel {
         List<ExcelTestModel> list = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
             ExcelTestModel data = new ExcelTestModel("宁" + i, new Date(), (double) i, ExcelTestEnum.Man);//不认localdatetime
+            list.add(data);
+        }
+        return list;
+    }
+    private static List<DemoStyleData> data3() {
+        List<DemoStyleData> list = new ArrayList<>();
+        for (int i = 0; i < 10; i++) {
+            DemoStyleData data = new DemoStyleData("宁" + i, new Date(), (double) i);//不认localdatetime
             list.add(data);
         }
         return list;
