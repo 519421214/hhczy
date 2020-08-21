@@ -1,5 +1,10 @@
+import alibaba.DemoDataListener;
+import bean.DemoData;
+import com.alibaba.excel.EasyExcel;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.google.gson.Gson;
+import com.king.hhczy.base.constant.CacheConstants;
 import com.king.hhczy.common.util.FilesUtils;
 import com.king.hhczy.common.util.Log;
 import com.king.hhczy.entity.domain.TblAccount;
@@ -27,7 +32,7 @@ import java.util.stream.Stream;
 public class Test {
 
     public static void main(String[] args) throws Exception {
-        System.out.println("45646462200054000".replaceAll("0+$",""));
+        alrr();
 //        double a = 62.21345856456465;
 //        System.out.println(String.format("%.5f",a));
 //        Map<String, Object> data = new HashMap<>();
@@ -692,5 +697,45 @@ public class Test {
                         + (getFour * 3000) + "元,五等奖：" + (getFive * 300) + "元,六等奖：" + getSix * 200 + "元,七等奖：" + getSeven * 100 + "元,八等奖：" + getEight * 15 + "元,九等奖：" + getNine * 5 + "元");
             }
         }
+    }
+
+    private static void alrr() throws IOException {
+        EasyExcel.read("D:\\2.xlsx", DemoData.class, new DemoDataListener()).sheet(0).
+                headRowNumber(1).doRead();
+
+        int total = 0,uTotal = 0,oTotal = 0,ouTotal = 0;
+        Path path = Paths.get("D:\\info.log");
+        BufferedReader br = Files.newBufferedReader(path, StandardCharsets.UTF_8);
+        String vals = "";
+        String lineVal = null;
+        while ((lineVal = br.readLine()) !=null){
+            System.out.println(lineVal);
+            vals += lineVal;
+        }
+        JSONObject jsonVal = JSONObject.parseObject(vals);
+        JSONArray list = jsonVal.getJSONObject("data").getJSONArray("list");
+        List<Map> list2 = list.toJavaList(Map.class);
+        Map<String, String> org = new HashMap<>();
+        for (Map o : list2) {
+            Object czhr = o.get("czhr");
+            Object czhdw = o.get("czhdw");
+            if (czhr !=null&&!"NULL".equals(czhr.toString().toUpperCase())) {
+                uTotal++;
+                org.put(czhdw.toString(), "1");
+                if (czhdw !=null&&!"NULL".equals(czhdw.toString().toUpperCase())) {
+                    ouTotal++;
+                }
+            }
+            if (czhdw !=null&&!"NULL".equals(czhdw.toString().toUpperCase())) {
+                oTotal++;
+            }
+        }
+        total = list.size();
+        System.out.println("统计日期：2020年8月19日");
+        System.out.println("统计结果：");
+        System.out.println("警情总数："+total+",其中包含处警人有："+uTotal+",包含处警部门有："+oTotal+",包含处警部门及处警人员有："+ouTotal);
+        org.forEach((k,v)->{
+            System.out.println(k+":"+CacheConstants.CACHE.get(k));
+        });
     }
 }

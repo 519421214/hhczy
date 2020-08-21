@@ -1,5 +1,8 @@
 package com.king.hhczy.base.constant;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public final class CacheConstants {
 
     /**
@@ -16,5 +19,6 @@ public final class CacheConstants {
     public final static String LASTING_CACHE_PREFIX = COMMON_CACHE_PREFIX+"lasting:";
 
     public final static String PA_CHONG = LASTING_CACHE_PREFIX+"pa-chong:";
+    public static Map<String,String> CACHE = new HashMap<>();
 
 }
