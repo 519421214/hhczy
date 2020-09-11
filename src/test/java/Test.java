@@ -32,7 +32,6 @@ import java.util.stream.Stream;
 public class Test {
 
     public static void main(String[] args) throws Exception {
-        alrr();
 //        double a = 62.21345856456465;
 //        System.out.println(String.format("%.5f",a));
 //        Map<String, Object> data = new HashMap<>();
@@ -395,6 +394,17 @@ public class Test {
         System.out.println(LocalDate.now().isEqual(date1));
     }
 
+    private static void time() {
+        //判断是否在区间内 传入String
+        LocalTime parse1 = LocalTime.parse("08:00");//注意 8:00会报错
+        LocalTime parse2 = LocalTime.parse("11:04");
+        LocalTime now = LocalTime.now();//获取时分秒
+        if (now.isAfter(parse1)&&now.isBefore(parse2)) {
+            System.out.println("在区间内");
+        }else {
+            System.out.println("不在区间内");
+        }
+    }
     private static void test4() {
         //https://blog.csdn.net/u011055819/article/details/80070429
         LocalDate now = LocalDate.now();

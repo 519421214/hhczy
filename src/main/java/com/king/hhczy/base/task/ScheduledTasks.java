@@ -46,7 +46,8 @@ public class ScheduledTasks {
     /**
      * 定时同步通道状态
      */
-//    @Scheduled(fixedDelay = 120000)//两分钟执行一次
+//    @Scheduled(fixedDelayString = "${time}")//如果需要动态可配，可以用...String
+    @Scheduled(fixedDelay = 120000)//两分钟执行一次
     public void buildToLocal() {
 //        dataSourceService.updateChannelStatus(this.getClass().getSimpleName(), UUIDUtil.uuid());
     }
