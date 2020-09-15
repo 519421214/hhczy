@@ -1,5 +1,7 @@
 package com.king.hhczy.base.task;
 
+import com.king.hhczy.common.util.ShuangSeQiuUtil;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
@@ -12,14 +14,15 @@ import org.springframework.stereotype.Component;
 public class AutoRunner implements ApplicationRunner {
 //    @Autowired
 //    private RedissonClient redissonClient;
-//    @Autowired
-//    private DataSourceService dataSourceService;
+    @Autowired
+    private ShuangSeQiuUtil shuangSeQiuUtil;
     @Override
     public void run(ApplicationArguments args) throws Exception {
         //重启时删除缓存
 //        redissonClient.getMap(CacheConstants.INIT_CACHE_PREFIX).clear();
 //        dataSourceService.getAllArea(null);
 //        dataSourceService.syncWhithDayHasDataOfMonth(this.getClass().getSimpleName(), UUIDUtil.uuid());
+        shuangSeQiuUtil.bichromaticSphere();
     }
     //定时任务测试(线程)
 //    public static void myTimer(){
