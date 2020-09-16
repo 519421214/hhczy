@@ -7,6 +7,9 @@ import org.springframework.web.client.RestTemplate;
 
 import java.text.DecimalFormat;
 import java.util.Arrays;
+import java.util.List;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * https://www.jianshu.com/p/108b8110a98c
@@ -45,4 +48,32 @@ public class GupiaoUtil {
         });
     }
 
+    /**
+     * 定时播报
+     * codes:逗号分开
+     */
+    public void autoRead(String inputCodes) {
+        Function<String, String> changeCode = x -> x.startsWith("6") ? ("sh" + x) : ("sz" + x);
+        List<String> collect = Arrays.stream(inputCodes.split(",")).map(changeCode::apply).collect(Collectors.toList());
+
+        String codesStr = collect.stream().reduce((s1, s2) -> s1 + "," + s2).orElse(null);
+        DecimalFormat df = new DecimalFormat("0.00");
+
+        String forObject = restTemplate.getForObject(impUrl + "sh000001," + codesStr, String.class);
+        Arrays.stream(forObject.split(";")).map(x -> x.substring(x.indexOf("\"") + 1).split(",")).forEach(y -> {
+            if (y.length < 5) return;
+//            System.out.println(y[0]+"\t[开]"+y[1]+"\t[低]"+y[5]+"\t[高]"+y[4]+"\t[当前]"+y[3]+"\t["+(Double.valueOf(y[3])>Double.valueOf(y[2])?"红":"绿")+"]"+
+//                    df.format(((Double.valueOf(y[3])/Double.valueOf(y[2]))-1)*100)+"%");
+            //获取盈亏占比
+            double ratio = (Double.valueOf(y[3]) / Double.valueOf(y[2])) - 1;
+            if(ratio>0){
+                WordsReading.speak("大盘红啦");
+            }
+//            String logPrint = String.format("%s\t" + "[开]%s\t" + "[低]%s\t" + "[高]%s\t" + "[NOW]%s\t" + "[%s]%s",
+//                    y[0], y[1], y[5], y[4], y[3],
+//                    ratio > 0 ? "红" : "绿",
+//                    df.format(ratio * 100) + "%");
+//            System.out.println(logPrint);
+        });
+    }
 }

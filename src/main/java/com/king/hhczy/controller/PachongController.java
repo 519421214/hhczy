@@ -1,5 +1,6 @@
 package com.king.hhczy.controller;
 
+import com.king.hhczy.common.util.GupiaoUtil;
 import com.king.hhczy.common.util.PaChongUtil;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
@@ -7,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -24,9 +26,15 @@ import org.springframework.web.bind.annotation.RestController;
 public class PachongController {
     @Autowired
     private PaChongUtil paChongUtil;
+    @Autowired
+    private GupiaoUtil gupiaoUtil;
 
     @GetMapping("/gov-news")
     public void html() {
         paChongUtil.govNews();
+    }
+    @GetMapping("/gp-read")
+    public void gupiaoReading(@RequestParam("codes") String inputCodes) {
+        gupiaoUtil.autoRead(inputCodes);
     }
 }
