@@ -24,7 +24,7 @@ public class WordsReading {
             // 音量 0-100
             sap.setProperty("Volume", new Variant(100));
             // 语音朗读速度 -10 到 +10
-            sap.setProperty("Rate", new Variant(2));
+            sap.setProperty("Rate", new Variant(0));
             // 执行朗读
             Dispatch.call(sapo, "Speak", new Variant(words));
         } catch (Exception e) {

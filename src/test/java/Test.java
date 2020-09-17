@@ -32,6 +32,9 @@ import java.util.stream.Stream;
     public class Test {
 
     public static void main(String[] args) throws Exception {
+        double a = -0.004872889278449866;
+        double b = -0.004872889278449866;
+        System.out.println(a - b);
 //        double a = 62.21345856456465;
 //        System.out.println(String.format("%.5f",a));
 //        Map<String, Object> data = new HashMap<>();
