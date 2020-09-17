@@ -29,12 +29,11 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-    public class Test {
+public class Test {
 
     public static void main(String[] args) throws Exception {
-        double a = -0.004872889278449866;
-        double b = -0.004872889278449866;
-        System.out.println(a - b);
+        System.out.println("21.56465".substring(0,"21.56465".indexOf(".")+3));
+//            System.out.println(Math.random()*0.097*2/10-0.097);
 //        double a = 62.21345856456465;
 //        System.out.println(String.format("%.5f",a));
 //        Map<String, Object> data = new HashMap<>();
@@ -59,7 +58,8 @@ import java.util.stream.Stream;
 //        searchFileByContent3("D:\\log2");
 //        MethodUtil.executeTargrtMethod(Test.class, "testSout");//反射，取代if/else
     }
-    private static String createTranData(String subCmdType, String rootName , Object inputMap){
+
+    private static String createTranData(String subCmdType, String rootName, Object inputMap) {
         StringBuilder stringBuilder = new StringBuilder();
 
         stringBuilder.append("<SubCmdType>");
@@ -67,29 +67,30 @@ import java.util.stream.Stream;
         stringBuilder.append("</SubCmdType>");
 
         stringBuilder.append("<" + rootName + ">");
-        if(inputMap instanceof Map){
+        if (inputMap instanceof Map) {
             Gson gson = new Gson();
             Map mapVal = gson.fromJson(gson.toJson(inputMap), Map.class);
-            mapVal.forEach((k,v)->{
+            mapVal.forEach((k, v) -> {
                 stringBuilder.append("<" + k + ">");
                 if (v instanceof Map) {
                     Map mapVal2 = gson.fromJson(gson.toJson(v), Map.class);
-                    mapVal2.forEach((k2,v2)->{
-                        stringBuilder.append("<" + k2 + ">" +v2 +"</" + k2 + ">" );
+                    mapVal2.forEach((k2, v2) -> {
+                        stringBuilder.append("<" + k2 + ">" + v2 + "</" + k2 + ">");
                     });
-                }else {
+                } else {
                     stringBuilder.append(v);
                 }
                 stringBuilder.append("<" + k + ">");
             });
-        }else {
-            stringBuilder.append(""+inputMap);
+        } else {
+            stringBuilder.append("" + inputMap);
         }
 
 
         stringBuilder.append("</" + rootName + ">");
         return stringBuilder.toString();
     }
+
     /*
      * 中文转unicode编码
      */
@@ -105,9 +106,11 @@ import java.util.stream.Stream;
         }
         return unicodeBytes;
     }
+
     public void testSout() {
         System.out.println("来了老弟：");
     }
+
     //二进制
     public static void base64Test() {
         byte[] bytes1 = new byte[]{67, 97, 112, 116, 117, 114, 101, 0, 126, 1, 0, 0, 105, 0, 0, 0, 123, 34, 100, 101, 118, 105, 99, 101, 115, 73, 100, 34, 58, 34, 55, 56, 67, 65, 56, 51, 52, 48, 48, 53, 49, 57, 48, 48, 48, 48, 48, 48, 48, 48, 34, 44, 34, 118, 105, 100, 101, 111, 78, 111, 34, 58, 51, 44, 34, 99, 104, 97, 110, 110, 101, 108, 78, 97, 109, 101, 34, 58, 34, 104, 105, 107, 95, 50, 51, 51, 34, 44, 34, 116, 114, 97, 99, 107, 73, 100, 34, 58, 54, 48, 49, 44, 34, 101, 110, 116, 101, 114, 84, 105, 109, 101, 115, 116, 97, 109, 112, 34, 58, 48, 44, 34, 99, 97, 116, 99, 104, 84, 105, 109, 101, 115, 116, 97, 109, 112, 34, 58, 49, 53, 54, 51, 52, 57, 56, 56, 49, 56, 57, 55, 54, 44, 34, 108, 101, 97, 118, 101, 84, 105, 109, 101, 115, 116, 97, 109, 112, 34, 58, 48, 44, 34, 102, 97, 99, 101, 65, 116, 116, 114, 34, 58, 123, 34, 97, 103, 101, 34, 58, 50, 52, 44, 34, 103, 101, 110, 100, 101, 114, 34, 58, 49, 44, 34, 109, 105, 110, 111, 114, 105, 116, 121, 34, 58, 102, 97, 108, 115, 101, 44, 34, 108, 101, 102, 116, 69, 121, 101, 111, 99, 99, 34, 58, 102, 97, 108, 115, 101, 44, 34, 114, 105, 103, 104, 116, 69, 121, 101, 111, 99, 99, 34, 58, 102, 97, 108, 115, 101, 44, 34, 109, 111, 117, 116, 104, 111, 99, 99, 34, 58, 102, 97, 108, 115, 101, 44, 34, 104, 101, 97, 100, 119, 101, 97, 114, 34, 58, 50, 44, 34, 110, 111, 115, 101, 111, 99, 99, 34, 58, 102, 97, 108, 115, 101, 44, 34, 98, 101, 97, 114, 100, 34, 58, 48, 44, 34, 108, 101, 102, 116, 69, 121, 101, 67, 108, 111, 115, 101, 34, 58, 102, 97, 108, 115, 101, 44, 34, 114, 105, 103, 104, 116, 69, 121, 101, 67, 108, 111, 115, 101, 34, 58, 102, 97, 108, 115, 101, 44, 34, 109, 111, 117, 116, 104, 83, 116, 97, 116, 117, 115, 34, 58, 116, 114, 117, 101, 125, 44, 34, 99, 97, 112, 116, 117, 114, 101, 70, 97, 99, 101, 34, 58, 50, 51, 49, 50, 55, 125};
@@ -177,6 +180,7 @@ import java.util.stream.Stream;
             e.printStackTrace();
         }
     }
+
     //内容检索
     private static void searchFileByContent(String path, String words) {
         Path filesPath = Paths.get(path);
@@ -402,12 +406,13 @@ import java.util.stream.Stream;
         LocalTime parse1 = LocalTime.parse("08:00");//注意 8:00会报错
         LocalTime parse2 = LocalTime.parse("11:04");
         LocalTime now = LocalTime.now();//获取时分秒
-        if (now.isAfter(parse1)&&now.isBefore(parse2)) {
+        if (now.isAfter(parse1) && now.isBefore(parse2)) {
             System.out.println("在区间内");
-        }else {
+        } else {
             System.out.println("不在区间内");
         }
     }
+
     private static void test4() {
         //https://blog.csdn.net/u011055819/article/details/80070429
         LocalDate now = LocalDate.now();
@@ -534,12 +539,12 @@ import java.util.stream.Stream;
             source = source.trim();
             int length = source.length();
             for (int i = 0; i < length; i = i + 3) {
-                String numStr = source.substring(i, length >= (i+3) ? (i+3):length);
-                char charAt= (char)(Integer.valueOf(numStr)).intValue();
+                String numStr = source.substring(i, length >= (i + 3) ? (i + 3) : length);
+                char charAt = (char) (Integer.valueOf(numStr)).intValue();
                 builder.append(charAt);
             }
             return builder.toString();
-        }else {
+        } else {
             return source;
         }
     }
@@ -645,12 +650,13 @@ import java.util.stream.Stream;
         List<Object> list = new ArrayList<>();
         list.subList(0, 10);//list截取0-10个记录
     }
+
     //URL下载图片
     public static void urlDownloadPic(String source) {
         try {
             URL url = new URL(source);
             URLConnection con = url.openConnection();
-            try (InputStream inputStream = con.getInputStream()){
+            try (InputStream inputStream = con.getInputStream()) {
                 if (!Files.exists(Paths.get("D:\\ABCd.jpg"))) {
                     Files.copy(inputStream, Paths.get("D:\\ABCd.jpg"));
                 }
@@ -716,12 +722,12 @@ import java.util.stream.Stream;
         EasyExcel.read("D:\\2.xlsx", DemoData.class, new DemoDataListener()).sheet(0).
                 headRowNumber(1).doRead();
 
-        int total = 0,uTotal = 0,oTotal = 0,ouTotal = 0;
+        int total = 0, uTotal = 0, oTotal = 0, ouTotal = 0;
         Path path = Paths.get("D:\\info.log");
         BufferedReader br = Files.newBufferedReader(path, StandardCharsets.UTF_8);
         String vals = "";
         String lineVal = null;
-        while ((lineVal = br.readLine()) !=null){
+        while ((lineVal = br.readLine()) != null) {
             System.out.println(lineVal);
             vals += lineVal;
         }
@@ -732,23 +738,23 @@ import java.util.stream.Stream;
         for (Map o : list2) {
             Object czhr = o.get("czhr");
             Object czhdw = o.get("czhdw");
-            if (czhr !=null&&!"NULL".equals(czhr.toString().toUpperCase())) {
+            if (czhr != null && !"NULL".equals(czhr.toString().toUpperCase())) {
                 uTotal++;
                 org.put(czhdw.toString(), "1");
-                if (czhdw !=null&&!"NULL".equals(czhdw.toString().toUpperCase())) {
+                if (czhdw != null && !"NULL".equals(czhdw.toString().toUpperCase())) {
                     ouTotal++;
                 }
             }
-            if (czhdw !=null&&!"NULL".equals(czhdw.toString().toUpperCase())) {
+            if (czhdw != null && !"NULL".equals(czhdw.toString().toUpperCase())) {
                 oTotal++;
             }
         }
         total = list.size();
         System.out.println("统计日期：2020年8月19日");
         System.out.println("统计结果：");
-        System.out.println("警情总数："+total+",其中包含处警人有："+uTotal+",包含处警部门有："+oTotal+",包含处警部门及处警人员有："+ouTotal);
-        org.forEach((k,v)->{
-            System.out.println(k+":"+CacheConstants.CACHE.get(k));
+        System.out.println("警情总数：" + total + ",其中包含处警人有：" + uTotal + ",包含处警部门有：" + oTotal + ",包含处警部门及处警人员有：" + ouTotal);
+        org.forEach((k, v) -> {
+            System.out.println(k + ":" + CacheConstants.CACHE.get(k));
         });
     }
 }
