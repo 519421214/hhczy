@@ -105,7 +105,7 @@ public class WebSocketGsServer {
             sb.append(y[0] + "，");
         });
         sendInfo(sb.toString(), null);
-        WordsReading.speak("订阅成功");
+        WordsReading.buildAndSpeak("订阅成功");
 
         DecimalFormat df = new DecimalFormat("0.00");
         //缓存
@@ -198,7 +198,7 @@ public class WebSocketGsServer {
                     }
                 });
                 if (sayWords.length() > 0) {
-                    WordsReading.speak(sayWords.toString());
+                    WordsReading.buildAndSpeak(sayWords.toString());
                 }
             }
         }, 0, 5000);
