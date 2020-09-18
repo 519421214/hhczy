@@ -44,6 +44,7 @@ public class WebSocketGsServer {
      * 用于存所有的连接服务的客户端，这个对象存储是安全的
      */
     private static ConcurrentHashMap<String, WebSocketGsServer> webSocketSet = new ConcurrentHashMap<>();
+
     //数据来源地址
     private String impUrl = "http://hq.sinajs.cn/list=";
     private Timer timer = new Timer();
@@ -161,7 +162,7 @@ public class WebSocketGsServer {
                     } else {
                         //--------------------其他----------------------
                         String ds = df.format(ratio * 100);
-                        String curGj = y[3].substring(0,y[3].indexOf(".")+3);//当前股价
+                        String curGj = y[3].substring(0, y[3].indexOf(".") + 3);//当前股价
                         if (ratio_ > 0.02) {
                             cacheHis.put(name, ratio);
                             sayWords.append(name + " 升天了。当前涨跌" + (ratio > 0 ? ("百分之" + ds) : ("负百分之" + ds.substring(1))) + "，价格为" + curGj + "元。");
@@ -177,7 +178,7 @@ public class WebSocketGsServer {
                         }
                         if (cacheHis.get(name) != ratio) {
                             if (ratio > 0.097) {
-                                sayWords.append("牛掰，"+ name + "涨停了。");
+                                sayWords.append("牛掰，" + name + "涨停了。");
                                 cacheHis.put(name, ratio);
                             } else if (ratio < -0.097) {
                                 sayWords.append("他妈的，" + name + " 跌停了！！");
@@ -224,7 +225,6 @@ public class WebSocketGsServer {
 //        session.getAsyncRemote().sendText(message);//异步发送不阻塞
         //getBasicRemote().sendText(message);这个是同步发送
     }
-
 
     /**
      * 群发自定义消息

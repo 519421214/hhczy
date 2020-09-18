@@ -82,9 +82,15 @@ public class WordsReading {
         }
     }
 
-    public static void playAudio(String path) throws LineUnavailableException,
+    /**
+     * 只能播放到本地，不能远程访问收听
+     * @param path
+     * @throws LineUnavailableException
+     * @throws UnsupportedAudioFileException
+     * @throws IOException
+     */
+    public static void playLocalAudio(String path) throws LineUnavailableException,
             UnsupportedAudioFileException, IOException {
-
         // 获取音频输入流
         AudioInputStream audioInputStream = AudioSystem
                 .getAudioInputStream(new File(path));
@@ -113,6 +119,10 @@ public class WordsReading {
         // 清空数据缓冲,并关闭输入
         sourceDataLine.drain();
         sourceDataLine.close();
+    }
+
+    public static void playAudio(String path) {
+        StdAudio.play(path);
     }
 
 }
