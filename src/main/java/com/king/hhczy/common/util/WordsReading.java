@@ -20,7 +20,7 @@ import java.io.IOException;
  * @author ningjinxiang
  */
 public class WordsReading {
-    public static String path = "D:\\test\\";
+    public static String path = "D:\\SpeakAudio\\";
     //朗读,不能并发朗读，通过先生成音频再读实现并发
     public static void speak(String words) {
 //        System.out.println(System.getProperty("java.library.path"));
