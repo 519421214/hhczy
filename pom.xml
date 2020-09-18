@@ -246,13 +246,14 @@
             <artifactId>gson</artifactId>
             <version>2.8.6</version>
         </dependency>
-<!--        <dependency>-->
-<!--            <groupId>com.hynnet</groupId>-->
-<!--            <artifactId>jacob</artifactId>-->
-<!--            <version>1.19</version>-->
-<!--            <scope>system</scope>-->
-<!--            <systemPath>${basedir}/src/main/resources/lib/jacob.jar</systemPath>-->
-<!--        </dependency>-->
+        <!--本地jar引入，需要①插件才能打-->
+        <dependency>
+            <groupId>com.jacob</groupId>
+            <artifactId>jacob</artifactId>
+            <version>1.19</version>
+            <scope>system</scope>
+            <systemPath>${basedir}/src/main/resources/lib/jacob.jar</systemPath>
+        </dependency>
     </dependencies>
     <name>hhczy</name>
 
@@ -273,6 +274,14 @@
             <plugin><!--spring-boot的默认打包插件，可自行修改-->
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+            <!--①打包本地包插件-->
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <includeSystemScope>true</includeSystemScope>
+                </configuration>
             </plugin>
         </plugins>
     </build>
