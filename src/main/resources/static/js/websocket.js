@@ -69,8 +69,8 @@ function connect(btn) {
 
         if (/^\[audio\].*$/.test(data)) {
             var path = data.replace("[audio]", "");
-            var audio = $('body').append('<Audio controls="" autoplay="true" src="D:\\SpeakAudio\\0a2ee8451c1a48ddadb37f48f5ed0b78.wav" type="audio/mp3" ></Audio>');
-            audio.click();
+            // $('body').append('<Audio controls="" autoplay="true" th:src="@{D:\\SpeakAudio\\02e43e4636e84e8ab55df3898a84b5b8.wav}" type="audio/mp3" ></Audio>');
+            $("#myAudio").attr("th:src","@{D:\\\\SpeakAudio\\\\02e43e4636e84e8ab55df3898a84b5b8.wav}")
         } else if(/^\[system\].*$/.test(data)){
             var sysMsg = data.replace("[system]", "【"+name+"】");
             addMsg(`<p class="text-success">系统提示:<span>${new Date().format(dateFormat)}</span></p><p>${sysMsg}</p>`)

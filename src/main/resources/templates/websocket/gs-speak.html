@@ -27,6 +27,7 @@ for (let i = 0; i < tools.length; i++) {
     }
 }</script>
 <main>
+    <audio id="myAudio" preload="auto" controls autoplay style="display:none;"></audio>
     <div class=container><h1>WebSocket测试</h1>
         <div class="flex mt-2"><label class="group fullwidth"><span class=static>地址</span>
             <input id=input_server class=input value="ws://127.0.0.1:6066/gp-read/李大肠"></label>
@@ -38,7 +39,7 @@ for (let i = 0; i < tools.length; i++) {
         </div>
         <div id=msg_list class="tile bordered mt-2"></div>
         <div class="group fullwidth mt-2"><span class=static>消息</span>
-            <input id=input_msg class=input>
+            <input id=input_msg class=input value="[订阅]002984,000100,600584,600031,000977,300123,600048，002555">
             <button class="button primary" onclick=send()>发送</button>
         </div>
     </div>
