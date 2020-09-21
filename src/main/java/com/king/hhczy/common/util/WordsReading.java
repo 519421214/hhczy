@@ -41,7 +41,7 @@ public class WordsReading {
         }
     }
     //生成文件,再读取
-    public static void buildAndSpeak(String words) {
+    public static String build(String words) {
         String localPath = path + UUIDUtil.uuid() + ".wav";
         ActiveXComponent ax = new ActiveXComponent("Sapi.SpVoice");
         Dispatch spVoice = ax.getObject();
@@ -72,14 +72,14 @@ public class WordsReading {
             //关闭输出文件
             Dispatch.call(spFileStream, "Close");
             Dispatch.putRef(spVoice, "AudioOutputStream", null);
-
-            playAudio(localPath);
+            return localPath;
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
             spVoice.safeRelease();
             ax.safeRelease();
         }
+        return null;
     }
 
     /**
@@ -121,6 +121,10 @@ public class WordsReading {
         sourceDataLine.close();
     }
 
+    /**
+     * 也是调用本地播放器播放
+     * @param path
+     */
     public static void playAudio(String path) {
         StdAudio.play(path);
     }

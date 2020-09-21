@@ -5,7 +5,7 @@
 <meta name=keywords content=WebSocket,WebSocket测试,WebSocket工具>
 <meta name=description content=在线WebSocket测试工具,WebSocket测试,WebSocket工具>
 <head>
-    <link rel="stylesheet" href="css/style.css" th:href="@{/css/style.css}"/>
+    <link rel="stylesheet" th:href="@{css/style.css}"/>
 </head>
 <style>#msg_list {
     padding: 8px 16px;
@@ -28,7 +28,7 @@ for (let i = 0; i < tools.length; i++) {
 <main>
     <div class=container><h1>WebSocket测试</h1>
         <div class="flex mt-2"><label class="group fullwidth"><span class=static>地址</span>
-            <input id=input_server class=input></label>
+            <input id=input_server class=input value="ws://127.0.0.1:6066/gp-read/李大肠"></label>
             <div class=group style=margin-left:1em;flex-shrink:5>
                 <button class=button onclick=connect(this)>连接</button>
                 <button class=button onclick=disconnect(this)>断开</button>

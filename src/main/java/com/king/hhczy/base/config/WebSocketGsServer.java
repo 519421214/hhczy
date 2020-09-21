@@ -100,13 +100,14 @@ public class WebSocketGsServer {
 
         String codesStr = collect.stream().reduce((s1, s2) -> s1 + "," + s2).orElse(null);
         //给个订阅提示
-        StringBuffer sb = new StringBuffer("成功订阅 ");
+        StringBuffer sb = new StringBuffer("成功订阅：");
         String forObject = restTemplate.getForObject(impUrl + "sh000001," + codesStr, String.class);
         Arrays.stream(forObject.split(";")).map(x -> x.substring(x.indexOf("\"") + 1).split(",")).forEach(y -> {
             sb.append(y[0] + "，");
         });
-        sendInfo(sb.toString(), null);
-        WordsReading.buildAndSpeak("订阅成功");
+        sendInfo("[system]" + sb.toString(), null);
+
+        sendAudio("订阅成功");
 
         DecimalFormat df = new DecimalFormat("0.00");
         //缓存
@@ -199,7 +200,7 @@ public class WebSocketGsServer {
                     }
                 });
                 if (sayWords.length() > 0) {
-                    WordsReading.buildAndSpeak(sayWords.toString());
+                    sendAudio(sayWords.toString());
                 }
             }
         }, 0, 5000);
@@ -231,7 +232,6 @@ public class WebSocketGsServer {
      */
     public void sendInfo(String message, String sid) {
         log.info("推送消息到窗口" + sid + "，推送内容:" + message);
-        message = this.sid + ":" + message;
         for (Map.Entry<String, WebSocketGsServer> entry : webSocketSet.entrySet()) {
             WebSocketGsServer v = entry.getValue();
             try {
@@ -245,6 +245,15 @@ public class WebSocketGsServer {
                 continue;
             }
         }
+    }
+
+    /**
+     * 群发带表示音频播放，线消息后音频
+     */
+    public void sendAudio(String message) {
+        sendInfo("[system]" + message, null);
+        String audioPath = WordsReading.build("订阅成功");
+        sendInfo("[audio]" + audioPath, null);
     }
 
 }
