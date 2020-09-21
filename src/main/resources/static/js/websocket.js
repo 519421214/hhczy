@@ -64,11 +64,13 @@ function connect(btn) {
         addMsg(`<p class="text-success">连接成功，可发送消息到服务端</p>`)
     };
     ws.onmessage = function (e) {
+
         var data = e.data;
+
         if (/^\[audio\].*$/.test(data)) {
             var path = data.replace("[audio]", "");
-            var audio = new Audio(path);
-            audio.play();
+            var audio = $('body').append('<Audio controls="" autoplay="true" src="D:\\SpeakAudio\\0a2ee8451c1a48ddadb37f48f5ed0b78.wav" type="audio/mp3" ></Audio>');
+            audio.click();
         } else if(/^\[system\].*$/.test(data)){
             var sysMsg = data.replace("[system]", "【"+name+"】");
             addMsg(`<p class="text-success">系统提示:<span>${new Date().format(dateFormat)}</span></p><p>${sysMsg}</p>`)
