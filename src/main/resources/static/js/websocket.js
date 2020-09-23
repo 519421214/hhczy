@@ -44,6 +44,23 @@ function send() {
     }
 }
 
+var nodeNo = 1;
+function play(path) {
+    //最多同时播放三个声音
+    var player1 = $("#myAudio1")[0];
+    var player2 = $("#myAudio2")[0];
+    //反复覆盖播放
+    if (nodeNo == 1) {
+        nodeNo = 2;
+        player1.setAttribute("src", path);
+        player1.play();
+    }else if(nodeNo = 2){
+        nodeNo = 1;
+        player2.setAttribute("src", path);
+        player2.play();
+    }
+}
+
 function connect(btn) {
     if (!"WebSocket" in window) {
         alert("您的浏览器不支持 WebSocket!");
@@ -52,7 +69,7 @@ function connect(btn) {
     if (!server) {
         return
     }
-    name = server.substr(server.lastIndexOf("/")+1);
+    name = server.substr(server.lastIndexOf("/") + 1);
     try {
         ws = new WebSocket(server);
     } catch (e) {
@@ -69,12 +86,11 @@ function connect(btn) {
 
         if (/^\[audio\].*$/.test(data)) {
             var path = data.replace("[audio]", "");
-            // $('body').append('<Audio controls="" autoplay="true" th:src="@{D:\\SpeakAudio\\02e43e4636e84e8ab55df3898a84b5b8.wav}" type="audio/mp3" ></Audio>');
-            $("#myAudio").attr("th:src","@{D:\\\\SpeakAudio\\\\02e43e4636e84e8ab55df3898a84b5b8.wav}")
-        } else if(/^\[system\].*$/.test(data)){
-            var sysMsg = data.replace("[system]", "【"+name+"】");
+            play(path);
+        } else if (/^\[system\].*$/.test(data)) {
+            var sysMsg = data.replace("[system]", "【" + name + "】");
             addMsg(`<p class="text-success">系统提示:<span>${new Date().format(dateFormat)}</span></p><p>${sysMsg}</p>`)
-        }else {
+        } else {
             addMsg(`<p class="text-success">${name}:<span>${new Date().format(dateFormat)}</span></p><p>${data}</p>`)
         }
     };

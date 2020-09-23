@@ -40,6 +40,7 @@ public class WebSocketGsServer {
     private Session session;
     //接收sid
     private String sid = "";
+    private String host = "";
     /**
      * 用于存所有的连接服务的客户端，这个对象存储是安全的
      */
@@ -55,6 +56,7 @@ public class WebSocketGsServer {
         this.sid = sid;
         // name是用来表示唯一客户端，如果需要指定发送，需要指定发送通过name来区分
         webSocketSet.put(session.getId(), this);
+        host = "http://"+session.getRequestURI().getHost()+":9099/file/";
         log.info("[WebSocket] 连接成功，当前连接人数为：={}", webSocketSet.size());
     }
 
@@ -107,7 +109,7 @@ public class WebSocketGsServer {
         });
         sendInfo("[system]" + sb.toString(), null);
 
-        sendAudio("订阅成功");
+        sendAudio(sid+"订阅成功");
 
         DecimalFormat df = new DecimalFormat("0.00");
         //缓存
@@ -120,11 +122,9 @@ public class WebSocketGsServer {
                 StringBuffer sayWords = new StringBuffer();
                 Arrays.stream(forObject.split(";")).map(x -> x.substring(x.indexOf("\"") + 1).split(",")).forEach(y -> {
                     if (y.length < 5) return;
-//            System.out.println(y[0]+"\t[开]"+y[1]+"\t[低]"+y[5]+"\t[高]"+y[4]+"\t[当前]"+y[3]+"\t["+(Double.valueOf(y[3])>Double.valueOf(y[2])?"红":"绿")+"]"+
-//                    df.format(((Double.valueOf(y[3])/Double.valueOf(y[2]))-1)*100)+"%");
                     //获取盈亏占比
-                    double ratio = Math.random() * 0.194 - 0.097;//测试用 todo
-//                    double ratio = (Double.valueOf(y[3]) / Double.valueOf(y[2])) - 1;
+//                    double ratio = Math.random() * 0.194 - 0.097;//测试用 todo
+                    double ratio = (Double.valueOf(y[3]) / Double.valueOf(y[2])) - 1;//正式用
                     //缓存点数
                     String name = y[0];//公司名
                     if (cacheHis.get(name) == null) {
@@ -180,11 +180,12 @@ public class WebSocketGsServer {
                         if (cacheHis.get(name) != ratio) {
                             if (ratio > 0.097) {
                                 sayWords.append("牛掰，" + name + "涨停了。");
-                                cacheHis.put(name, ratio);
                             } else if (ratio < -0.097) {
                                 sayWords.append("他妈的，" + name + " 跌停了！！");
-                                cacheHis.put(name, ratio);
+                            }else if (cacheHis.get(name)>0.097&&ratio<cacheHis.get(name)){
+                                sayWords.append("靠，" + name + " 板不住，破板了！！");
                             }
+                            cacheHis.put(name, ratio);
                         }
                         if (ratio > 0) {
                             if (szzs < 0) {
@@ -252,7 +253,7 @@ public class WebSocketGsServer {
      */
     public void sendAudio(String message) {
         sendInfo("[system]" + message, null);
-        String audioPath = WordsReading.build("订阅成功");
+        String audioPath = WordsReading.build(message,host);
         sendInfo("[audio]" + audioPath, null);
     }
 

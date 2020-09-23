@@ -30,8 +30,10 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 public class Test {
-
+    public static String path = "D:\\SpeakAudio\\";
     public static void main(String[] args) throws Exception {
+        String nowDate = LocalDate.now().toString().replace("-","\\02323");
+//        String nowDateFormat = Paths.get(path,nowDate.getYear()+"",nowDate.getMonthValue()+"",nowDate.getDayOfMonth()+"").toString();
         System.out.println("21.56465".substring(0,"21.56465".indexOf(".")+3));
 //            System.out.println(Math.random()*0.097*2/10-0.097);
 //        double a = 62.21345856456465;

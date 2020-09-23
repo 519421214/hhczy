@@ -3,10 +3,15 @@ package com.king.hhczy.common.util;
 import com.jacob.activeX.ActiveXComponent;
 import com.jacob.com.Dispatch;
 import com.jacob.com.Variant;
+import org.springframework.util.StringUtils;
 
 import javax.sound.sampled.*;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.time.LocalDate;
 
 /**
  * 语音播报的方式有很多中。通过jacob实现语音朗读，则是其中最简单的一种实现方式。
@@ -21,6 +26,7 @@ import java.io.IOException;
  */
 public class WordsReading {
     public static String path = "D:\\SpeakAudio\\";
+
     //朗读,不能并发朗读，通过先生成音频再读实现并发
     public static void speak(String words) {
 //        System.out.println(System.getProperty("java.library.path"));
@@ -40,9 +46,26 @@ public class WordsReading {
             sap.safeRelease();
         }
     }
+
+    /**
+     * host不为空的话，就返回服务地址
+     *
+     * @param words
+     * @param host
+     * @return
+     */
     //生成文件,再读取
-    public static String build(String words) {
-        String localPath = path + UUIDUtil.uuid() + ".wav";
+    public static String build(String words, String host) {
+        //以年月日为路径
+        LocalDate nowDate = LocalDate.now();
+        Path directors = Paths.get(path, nowDate.getYear() + "", nowDate.getMonthValue() + "", nowDate.getDayOfMonth() + "");
+        try {
+            Files.createDirectories(directors);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        String localPath = directors.toString() + "/" + UUIDUtil.uuid() + ".wav";
         ActiveXComponent ax = new ActiveXComponent("Sapi.SpVoice");
         Dispatch spVoice = ax.getObject();
         try {
@@ -72,6 +95,9 @@ public class WordsReading {
             //关闭输出文件
             Dispatch.call(spFileStream, "Close");
             Dispatch.putRef(spVoice, "AudioOutputStream", null);
+            if (StringUtils.hasText(host)) {
+                localPath = localPath.replace(path, host);
+            }
             return localPath;
         } catch (Exception e) {
             e.printStackTrace();
@@ -84,6 +110,7 @@ public class WordsReading {
 
     /**
      * 只能播放到本地，不能远程访问收听
+     *
      * @param path
      * @throws LineUnavailableException
      * @throws UnsupportedAudioFileException
@@ -123,6 +150,7 @@ public class WordsReading {
 
     /**
      * 也是调用本地播放器播放
+     *
      * @param path
      */
     public static void playAudio(String path) {
