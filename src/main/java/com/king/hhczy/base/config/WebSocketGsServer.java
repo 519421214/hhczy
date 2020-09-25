@@ -123,8 +123,8 @@ public class WebSocketGsServer {
                 Arrays.stream(forObject.split(";")).map(x -> x.substring(x.indexOf("\"") + 1).split(",")).forEach(y -> {
                     if (y.length < 5) return;
                     //获取盈亏占比
-//                    double ratio = Math.random() * 0.194 - 0.097;//测试用 todo
-                    double ratio = (Double.valueOf(y[3]) / Double.valueOf(y[2])) - 1;//正式用
+                    double ratio = Math.random() * 0.194 - 0.097;//测试用 todo
+//                    double ratio = (Double.valueOf(y[3]) / Double.valueOf(y[2])) - 1;//正式用
                     //缓存点数
                     String name = y[0];//公司名
                     if (cacheHis.get(name) == null) {
@@ -252,9 +252,9 @@ public class WebSocketGsServer {
      * 群发带表示音频播放，线消息后音频
      */
     public void sendAudio(String message) {
-        sendInfo("[system]" + message, null);
+        sendInfo("[system]" +"【"+sid+"】"+ message, null);
         String audioPath = WordsReading.build(message,host);
-        sendInfo("[audio]" + audioPath, null);
+        sendInfo("[audio]" + audioPath, session.getId());
     }
 
 }

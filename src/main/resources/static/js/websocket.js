@@ -88,10 +88,10 @@ function connect(btn) {
             var path = data.replace("[audio]", "");
             play(path);
         } else if (/^\[system\].*$/.test(data)) {
-            var sysMsg = data.replace("[system]", "【" + name + "】");
-            addMsg(`<p class="text-success">系统提示:<span>${new Date().format(dateFormat)}</span></p><p>${sysMsg}</p>`)
+            var sysMsg = data.replace("[system]", "");
+            addMsg(`<p class="text-success">系统提示： <span>${new Date().format(dateFormat)}</span></p><p>${sysMsg}</p>`)
         } else {
-            addMsg(`<p class="text-success">${name}:<span>${new Date().format(dateFormat)}</span></p><p>${data}</p>`)
+            addMsg(`<p class="text-success">${name}： <span>${new Date().format(dateFormat)}</span></p><p>${data}</p>`)
         }
     };
     ws.onclose = function () {
