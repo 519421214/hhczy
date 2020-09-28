@@ -1,0 +1,52 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<meta charset=utf-8>
+<!--页面默认用极速核-->
+<meta name="renderer" content="webkit">
+<title>订阅播报</title>
+<head>
+    <link rel="stylesheet" th:href="@{css/style.css}"/>
+    <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
+</head>
+<style>#msg_list {
+    padding: 8px 16px;
+    height: 70vh;
+    font-size: 14px;
+    overflow: auto
+}</style>
+<script>
+    var _hmt = _hmt || [];
+    let hm = document.createElement("script");
+    let s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(hm, s);
+    let tools = document.querySelectorAll('.side-nav li');
+    for (let i = 0; i < tools.length; i++) {
+        let node = tools[i];
+        if (node.querySelector('a').getAttribute('href').endsWith(document.location.pathname)) {
+            node.classList.add('active');
+            break
+        }
+    }</script>
+<main>
+    <audio id="myAudio1" controls autoplay style="display: none"></audio>
+    <audio id="myAudio2" controls autoplay style="display: none"></audio>
+    <div class=container><h1>WebSocket测试</h1>
+        <div class="flex mt-2"><label class="group fullwidth"><span class=static>地址</span>
+            <input id=input_server class=input value=""/></label>
+            <div class=group style=margin-left:1em;flex-shrink:5>
+                <button class=button onclick=connect(this)>连接</button>
+                <button class=button onclick=disconnect(this)>断开</button>
+                <button class=button onclick=cleanup(this)>清空</button>
+            </div>
+        </div>
+        <div id=msg_list class="tile bordered mt-2"></div>
+        <div class="group fullwidth mt-2"><span class=static>消息</span>
+            <input id=input_msg class=input value="[订阅]002984,000100,600584,600031,000977,300123,600048,002555">
+            <button class="button primary" onclick=send()>发送</button>
+        </div>
+    </div>
+</main>
+<script th:src="@{js/websocket.js}"></script>
+<script>
+    $("#input_server").val("wss://[[${session.netIP}]]:6066/gp-read/李大肠");
+</script>
