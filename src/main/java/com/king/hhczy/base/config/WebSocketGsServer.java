@@ -56,7 +56,7 @@ public class WebSocketGsServer {
         this.sid = sid;
         // name是用来表示唯一客户端，如果需要指定发送，需要指定发送通过name来区分
         webSocketSet.put(session.getId(), this);
-        host = "http://"+session.getRequestURI().getHost()+":9099/file/";
+        host = "https://"+session.getRequestURI().getHost()+"/file/";
         log.info("[WebSocket] 连接成功，当前连接人数为：={}", webSocketSet.size());
     }
 
