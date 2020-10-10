@@ -1,7 +1,9 @@
 package com.king.hhczy.base.config;
 
+import com.king.hhczy.base.constant.GsConstant;
 import com.king.hhczy.common.util.SpringContextUtils;
 import com.king.hhczy.common.util.WordsReading;
+import com.king.hhczy.service.IBichromaticSphereService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
@@ -31,7 +33,7 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Component
-@ServerEndpoint("/gp-read/{sid}")
+@ServerEndpoint("/chat/{sid}")
 public class WebSocketGsServer {
 
     /**
@@ -57,6 +59,7 @@ public class WebSocketGsServer {
         // name是用来表示唯一客户端，如果需要指定发送，需要指定发送通过name来区分
         webSocketSet.put(session.getId(), this);
         host = "https://"+session.getRequestURI().getHost()+"/file/";
+        sendInfo("[open]"+this.sid+" 进入聊天",null);
         log.info("[WebSocket] 连接成功，当前连接人数为：={}", webSocketSet.size());
     }
 
@@ -67,6 +70,7 @@ public class WebSocketGsServer {
     public void OnClose() {
         webSocketSet.remove(session.getId());
         timer.cancel();
+        sendInfo("[close]"+this.sid+" 退出聊天",null);
         log.info("[WebSocket] 退出成功，当前连接人数为：={}", webSocketSet.size());
     }
 
@@ -81,20 +85,35 @@ public class WebSocketGsServer {
     public void onMessage(String message, Session session) {
         timer.cancel();
         timer = new Timer();
-        log.info("收到来自窗口" + sid + "的信息:" + message);
-        if (message.startsWith("[订阅]")) {
+        log.info("收到来自窗口【" + sid + "】的信息:" + message);
+        if (message.startsWith(GsConstant.DING_YUE)) {
             autoRead(message);
-        } else {
-            sendInfo(message, null);
+        }else if (message.startsWith(GsConstant.SHUANG_SE_QIU)){
+            systemSend(bichromaticSphere(message));
+        }else {
+            String sendMsg = String.format("<p class=\"text-success\">%s <span> %s</span></p><p>%s</p>",sid,String.format("%tT",new Date()),message);
+            sendInfo(sendMsg, null);
         }
     }
 
+    /**
+     * 历史双色球中奖
+     * codes:逗号分开 1,2,3,4,5,6 7
+     */
+    public String bichromaticSphere(String inputCodes) {
+        IBichromaticSphereService bichromaticSphereService = SpringContextUtils.getBean(IBichromaticSphereService.class);
+        inputCodes = inputCodes.replace(GsConstant.SHUANG_SE_QIU, "").replaceAll("\\s+", " ");
+        String[] split = inputCodes.split("-");
+        String[] redNos = split[0].trim().split(" ");
+        String blueNo = split[1].trim();
+        return bichromaticSphereService.analyse(redNos,Integer.parseInt(blueNo));
+    }
     /**
      * 定时播报
      * codes:逗号分开
      */
     public void autoRead(String inputCodes) {
-        inputCodes = inputCodes.replace("[订阅]", "").replace("，", ",");
+        inputCodes = inputCodes.replace(GsConstant.DING_YUE, "").replace("，", ",");
 
         RestTemplate restTemplate = SpringContextUtils.getBean(RestTemplate.class);
         Function<String, String> changeCode = x -> x.startsWith("6") ? ("sh" + x) : ("sz" + x);
@@ -107,9 +126,9 @@ public class WebSocketGsServer {
         Arrays.stream(forObject.split(";")).map(x -> x.substring(x.indexOf("\"") + 1).split(",")).forEach(y -> {
             sb.append(y[0] + "，");
         });
-        sendInfo("[system]" + sb.toString(), null);
+        systemSend(sb.toString());
 
-        sendAudio(sid+"订阅成功");
+//        sendAudio(sid+"订阅成功");
 
         DecimalFormat df = new DecimalFormat("0.00");
         //缓存
@@ -252,9 +271,15 @@ public class WebSocketGsServer {
      * 群发带表示音频播放，线消息后音频
      */
     public void sendAudio(String message) {
-        sendInfo("[system]" +"【"+sid+"】"+ message, null);
+        systemSend(message);
         String audioPath = WordsReading.build(message,host);
         sendInfo("[audio]" + audioPath, session.getId());
+    }
+    /**
+     * 群发带表示音频播放，线消息后音频
+     */
+    public void systemSend(String message) {
+        sendInfo("[system]" +"【"+sid+"】"+ message, null);
     }
 
 }

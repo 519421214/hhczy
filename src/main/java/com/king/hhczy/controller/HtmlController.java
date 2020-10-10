@@ -19,10 +19,15 @@ import javax.servlet.http.HttpServletRequest;
 @Validated
 public class HtmlController {
     private static int i = 0;
-    @RequestMapping("/speak")
-    public String toGSSpeak(Model model, HttpServletRequest request) {
-        String netURL = "ws://" + request.getServerName() + ":6066/gp-read/李"+i+++"肠";
-        model.addAttribute("netURL", netURL);
-        return "/websocket/index";
+    @RequestMapping("/chat")
+    public String toGSChat(Model model, HttpServletRequest request) {
+        String netUrl = "ws://" + request.getServerName() + "/chat/";
+        if ("https".equals(request.getScheme())) {
+            netUrl = "wss://" + request.getServerName() + "/chat/";
+        }
+        String netName = "李"+i+++"肠";
+        model.addAttribute("netUrl", netUrl);
+        model.addAttribute("netName", netName);
+        return "/websocket/chat";
     }
 }

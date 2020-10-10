@@ -39,7 +39,7 @@ function send() {
         if (text) {
             ws.send(text);
             input_msg.value = '';
-            addMsg(`<p class="text-info">客户端：<span>${new Date().format(dateFormat)}</span></p><p>${text}</p>`)
+            // addMsg(`<p class="text-info">客户端：<span>${new Date().format(dateFormat)}</span></p><p>${text}</p>`)
         }
     }
 }
@@ -66,12 +66,15 @@ function connect(btn) {
         alert("您的浏览器不支持 WebSocket!");
     }
     let server = document.getElementById('input_server').value;
+    name = document.getElementById('input_name').value;
     if (!server) {
         return
     }
-    name = server.substr(server.lastIndexOf("/") + 1);
+    if (!name) {
+        name = "李大肠";
+    }
     try {
-        ws = new WebSocket(server);
+        ws = new WebSocket(server+name);
     } catch (e) {
         addMsg(`<p class="text-error">${e}</p>`);
         return;
@@ -79,25 +82,35 @@ function connect(btn) {
     ws.onopen = function () {
         btn.classList.add('primary');
         addMsg(`<p class="text-success">连接成功，可发送消息到服务端</p>`)
+        $("#bt_connect").attr("disabled", true);
+        $("#bt_disconnect").attr("disabled", false);
     };
     ws.onmessage = function (e) {
 
         var data = e.data;
 
-        if (/^\[audio\].*$/.test(data)) {
+        if (data.startsWith("[audio]")) {
             var path = data.replace("[audio]", "");
             play(path);
-        } else if (/^\[system\].*$/.test(data)) {
+        } else if (data.startsWith("[system]")) {// 或者用/^\[system\].*$/.test(data)
             var sysMsg = data.replace("[system]", "");
-            addMsg(`<p class="text-success">系统提示： <span>${new Date().format(dateFormat)}</span></p><p>${sysMsg}</p>`)
+            addMsg(`<p class="text-success">系统提示 <span> ${new Date().format(dateFormat)}</span></p><p>${sysMsg}</p>`)
+        } else if (data.startsWith("[open]")) {
+            var sysMsg = data.replace("[open]", "");
+            addMsg(`<p class="system-tip-in">${sysMsg}</p>`)
+        } else if (data.startsWith("[close]")) {
+            var sysMsg = data.replace("[close]", "");
+            addMsg(`<p class="system-tip-out">${sysMsg}</p>`)
         } else {
-            addMsg(`<p class="text-success">${name}： <span>${new Date().format(dateFormat)}</span></p><p>${data}</p>`)
+            addMsg(data)
         }
     };
     ws.onclose = function () {
         ws = null;
         btn.classList.remove('primary');
         addMsg(`<p class="text-error">连接已关闭</p>`)
+        $("#bt_connect").attr("disabled", false);
+        $("#bt_disconnect").attr("disabled", true);
     };
     ws.onerror = function (e) {
         btn.classList.remove('primary');
