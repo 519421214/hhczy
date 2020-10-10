@@ -1,0 +1,72 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>websocket在线测试工具</title>
+    <meta name="keywords" content="keywords">
+    <meta name="description" content="websocket在线测试工具，可以通过socke测试工具发起websocket连接，进行websocket通信测试，本站提供了ws和wss两个websocket连接地址，也可以使用其他socke服务器地址进行连接测试。">
+    <link th:href="@{css/bootstrap.min.css}" rel="stylesheet">
+    <link th:href="@{css/chat.style.css}" rel="stylesheet">
+    <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom shadow-sm">
+    <a class="navbar-brand" href="https://www.idcd.com/">
+        <svg class="icon svg-icon" style="width:30px;height:30px;" aria-hidden="true">
+            <use xlink:href="#icon-collaborativetools"></use>
+        </svg>
+        天葵工具箱
+    </a>
+</nav>
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb bg-transparent border-bottom rounded-0">
+        <li class="breadcrumb-item"><a href="/">首页</a></li>
+        <li class="breadcrumb-item"><a href="/tool">工具箱</a></li>
+        <li class="breadcrumb-item active" aria-current="page">聊天</li>
+    </ol>
+</nav>
+<div id="content" class="container">
+    <div id="app">
+        <div class="card my-3" style="font-size:.9rem;">
+            <div class="card-header bg-transparent">
+                <div class="input-group">
+                    <input id="input_server" class="form-control hidden" th:value="${netUrl}"/>
+                    <input id="input_name" class="form-control" th:value="${netName}" th:maxlength="20"/>
+                    <div class="input-group-append">
+                        <button id="bt_connect" onclick="connect(this)" class="btn btn-outline-secondary" type="button">连接</button>
+                        <button id="bt_disconnect" disabled=true onclick="disconnect(this)" class="btn btn-outline-secondary" type="button">断开</button>
+                        <button onclick="cleanup(this)" class="btn btn-outline-secondary" type="button">清空</button>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body overflow-auto" id="msg_list" style="height:400px;">
+            </div>
+            <div class="card-footer">
+                <div class="input-group">
+                    <input id="input_msg" class=form-control value="[#030701]002984,000100,600584,600031,000977,300123,600048,002555" th:maxlength="500"/>
+                    <div class="input-group-append">
+                        <button onclick="send()" class="btn btn-outline-secondary" type="button">发送</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<footer class="border-top bg-white mt-5 fixed-bottom">
+    <div class="d-flex justify-content-between text-muted px-2 py-1">
+        <div class="bd-highlight">
+            <div class="d-inline"><small class="text-muted">© 2020</small></div>
+            <div class="d-inline"><small class="text-muted"></small></div>
+        </div>
+        <div class="bd-highlight d-none d-sm-block">
+            <small>Beta 1.0821</small>
+            <small class="text-muted ml-2">蜀ICP备19009987号</small>
+            <a target="_blank" rel="external nofollow" href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=51010702001950"><small class="text-muted ml-2">川公网安备 51010702001950号</small>
+            </a>
+        </div>
+    </div>
+</footer>
+</body>
+<script th:src="@{js/websocket.js}"></script>
