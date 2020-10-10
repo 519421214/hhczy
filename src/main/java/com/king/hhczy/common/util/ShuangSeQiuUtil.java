@@ -41,6 +41,7 @@ public class ShuangSeQiuUtil {
         if (!ObjectUtils.isEmpty(maxOne)) {
             maxNo = maxOne.getNo();
         }
+        log.info("maxNo:{}",maxNo);
         //拿到网页源码
         String urlSource = HtmlRequest.getHttpsURLSource("https://datachart.500.com/ssq/history/newinc/history.php?start="+maxNo);
         if (!StringUtils.hasText(urlSource)) return maxNo;
