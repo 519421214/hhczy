@@ -1,6 +1,7 @@
 package com.king.hhczy.base.config;
 
 import com.king.hhczy.base.constant.GsConstant;
+import com.king.hhczy.common.util.ShuangSeQiuUtil;
 import com.king.hhczy.common.util.SpringContextUtils;
 import com.king.hhczy.common.util.WordsReading;
 import com.king.hhczy.service.IBichromaticSphereService;
@@ -90,6 +91,8 @@ public class WebSocketGsServer {
             autoRead(message);
         }else if (message.startsWith(GsConstant.SHUANG_SE_QIU)){
             systemSend(bichromaticSphere(message));
+        }else if (message.startsWith(GsConstant.SHUANG_SE_QIU_SYNC)){
+            bichromaticSphereSync();
         }else {
             String sendMsg = String.format("<p class=\"text-success\">%s <span> %s</span></p><p>%s</p>",sid,String.format("%tT",new Date()),message);
             sendInfo(sendMsg, null);
@@ -107,6 +110,21 @@ public class WebSocketGsServer {
         String[] redNos = split[0].trim().split(" ");
         String blueNo = split[1].trim();
         return bichromaticSphereService.analyse(redNos,Integer.parseInt(blueNo));
+    }
+    /**
+     * 历史双色球中奖
+     * codes:逗号分开 1,2,3,4,5,6 7
+     */
+    public void bichromaticSphereSync() {
+        ShuangSeQiuUtil shuangSeQiuUtil = SpringContextUtils.getBean(ShuangSeQiuUtil.class);
+        try{
+            this.sendMessage("[system]开始同步双色球数据");
+            String result = shuangSeQiuUtil.bichromaticSphere();
+            this.sendMessage("[system]" + result);
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+
     }
     /**
      * 定时播报
