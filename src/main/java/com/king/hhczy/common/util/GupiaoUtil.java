@@ -21,7 +21,7 @@ public class GupiaoUtil {
     //数据来源地址
     private String impUrl = "http://hq.sinajs.cn/list=";
     //    private String[] codes = {"sz300098,sz000100,sh600105,sz000625,sz300050,sz002446,sh600936,sh600699,sh600050"};002584,300366,300796,300706
-    private String[] codes = {"sz002984,sz000100,sh600584,sh600031,sz000977,sz300123,sh600048,sz002555,sh000001"};
+    private String[] codes = {"sz000100,sh600584,sz000977,sh600048,sz002555,sh000001"};
 
     //GP信息输出到控制台
     public void showDetail() {
