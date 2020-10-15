@@ -2,7 +2,7 @@ package com.king.hhczy.base.config;
 
 import com.king.hhczy.common.util.JwtUtils;
 import com.king.hhczy.common.util.Log;
-import com.king.hhczy.common.util.UUIDUtil;
+import com.king.hhczy.common.util.RandomUtil;
 import io.jsonwebtoken.Claims;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
@@ -54,7 +54,7 @@ public class BaseInterceptors implements WebMvcConfigurer {
         @Override
         public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws IOException, ServletException {
             //请求信息
-            String requestId = Optional.ofNullable(request.getHeader("request-id")).orElse(UUIDUtil.uuid());
+            String requestId = Optional.ofNullable(request.getHeader("request-id")).orElse(RandomUtil.uuid());
             request.setAttribute("requestId",requestId);
             Log.info("request-id={}", requestId);
             Log.info("Method={}", request.getMethod());

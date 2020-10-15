@@ -2,7 +2,7 @@ package com.king.hhczy.mapper;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.king.hhczy.common.util.UUIDUtil;
+import com.king.hhczy.common.util.RandomUtil;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
@@ -51,7 +51,7 @@ public class RestTemplateMapper {
 
         MultiValueMap headers = new HttpHeaders();
         headers.add("Content-Type", "application/json");
-        headers.add("Request-Id", UUIDUtil.uuid());
+        headers.add("Request-Id", RandomUtil.uuid());
 
         JSONObject data = null;
         try {
@@ -86,7 +86,7 @@ public class RestTemplateMapper {
                 });
             }
             HttpHeaders headers = new HttpHeaders();
-            headers.add("Request-Id", UUIDUtil.uuid());
+            headers.add("Request-Id", RandomUtil.uuid());
             headers.add("Content-Type", "application/x-www-form-urlencoded");
             JSONObject data = null;
 
@@ -125,7 +125,7 @@ public class RestTemplateMapper {
 
     private JSONObject resultDeal(JSONObject data, Object... params) {
 
-        Function<String[],String> getKey = x->Arrays.stream(x).filter(y -> data.get(y) != null).findAny().orElse(UUIDUtil.uuid());
+        Function<String[],String> getKey = x->Arrays.stream(x).filter(y -> data.get(y) != null).findAny().orElse(RandomUtil.uuid());
 
         int resultCode = data.getIntValue(getKey.apply(resultCodeKey));
         if (resultCode == successCode) {

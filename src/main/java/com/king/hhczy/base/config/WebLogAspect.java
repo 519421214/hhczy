@@ -3,7 +3,7 @@ package com.king.hhczy.base.config;
 import com.alibaba.fastjson.JSONObject;
 import com.king.hhczy.common.result.ReqtBody;
 import com.king.hhczy.common.util.Log;
-import com.king.hhczy.common.util.UUIDUtil;
+import com.king.hhczy.common.util.RandomUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.Signature;
@@ -63,7 +63,7 @@ public class WebLogAspect {
         String classMethod = signature.getDeclaringTypeName() + "." + signature.getName();
 
         Map<String, Object> requestMap = new LinkedHashMap<>();
-        requestMap.put("requestId", Optional.ofNullable(requestId).orElse(UUIDUtil.uuid()));
+        requestMap.put("requestId", Optional.ofNullable(requestId).orElse(RandomUtil.uuid()));
         requestMap.put("remoteAddr", remoteAddr);
         requestMap.put("url", url);
         requestMap.put("httpMethod", httpMethod);
