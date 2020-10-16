@@ -3,10 +3,12 @@ package com.king.hhczy.base.config;
 import com.king.hhczy.base.constant.GsConstant;
 import com.king.hhczy.common.util.ShuangSeQiuUtil;
 import com.king.hhczy.common.util.SpringContextUtils;
-import com.king.hhczy.common.util.WordsReading;
 import com.king.hhczy.service.IBichromaticSphereService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import javax.websocket.*;
@@ -44,6 +46,7 @@ public class WebSocketGsServer {
     //接收sid
     private String sid = "";
     private String host = "";
+    private String apiUrl = "http://hhczy.vrfantasy.top:9099/word-to-speak";
     /**
      * 用于存所有的连接服务的客户端，这个对象存储是安全的
      */
@@ -290,7 +293,15 @@ public class WebSocketGsServer {
      */
     public void sendAudio(String message) {
         systemSend(message);
-        String audioPath = WordsReading.build(message,host);
+        //本地生成audio
+//        String audioPath = WordsReading.build(message,host);
+        //拿到远程audio地址
+        RestTemplate restTemplate = SpringContextUtils.getBean(RestTemplate.class);
+        MultiValueMap headers = new HttpHeaders();
+        headers.add("Content-Type","application/json");
+        Map<String,String> vals = new HashMap<>();
+        vals.put("words", message);
+        String audioPath = restTemplate.postForObject(apiUrl, new HttpEntity(vals, headers), String.class);
         sendInfo("[audio]" + audioPath, session.getId());
     }
     /**

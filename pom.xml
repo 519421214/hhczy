@@ -123,11 +123,11 @@
         <!--redis缓存 start-->
         <!--使用redisson来操作redis缓存-->
         <!--3.10.7该版本优化了序列化器，可以存储数字等（key/value转成16进制存）-->
-        <dependency><!--配置请看RedissonConfiguration.java-->
-            <groupId>org.redisson</groupId>
-            <artifactId>redisson</artifactId>
-            <version>3.11.2</version>
-        </dependency>
+<!--        <dependency>&lt;!&ndash;配置请看RedissonConfiguration.java&ndash;&gt;-->
+<!--            <groupId>org.redisson</groupId>-->
+<!--            <artifactId>redisson</artifactId>-->
+<!--            <version>3.11.2</version>-->
+<!--        </dependency>-->
         <!--redisson不需要spring-boot-starter-data-redis的依赖-->
         <!--<dependency>
             <groupId>org.springframework.boot</groupId>
