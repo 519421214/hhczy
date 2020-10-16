@@ -99,7 +99,7 @@ public class WordsReading {
             Dispatch.call(spFileStream, "Close");
             Dispatch.putRef(spVoice, "AudioOutputStream", null);
             if (StringUtils.hasText(host)) {
-                localPath = localPath.replace(path,host+"/").replace("\\","/");
+                localPath = localPath.replace(path,host+"/file/").replace("\\","/");
             }
             return localPath;
         } catch (Exception e) {
