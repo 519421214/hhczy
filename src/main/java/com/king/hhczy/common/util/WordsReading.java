@@ -21,7 +21,7 @@ import java.time.LocalDate;
  * 1、下载Jacob文件。
  * 官网下载：https://sourceforge.net/projects/jacob-project/
  * 2、把下载解压之后里面的“jacob-1.19-x64.dll”文件复制到jdk安装的bin目录中（切记：.dll文件根据自己电脑位数选择不同的文件）。
- * 3、通过build Path把文件里的“jacob.jar”jar包添加到项目中。 测试通过maven会报错，未解决
+ * 3、通过build Path把文件里的“jacob.jar”jar包添加到项目中。 测试通过maven会报错，未解决 maven需要引入①部分
  * 4、语音播报实现代码
  *
  * @author ningjinxiang

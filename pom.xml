@@ -65,6 +65,15 @@
             <artifactId>aliyun-java-sdk-core</artifactId>
             <version>4.4.3</version>
         </dependency>
+        <!--本地jar引入，需要①插件才能打-->
+        <dependency>
+            <groupId>com.jacob</groupId>
+            <artifactId>jacob</artifactId>
+            <version>1.19</version>
+            <scope>system</scope>
+            <systemPath>${basedir}/lib/jacob.jar</systemPath>
+        </dependency>
+
         <!-- https://mvnrepository.com/artifact/com.aliyun/aliyun-java-sdk-alidns -->
         <dependency>
             <groupId>com.aliyun</groupId>
@@ -106,9 +115,13 @@
 
     <build>
         <plugins>
-            <plugin><!--spring-boot的默认打包插件，可自行修改-->
+            <!--①打包本地包插件-->
+            <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <includeSystemScope>true</includeSystemScope>
+                </configuration>
             </plugin>
         </plugins>
     </build>
