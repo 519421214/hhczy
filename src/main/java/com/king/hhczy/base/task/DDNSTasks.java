@@ -22,7 +22,7 @@ import java.time.format.DateTimeFormatter;
 @Configurable
 @EnableScheduling
 @Slf4j
-public class ScheduledTasks {
+public class DDNSTasks {
     @Autowired
     private AliyunDDNS aliyunDDNS;
     /**
