@@ -1,52 +1,46 @@
 <!doctype html>
 <html xmlns:th="http://www.thymeleaf.org">
-<meta charset=utf-8>
-<!--页面默认用极速核-->
-<meta name="renderer" content="webkit">
-<title>订阅播报</title>
 <head>
-    <link rel="stylesheet" th:href="@{css/style.css}"/>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>航行粗壮圆</title>
+    <meta name="keywords" content="keywords">
+    <meta name="description" content="websocket在线测试工具，可以通过socke测试工具发起websocket连接，进行websocket通信测试，本站提供了ws和wss两个websocket连接地址，也可以使用其他socke服务器地址进行连接测试。">
+    <link th:href="@{css/bootstrap.min.css}" rel="stylesheet">
+    <link th:href="@{css/chat.style.css}" rel="stylesheet">
     <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
 </head>
-<style>#msg_list {
-    padding: 8px 16px;
-    height: 70vh;
-    font-size: 14px;
-    overflow: auto
-}</style>
-<script>
-    var _hmt = _hmt || [];
-    let hm = document.createElement("script");
-    let s = document.getElementsByTagName("script")[0];
-    s.parentNode.insertBefore(hm, s);
-    let tools = document.querySelectorAll('.side-nav li');
-    for (let i = 0; i < tools.length; i++) {
-        let node = tools[i];
-        if (node.querySelector('a').getAttribute('href').endsWith(document.location.pathname)) {
-            node.classList.add('active');
-            break
-        }
-    }</script>
-<main>
-    <audio id="myAudio1" controls autoplay style="display: none"></audio>
-    <audio id="myAudio2" controls autoplay style="display: none"></audio>
-    <div class=container><h1>WebSocket测试</h1>
-        <div class="flex mt-2"><label class="group fullwidth"><span class=static>地址</span>
-            <input id=input_server class=input value=""/></label>
-            <div class=group style=margin-left:1em;flex-shrink:5>
-                <button class=button onclick=connect(this)>连接</button>
-                <button class=button onclick=disconnect(this)>断开</button>
-                <button class=button onclick=cleanup(this)>清空</button>
-            </div>
+<body>
+<nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom shadow-sm">
+    <a class="navbar-brand" href="https://www.idcd.com/">
+        <svg class="icon svg-icon" style="width:30px;height:30px;" aria-hidden="true">
+            <use xlink:href="#icon-collaborativetools"></use>
+        </svg>
+        天葵工具箱
+    </a>
+</nav>
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb bg-transparent border-bottom rounded-0">
+        <li class="breadcrumb-item"><a href="/">首页</a></li>
+    </ol>
+</nav>
+<div id="content" class="container">
+    <a target="_blank" rel="external nofollow" href="/chat"><small class="text-muted ml-2">命令窗</small></a>
+</div>
+<footer class="border-top bg-white mt-5 fixed-bottom">
+    <div class="d-flex justify-content-between text-muted px-2 py-1">
+        <div class="bd-highlight">
+            <div class="d-inline"><small class="text-muted">© 2020</small></div>
+            <div class="d-inline"><small class="text-muted"></small></div>
         </div>
-        <div id=msg_list class="tile bordered mt-2"></div>
-        <div class="group fullwidth mt-2"><span class=static>消息</span>
-            <input id=input_msg class=input value="[订阅]002984,000100,600584,600031,000977,300123,600048,002555">
-            <button class="button primary" onclick=send()>发送</button>
+        <div class="bd-highlight d-none d-sm-block">
+            <small>航航粗壮圆</small>
+            <a target="_blank" rel="external nofollow" href="http://www.beian.miit.gov.cn"><small class="text-muted ml-2">粤ICP备19138954号</small></a>
+            <!--<a target="_blank" rel="external nofollow" href="http://www.beian.miit.gov.cn"><small class="text-muted ml-2">粤公网安备 xxxx号</small>-->
+            </a>
         </div>
     </div>
-</main>
+</footer>
+</body>
 <script th:src="@{js/websocket.js}"></script>
-<script>
-    $("#input_server").val("wss://[[${session.netIP}]]:6066/gp-read/李大肠");
-</script>

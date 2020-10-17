@@ -12,6 +12,7 @@ import java.net.MalformedURLException;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributeView;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.time.Instant;
 import java.util.*;
 
 /**
@@ -37,7 +38,17 @@ public class FilesUtils {
         }
         return result;
     }
-
+    public static boolean uploadFile(String parentPathStr,String fileName,byte[] buf) {
+        fileName = Optional.ofNullable(fileName).orElse(Instant.now().toEpochMilli()+"");
+        Path parentPath = Paths.get(parentPathStr,fileName);
+        try {
+            Files.write(parentPath, buf);
+            return true;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
     /**
      * 获取文件夹的所有子文件个数
      * @param path
