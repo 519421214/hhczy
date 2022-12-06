@@ -178,7 +178,7 @@
         <dependency>
             <groupId>commons-net</groupId>
             <artifactId>commons-net</artifactId>
-            <version>3.6</version>
+            <version>3.9.0</version>
         </dependency>
         <!--以下引入会导致缓存失败Cannot find cache named 'emp' for Builder-->
         <!--<dependency>
